@@ -11,6 +11,7 @@ import { generateSVG, TitleBarType, AspectRatio } from '@/lib/svgRenderer';
 import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
 import { AlertCircle } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Index = () => {
   const savedSettings = loadSettings();
@@ -142,6 +143,7 @@ const Index = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
+                      <ThemeToggle />
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Screenshot Styler
