@@ -137,24 +137,51 @@ function generateDotGrid(palette: Palette, width: number, height: number): strin
 }
 
 function generateMacOSTitleBar(palette: Palette, x: number, y: number, width: number): string {
+  // High‑fidelity macOS title bar using vector UI kit primitives
+  const h = 56; // bar height
+  const bg = palette.swatches[1] || '#1A1A1A';
+  const fg = palette.swatches[4] || '#FFFFFF';
   return `
     <g transform="translate(${x}, ${y})">
-      <rect width="${width}" height="40" fill="${palette.swatches[1] || '#1A1A1A'}" rx="12" ry="12" />
-      <rect y="40" width="${width}" height="8" fill="${palette.swatches[1] || '#1A1A1A'}" />
-      <circle cx="20" cy="20" r="6" fill="#FF5F56" />
-      <circle cx="40" cy="20" r="6" fill="#FFBD2E" />
-      <circle cx="60" cy="20" r="6" fill="#27C93F" />
+      <!-- Background with rounded top corners and subtle bottom divider -->
+      <rect width="${width}" height="${h}" fill="${bg}" rx="12" ry="12" />
+      <rect y="${h - 1}" width="${width}" height="1" fill="rgba(255,255,255,0.06)" />
+      <!-- Traffic lights (12px) with fine inner ring -->
+      <g transform="translate(16, ${Math.round(h / 2)})">
+        <circle cx="0" cy="0" r="7" fill="#FF5F57" />
+        <circle cx="24" cy="0" r="7" fill="#FEBE2E" />
+        <circle cx="48" cy="0" r="7" fill="#28C840" />
+        <circle cx="0" cy="0" r="7" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
+        <circle cx="24" cy="0" r="7" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
+        <circle cx="48" cy="0" r="7" fill="none" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
+      </g>
+      <!-- Centered notch / camera indicator (subtle) -->
+      <circle cx="${Math.round(width / 2)}" cy="${Math.round(h / 2)}" r="2" fill="rgba(255,255,255,0.12)" />
     </g>
   `;
 }
 
 function generateWindowsTitleBar(palette: Palette, x: number, y: number, width: number): string {
+  // High‑fidelity Windows title bar with crisp system icons (min/max/close)
+  const h = 46;
+  const bg = palette.swatches[1] || '#1A1A1A';
+  const fg = palette.swatches[4] || '#FFFFFF';
+  const pad = 12;
+  const iconY = Math.round(h / 2);
   return `
     <g transform="translate(${x}, ${y})">
-      <rect width="${width}" height="36" fill="${palette.swatches[1] || '#1A1A1A'}" />
-      <line x1="${width - 80}" y1="12" x2="${width - 68}" y2="24" stroke="${palette.swatches[4] || '#FFF'}" stroke-width="2" />
-      <rect x="${width - 50}" y="8" width="16" height="2" fill="${palette.swatches[4] || '#FFF'}" />
-      <rect x="${width - 22}" y="8" width="14" height="14" fill="none" stroke="${palette.swatches[4] || '#FFF'}" stroke-width="2" />
+      <rect width="${width}" height="${h}" fill="${bg}" />
+      <rect y="${h - 1}" width="${width}" height="1" fill="rgba(255,255,255,0.06)" />
+      <!-- Window controls on the right: minimize, maximize, close -->
+      <g stroke="${fg}" stroke-width="1.5" stroke-linecap="square" fill="none">
+        <!-- Minimize -->
+        <line x1="${width - pad - 72}" y1="${iconY + 4}" x2="${width - pad - 56}" y2="${iconY + 4}" />
+        <!-- Maximize -->
+        <rect x="${width - pad - 48}" y="${iconY - 8}" width="14" height="14" />
+        <!-- Close (X) -->
+        <line x1="${width - pad - 12 - 12}" y1="${iconY - 6}" x2="${width - pad - 12}" y2="${iconY + 6}" />
+        <line x1="${width - pad - 12}" y1="${iconY - 6}" x2="${width - pad - 12 - 12}" y2="${iconY + 6}" />
+      </g>
     </g>
   `;
 }
@@ -207,7 +234,7 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 12;
       if (options.titleBar === 'macos') {
-        frameSVG = generateMacOSTitleBar(options.palette, centerX, centerY - 48, options.imageWidth);
+        frameSVG = generateMacOSTitleBar(options.palette, centerX, centerY - 56, options.imageWidth);
       }
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/></filter>';
       break;
@@ -215,7 +242,7 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 8;
       if (options.titleBar === 'windows') {
-        frameSVG = generateWindowsTitleBar(options.palette, centerX, centerY - 36, options.imageWidth);
+        frameSVG = generateWindowsTitleBar(options.palette, centerX, centerY - 46, options.imageWidth);
       }
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="16" flood-opacity="0.18"/></filter>';
       break;
@@ -253,7 +280,7 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
   }
 
-  const titleBarOffset = options.titleBar === 'macos' ? 48 : options.titleBar === 'windows' ? 36 : 0;
+  const titleBarOffset = options.titleBar === 'macos' ? 56 : options.titleBar === 'windows' ? 46 : 0;
 
   return `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
