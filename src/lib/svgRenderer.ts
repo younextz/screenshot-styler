@@ -290,7 +290,6 @@ export function generateSVG(options: RenderOptions): string {
         ${shadowFilter}
       </defs>
       ${backgroundSVG}
-      ${frameSVG}
       <g filter="${shadowFilter ? 'url(#shadow)' : ''}">
         <rect x="${centerX}" y="${centerY + titleBarOffset}" width="${options.imageWidth}" height="${options.imageHeight}" 
               rx="${cardRadius}" fill="white" />
@@ -300,6 +299,7 @@ export function generateSVG(options: RenderOptions): string {
                clip-path="inset(0 round ${cardRadius}px)"
                preserveAspectRatio="xMidYMid meet" />
       </g>
+      ${frameSVG}
     </svg>
   `.trim();
 }
