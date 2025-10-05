@@ -18,8 +18,14 @@ export function calculateOutputSize(
   hs: number,
   aspectRatio: AspectRatio
 ): { width: number; height: number } {
+  // Add generous padding (40% extra space) for beautiful styling
+  const paddingFactor = 1.4;
+  
   if (aspectRatio === 'auto') {
-    return { width: ws, height: hs };
+    return { 
+      width: Math.ceil(ws * paddingFactor), 
+      height: Math.ceil(hs * paddingFactor) 
+    };
   }
 
   const ratioMap: Record<string, number> = {
@@ -31,8 +37,14 @@ export function calculateOutputSize(
   };
 
   const r = ratioMap[aspectRatio];
-  const height = Math.max(hs, Math.ceil(ws / r));
-  const width = Math.ceil(height * r);
+  
+  // Calculate minimum container size, then add padding
+  const minHeight = Math.max(hs, Math.ceil(ws / r));
+  const minWidth = Math.ceil(minHeight * r);
+  
+  // Apply padding factor to create generous whitespace
+  const height = Math.ceil(minHeight * paddingFactor);
+  const width = Math.ceil(minWidth * paddingFactor);
 
   return { width, height };
 }
