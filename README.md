@@ -71,3 +71,12 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+
+## Themes
+
+This project now supports light and dark themes.
+
+- A Theme Toggle is available in the header to switch between Light and Dark.
+- Your preference is saved to localStorage and restored on next visit.
+- On first load, the theme follows your system preference. A small inline script in index.html applies the theme early to avoid a flash.
