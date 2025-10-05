@@ -1,5 +1,5 @@
 import { Upload, Clipboard } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Button } from './ui/button';
 import { toast } from 'sonner';
 
@@ -11,6 +11,29 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Handle document-level paste events for Command+V
+  useEffect(() => {
+    const handleDocumentPaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) {
+            processFile(blob);
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('paste', handleDocumentPaste);
+    return () => {
+      document.removeEventListener('paste', handleDocumentPaste);
+    };
+  }, []);
 
   const processFile = (file: File) => {
     if (!file.type.match(/image\/(png|jpeg|jpg)/)) {
@@ -75,21 +98,6 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        const blob = items[i].getAsFile();
-        if (blob) {
-          processFile(blob);
-          e.preventDefault();
-        }
-      }
-    }
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex gap-3">
@@ -124,13 +132,6 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
         accept="image/png,image/jpeg,image/jpg"
         onChange={handleFileChange}
         className="hidden"
-      />
-
-      <div
-        onPaste={handlePaste}
-        tabIndex={0}
-        className="sr-only"
-        aria-label="Paste area"
       />
     </div>
   );
