@@ -282,8 +282,6 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
   }
 
-  const titleBarOffset = options.titleBar === 'macos' ? 56 : options.titleBar === 'windows' ? 46 : 0;
-
   return `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -291,10 +289,10 @@ export function generateSVG(options: RenderOptions): string {
       </defs>
       ${backgroundSVG}
       <g filter="${shadowFilter ? 'url(#shadow)' : ''}">
-        <rect x="${centerX}" y="${centerY + titleBarOffset}" width="${options.imageWidth}" height="${options.imageHeight}" 
+        <rect x="${centerX}" y="${centerY}" width="${options.imageWidth}" height="${options.imageHeight}" 
               rx="${cardRadius}" fill="white" />
         <image href="${options.imageData}" 
-               x="${centerX}" y="${centerY + titleBarOffset}" 
+               x="${centerX}" y="${centerY}" 
                width="${options.imageWidth}" height="${options.imageHeight}"
                clip-path="inset(0 round ${cardRadius}px)"
                preserveAspectRatio="xMidYMid meet" />
