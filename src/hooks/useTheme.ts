@@ -12,10 +12,13 @@ function getSystemTheme(): Theme {
 
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
-  if (theme === 'light') {
+  const isLight = theme === 'light';
+  if (isLight) {
     root.setAttribute('data-theme', 'light');
+    root.classList.remove('dark');
   } else {
     root.removeAttribute('data-theme');
+    root.classList.add('dark');
   }
 }
 
