@@ -234,7 +234,8 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 12;
       if (options.titleBar === 'macos') {
-        frameSVG = generateMacOSTitleBar(options.palette, centerX, centerY - 56, options.imageWidth);
+        // Position the title bar so its bottom edge is flush with the image top (no gap)
+        frameSVG = generateMacOSTitleBar(options.palette, centerX, centerY, options.imageWidth);
       }
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/></filter>';
       break;
@@ -242,7 +243,8 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 8;
       if (options.titleBar === 'windows') {
-        frameSVG = generateWindowsTitleBar(options.palette, centerX, centerY - 46, options.imageWidth);
+        // Position the title bar so its bottom edge is flush with the image top (no gap)
+        frameSVG = generateWindowsTitleBar(options.palette, centerX, centerY, options.imageWidth);
       }
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="16" flood-opacity="0.18"/></filter>';
       break;
