@@ -10,7 +10,7 @@ export function PalettePicker({ selectedId, onChange }: PalettePickerProps) {
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium mb-3">Palettes</h3>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {palettes.map((palette, index) => (
           <button
             key={palette.id}
