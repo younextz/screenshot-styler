@@ -60,12 +60,12 @@ function softOverlays(width: number, height: number, baseId: string) {
         </feComponentTransfer>
       </filter>
       <radialGradient id="${baseId}-vignette" cx="50%" cy="50%" r="70%">
-        <stop offset="60%" stop-color="black" stop-opacity="0"/>
-        <stop offset="100%" stop-color="black" stop-opacity="0.18"/>
+        <stop offset="60%" stop-color="#1A1A1A" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#1A1A1A" stop-opacity="0.18"/>
       </radialGradient>
       <radialGradient id="${baseId}-glow" cx="35%" cy="25%" r="45%">
-        <stop offset="0%" stop-color="white" stop-opacity="0.14"/>
-        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#E6E6E6" stop-opacity="0.14"/>
+        <stop offset="100%" stop-color="#E6E6E6" stop-opacity="0"/>
       </radialGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#${baseId}-glow)" />
