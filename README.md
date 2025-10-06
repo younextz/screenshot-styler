@@ -96,7 +96,7 @@ Detailed specifications and build instructions can be found in [`/docs/agent_ins
 ## 🌈 Color Palettes
 
 16+ curated color palettes including:
-- JetBrains Dark (inspired by jetbrains.com)
+- JetBrains Dark
 - Neutral tones
 - Bold neons  
 - Soft pastels
@@ -144,7 +144,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **Supported Formats**: PNG and JPG only
 - **Browser Compatibility**: Chromium and Safari supported
 - **Clipboard Access**: May require permissions in some browsers
-- **No Sensitive Data**: Don't upload confidential screenshots
 
 ---
 
