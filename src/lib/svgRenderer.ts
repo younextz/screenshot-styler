@@ -49,90 +49,128 @@ export function calculateOutputSize(
   return { width, height };
 }
 
-function generateGradientSoft(palette: Palette, width: number, height: number): string {
+function softOverlays(width: number, height: number, baseId: string) {
   return `
     <defs>
-      <linearGradient id="grad-soft" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:${palette.swatches[0]};stop-opacity:1" />
-        <stop offset="100%" style="stop-color:${palette.swatches[1] || palette.swatches[0]};stop-opacity:1" />
+      <filter id="${baseId}-grain" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="2" result="noise" />
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.06" />
+        </feComponentTransfer>
+      </filter>
+      <radialGradient id="${baseId}-vignette" cx="50%" cy="50%" r="70%">
+        <stop offset="60%" stop-color="#1A1A1A" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#1A1A1A" stop-opacity="0.18"/>
+      </radialGradient>
+      <radialGradient id="${baseId}-glow" cx="35%" cy="25%" r="45%">
+        <stop offset="0%" stop-color="#E6E6E6" stop-opacity="0.14"/>
+        <stop offset="100%" stop-color="#E6E6E6" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${baseId}-glow)" />
+    <rect width="${width}" height="${height}" fill="url(#${baseId}-vignette)" />
+    <rect width="${width}" height="${height}" filter="url(#${baseId}-grain)" opacity="0.35" />
+  `;
+}
+
+function generateGradientSoft(palette: Palette, width: number, height: number): string {
+  const id = 'grad-soft';
+  return `
+    <defs>
+      <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="70%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="100%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
       </linearGradient>
     </defs>
-    <rect width="${width}" height="${height}" fill="url(#grad-soft)" />
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    ${softOverlays(width, height, id)}
   `;
 }
 
 function generateGradientBold(palette: Palette, width: number, height: number): string {
+  const id = 'grad-bold';
   return `
     <defs>
-      <linearGradient id="grad-bold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:${palette.swatches[2] || palette.swatches[0]};stop-opacity:1" />
-        <stop offset="50%" style="stop-color:${palette.swatches[3] || palette.swatches[1]};stop-opacity:1" />
-        <stop offset="100%" style="stop-color:${palette.swatches[4] || palette.swatches[0]};stop-opacity:1" />
+      <linearGradient id="${id}" x1="-20%" y1="0%" x2="120%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" />
+        <stop offset="55%" stop-color="${palette.swatches[3] || palette.swatches[1]}" />
+        <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[0]}" />
       </linearGradient>
     </defs>
-    <rect width="${width}" height="${height}" fill="url(#grad-bold)" />
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    ${softOverlays(width, height, id)}
   `;
 }
 
 function generateMeshGradient(palette: Palette, width: number, height: number): string {
+  const id = 'mesh';
   return `
     <defs>
-      <radialGradient id="mesh-1" cx="30%" cy="30%">
-        <stop offset="0%" style="stop-color:${palette.swatches[2] || palette.swatches[0]};stop-opacity:0.8" />
-        <stop offset="100%" style="stop-color:${palette.swatches[0]};stop-opacity:1" />
+      <radialGradient id="${id}-1" cx="28%" cy="32%" r="45%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="1" />
       </radialGradient>
-      <radialGradient id="mesh-2" cx="70%" cy="70%">
-        <stop offset="0%" style="stop-color:${palette.swatches[3] || palette.swatches[1]};stop-opacity:0.8" />
-        <stop offset="100%" style="stop-color:${palette.swatches[0]};stop-opacity:1" />
+      <radialGradient id="${id}-2" cx="72%" cy="68%" r="50%">
+        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[1]}" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="1" />
       </radialGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
-    <rect width="${width}" height="${height}" fill="url(#mesh-1)" opacity="0.8" />
-    <rect width="${width}" height="${height}" fill="url(#mesh-2)" opacity="0.8" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-1)" opacity="0.9" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-2)" opacity="0.9" />
+    ${softOverlays(width, height, id)}
   `;
 }
 
 function generateBlobDuo(palette: Palette, width: number, height: number): string {
+  const id = 'blur-duo';
   return `
     <defs>
-      <filter id="blur-duo">
+      <filter id="${id}">
         <feGaussianBlur in="SourceGraphic" stdDeviation="80" />
       </filter>
     </defs>
     <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
     <ellipse cx="${width * 0.3}" cy="${height * 0.4}" rx="${width * 0.3}" ry="${height * 0.35}" 
-             fill="${palette.swatches[2] || palette.swatches[0]}" filter="url(#blur-duo)" opacity="0.7" />
+             fill="${palette.swatches[2] || palette.swatches[0]}" filter="url(#${id})" opacity="0.6" />
     <ellipse cx="${width * 0.7}" cy="${height * 0.6}" rx="${width * 0.35}" ry="${height * 0.3}" 
-             fill="${palette.swatches[3] || palette.swatches[1]}" filter="url(#blur-duo)" opacity="0.7" />
+             fill="${palette.swatches[3] || palette.swatches[1]}" filter="url(#${id})" opacity="0.6" />
+    ${softOverlays(width, height, id)}
   `;
 }
 
 function generateBlobTrio(palette: Palette, width: number, height: number): string {
+  const id = 'blur-trio';
   return `
     <defs>
-      <filter id="blur-trio">
+      <filter id="${id}">
         <feGaussianBlur in="SourceGraphic" stdDeviation="70" />
       </filter>
     </defs>
     <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
     <ellipse cx="${width * 0.25}" cy="${height * 0.35}" rx="${width * 0.25}" ry="${height * 0.3}" 
-             fill="${palette.swatches[2] || palette.swatches[0]}" filter="url(#blur-trio)" opacity="0.6" />
+             fill="${palette.swatches[2] || palette.swatches[0]}" filter="url(#${id})" opacity="0.55" />
     <ellipse cx="${width * 0.75}" cy="${height * 0.45}" rx="${width * 0.3}" ry="${height * 0.25}" 
-             fill="${palette.swatches[3] || palette.swatches[1]}" filter="url(#blur-trio)" opacity="0.6" />
+             fill="${palette.swatches[3] || palette.swatches[1]}" filter="url(#${id})" opacity="0.55" />
     <ellipse cx="${width * 0.5}" cy="${height * 0.75}" rx="${width * 0.35}" ry="${height * 0.28}" 
-             fill="${palette.swatches[4] || palette.swatches[2]}" filter="url(#blur-trio)" opacity="0.6" />
+             fill="${palette.swatches[4] || palette.swatches[2]}" filter="url(#${id})" opacity="0.55" />
+    ${softOverlays(width, height, id)}
   `;
 }
 
 function generateDotGrid(palette: Palette, width: number, height: number): string {
+  const id = 'dot';
   return `
     <defs>
       <pattern id="dot-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-        <circle cx="15" cy="15" r="2" fill="${palette.swatches[2] || palette.swatches[1]}" opacity="0.3" />
+        <circle cx="15" cy="15" r="2" fill="${palette.swatches[2] || palette.swatches[1]}" opacity="0.25" />
       </pattern>
     </defs>
     <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
     <rect width="${width}" height="${height}" fill="url(#dot-pattern)" />
+    ${softOverlays(width, height, id)}
   `;
 }
 

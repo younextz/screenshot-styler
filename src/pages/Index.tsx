@@ -12,9 +12,11 @@ import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
 import { AlertCircle } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/hooks/useTheme';
 
 const Index = () => {
   const savedSettings = loadSettings();
+  const { theme } = useTheme();
 
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
@@ -48,6 +50,14 @@ const Index = () => {
     saveSettings({ presetId, paletteId, titleBar, aspectRatio });
   }, [presetId, paletteId, titleBar, aspectRatio]);
 
+  // Theme-aware default palette (applied only when there is no saved preference)
+  useEffect(() => {
+    if (!savedSettings.paletteId) {
+      setPaletteId(theme === 'light' ? 'soft-pastel' : 'jetbrains-dark');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
+
   const handleImageLoad = (dataUrl: string, width: number, height: number) => {
     setImageData(dataUrl);
     setImageWidth(width);
@@ -60,7 +70,16 @@ const Index = () => {
     }
   };
 
-  const svgToBlob = async (svgString: string): Promise<Blob> => {
+  const getSvgSize = (svgString: string) => {
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
+    const svgElement = svgDoc.querySelector('svg');
+    const width = parseInt(svgElement?.getAttribute('width') || '800');
+    const height = parseInt(svgElement?.getAttribute('height') || '600');
+    return { width, height };
+  };
+
+  const svgToBlob = async (svgString: string, targetLongSide?: number): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
@@ -68,15 +87,22 @@ const Index = () => {
 
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
-        const svgElement = svgDoc.querySelector('svg');
-        
-        const width = parseInt(svgElement?.getAttribute('width') || '800');
-        const height = parseInt(svgElement?.getAttribute('height') || '600');
+        const { width: svgW, height: svgH } = getSvgSize(svgString);
 
-        canvas.width = width;
-        canvas.height = height;
+        let outW = svgW;
+        let outH = svgH;
+        if (targetLongSide && Math.max(svgW, svgH) !== targetLongSide) {
+          if (svgW >= svgH) {
+            outW = targetLongSide;
+            outH = Math.round((targetLongSide / svgW) * svgH);
+          } else {
+            outH = targetLongSide;
+            outW = Math.round((targetLongSide / svgH) * svgW);
+          }
+        }
+
+        canvas.width = outW;
+        canvas.height = outH;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
@@ -84,7 +110,7 @@ const Index = () => {
           return;
         }
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, outW, outH);
         URL.revokeObjectURL(url);
 
         canvas.toBlob((blob) => {
@@ -105,11 +131,27 @@ const Index = () => {
     });
   };
 
-  const handleExport = async (type: 'copy' | 'download') => {
+  const downloadSvg = (svgString: string) => {
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `styled-screenshot-${Date.now()}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
     if (!svgContent) return;
 
     try {
-      const blob = await svgToBlob(svgContent);
+      if (type === 'downloadSvg') {
+        downloadSvg(svgContent);
+        toast.success('SVG downloaded!');
+        return;
+      }
+
+      const blob = await svgToBlob(svgContent, type === 'download4k' ? 3840 : undefined);
 
       if (type === 'copy') {
         try {
@@ -136,7 +178,7 @@ const Index = () => {
         a.download = `styled-screenshot-${Date.now()}.png`;
         a.click();
         URL.revokeObjectURL(url);
-        toast.success('Downloaded successfully!');
+        toast.success(type === 'download4k' ? '4K PNG downloaded!' : 'PNG downloaded!');
       }
     } catch (error) {
       console.error('Export error:', error);
