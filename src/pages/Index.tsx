@@ -223,45 +223,59 @@ const Index = () => {
         </div>
 
         {imageData && (
-          <div className="space-y-8 animate-fade-in-up">
-            {/* Preview */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Preview</h2>
-              <CanvasPreview svgContent={svgContent} />
-            </div>
+          <div className="animate-fade-in-up">
+            {/* Two-column layout for larger screens, single column for smaller screens */}
+            <div className="flex flex-col xl:flex-row gap-8">
+              {/* Main content area - Preview and Export */}
+              <div className="flex-1 space-y-6">
+                {/* Preview */}
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">Preview</h2>
+                  <CanvasPreview svgContent={svgContent} />
+                </div>
 
-            {/* Export */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Export</h2>
-              <ExportButtons
-                svgContent={svgContent}
-                onExport={handleExport}
-                disabled={!svgContent}
-              />
-            </div>
+                {/* Export */}
+                <div>
+                  <h2 className="text-lg font-semibold mb-4">Export</h2>
+                  <ExportButtons
+                    svgContent={svgContent}
+                    onExport={handleExport}
+                    disabled={!svgContent}
+                  />
+                </div>
+              </div>
 
-            {/* Preset Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Style Preset</h2>
-              <PresetPicker selectedId={presetId} onChange={setPresetId} />
-            </div>
+              {/* Controls sidebar for larger screens */}
+              <div className="xl:w-96 xl:sticky xl:top-24 xl:self-start">
+                <div className="space-y-6 xl:bg-card/50 xl:backdrop-blur-sm xl:border xl:border-border xl:rounded-lg xl:p-6">
+                  {/* Palette Selection - Most prominent */}
+                  <div>
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                      <span className="w-3 h-3 bg-gradient-to-r from-primary to-accent rounded-full"></span>
+                      Color Palette
+                    </h2>
+                    <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
+                  </div>
 
-            {/* Palette Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Color Palette</h2>
-              <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-            </div>
+                  {/* Preset Selection */}
+                  <div>
+                    <h2 className="text-lg font-semibold mb-4">Style Preset</h2>
+                    <PresetPicker selectedId={presetId} onChange={setPresetId} />
+                  </div>
 
-            {/* Controls */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Options</h2>
-              <ControlPanel
-                titleBar={titleBar}
-                aspectRatio={aspectRatio}
-                onTitleBarChange={setTitleBar}
-                onAspectRatioChange={setAspectRatio}
-                supportsTitleBar={currentPreset.supportsTitle}
-              />
+                  {/* Controls */}
+                  <div>
+                    <h2 className="text-lg font-semibold mb-4">Options</h2>
+                    <ControlPanel
+                      titleBar={titleBar}
+                      aspectRatio={aspectRatio}
+                      onTitleBarChange={setTitleBar}
+                      onAspectRatioChange={setAspectRatio}
+                      supportsTitleBar={currentPreset.supportsTitle}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
