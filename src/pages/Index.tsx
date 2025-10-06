@@ -79,7 +79,7 @@ const Index = () => {
     return { width, height };
   };
 
-  const svgToBlob = async (svgString: string, targetLongSide?: number): Promise<Blob> => {
+  const svgToBlob = async (svgString: string): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
@@ -89,20 +89,8 @@ const Index = () => {
         const canvas = document.createElement('canvas');
         const { width: svgW, height: svgH } = getSvgSize(svgString);
 
-        let outW = svgW;
-        let outH = svgH;
-        if (targetLongSide && Math.max(svgW, svgH) !== targetLongSide) {
-          if (svgW >= svgH) {
-            outW = targetLongSide;
-            outH = Math.round((targetLongSide / svgW) * svgH);
-          } else {
-            outH = targetLongSide;
-            outW = Math.round((targetLongSide / svgH) * svgW);
-          }
-        }
-
-        canvas.width = outW;
-        canvas.height = outH;
+        canvas.width = svgW;
+        canvas.height = svgH;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
@@ -110,7 +98,7 @@ const Index = () => {
           return;
         }
 
-        ctx.drawImage(img, 0, 0, outW, outH);
+        ctx.drawImage(img, 0, 0, svgW, svgH);
         URL.revokeObjectURL(url);
 
         canvas.toBlob((blob) => {
@@ -131,27 +119,12 @@ const Index = () => {
     });
   };
 
-  const downloadSvg = (svgString: string) => {
-    const blob = new Blob([svgString], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `styled-screenshot-${Date.now()}.svg`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
-  const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
+  const handleExport = async (type: 'copy' | 'download') => {
     if (!svgContent) return;
 
     try {
-      if (type === 'downloadSvg') {
-        downloadSvg(svgContent);
-        toast.success('SVG downloaded!');
-        return;
-      }
-
-      const blob = await svgToBlob(svgContent, type === 'download4k' ? 3840 : undefined);
+      const blob = await svgToBlob(svgContent);
 
       if (type === 'copy') {
         try {
@@ -178,7 +151,7 @@ const Index = () => {
         a.download = `styled-screenshot-${Date.now()}.png`;
         a.click();
         URL.revokeObjectURL(url);
-        toast.success(type === 'download4k' ? '4K PNG downloaded!' : 'PNG downloaded!');
+        toast.success('PNG downloaded!');
       }
     } catch (error) {
       console.error('Export error:', error);
@@ -223,14 +196,22 @@ const Index = () => {
         </div>
 
         {imageData && (
-          <div className="space-y-8 animate-fade-in-up">
-            {/* Preview */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Preview</h2>
-              <CanvasPreview svgContent={svgContent} />
+          <div className="animate-fade-in-up space-y-6">
+            {/* Preview and Palette Row */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Preview Area */}
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold mb-4">Preview</h2>
+                <CanvasPreview svgContent={svgContent} />
+              </div>
+
+              {/* Compact Palette Picker - Right of Preview */}
+              <div className="lg:w-64 lg:shrink-0">
+                <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
+              </div>
             </div>
 
-            {/* Export */}
+            {/* Export Section */}
             <div>
               <h2 className="text-lg font-semibold mb-4">Export</h2>
               <ExportButtons
@@ -240,28 +221,25 @@ const Index = () => {
               />
             </div>
 
-            {/* Preset Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Style Preset</h2>
-              <PresetPicker selectedId={presetId} onChange={setPresetId} />
-            </div>
+            {/* Compact Controls in Two Columns */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Style Preset */}
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Style Preset</h2>
+                <PresetPicker selectedId={presetId} onChange={setPresetId} />
+              </div>
 
-            {/* Palette Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Color Palette</h2>
-              <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-            </div>
-
-            {/* Controls */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Options</h2>
-              <ControlPanel
-                titleBar={titleBar}
-                aspectRatio={aspectRatio}
-                onTitleBarChange={setTitleBar}
-                onAspectRatioChange={setAspectRatio}
-                supportsTitleBar={currentPreset.supportsTitle}
-              />
+              {/* Options */}
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Options</h2>
+                <ControlPanel
+                  titleBar={titleBar}
+                  aspectRatio={aspectRatio}
+                  onTitleBarChange={setTitleBar}
+                  onAspectRatioChange={setAspectRatio}
+                  supportsTitleBar={currentPreset.supportsTitle}
+                />
+              </div>
             </div>
           </div>
         )}
