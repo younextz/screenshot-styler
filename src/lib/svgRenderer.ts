@@ -207,7 +207,8 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 12;
       if (options.titleBar === 'macos') {
-        frameSVG = generateMacOSTitleBar(options.palette, centerX, centerY - 48, options.imageWidth);
+        const titleBarHeight = 48;
+        frameSVG = generateMacOSTitleBar(options.palette, centerX, centerY, options.imageWidth);
       }
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/></filter>';
       break;
@@ -215,7 +216,8 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 8;
       if (options.titleBar === 'windows') {
-        frameSVG = generateWindowsTitleBar(options.palette, centerX, centerY - 36, options.imageWidth);
+        const titleBarHeight = 36;
+        frameSVG = generateWindowsTitleBar(options.palette, centerX, centerY, options.imageWidth);
       }
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="16" flood-opacity="0.18"/></filter>';
       break;
@@ -253,7 +255,15 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
   }
 
-  const titleBarOffset = options.titleBar === 'macos' ? 48 : options.titleBar === 'windows' ? 36 : 0;
+  // Determine if we have a title bar frame to account for spacing
+  let hasTitleBar = false;
+  let titleBarHeight = 0;
+
+  if ((options.presetId === 'browser-macos' && options.titleBar === 'macos') ||
+      (options.presetId === 'browser-windows' && options.titleBar === 'windows')) {
+    hasTitleBar = true;
+    titleBarHeight = options.titleBar === 'macos' ? 48 : 36;
+  }
 
   return `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -263,10 +273,10 @@ export function generateSVG(options: RenderOptions): string {
       ${backgroundSVG}
       ${frameSVG}
       <g filter="${shadowFilter ? 'url(#shadow)' : ''}">
-        <rect x="${centerX}" y="${centerY + titleBarOffset}" width="${options.imageWidth}" height="${options.imageHeight}" 
+        <rect x="${centerX}" y="${centerY + titleBarHeight}" width="${options.imageWidth}" height="${options.imageHeight}"
               rx="${cardRadius}" fill="white" />
-        <image href="${options.imageData}" 
-               x="${centerX}" y="${centerY + titleBarOffset}" 
+        <image href="${options.imageData}"
+               x="${centerX}" y="${centerY + titleBarHeight}"
                width="${options.imageWidth}" height="${options.imageHeight}"
                clip-path="inset(0 round ${cardRadius}px)"
                preserveAspectRatio="xMidYMid meet" />
