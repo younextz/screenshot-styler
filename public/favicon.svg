@@ -1,0 +1,33 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+  
+  <!-- Screenshot frame -->
+  <rect x="6" y="8" width="20" height="14" rx="2" fill="url(#screen)" stroke="#cbd5e1" stroke-width="0.5"/>
+  
+  <!-- Mockup content lines -->
+  <rect x="8" y="11" width="8" height="1" rx="0.5" fill="#94a3b8"/>
+  <rect x="8" y="13" width="12" height="1" rx="0.5" fill="#cbd5e1"/>
+  <rect x="8" y="15" width="6" height="1" rx="0.5" fill="#cbd5e1"/>
+  
+  <!-- Style indicator dots -->
+  <circle cx="10" cy="26" r="1.5" fill="#ff6b6b"/>
+  <circle cx="16" cy="26" r="1.5" fill="#4ecdc4"/>
+  <circle cx="22" cy="26" r="1.5" fill="#ffe66d"/>
+  
+  <!-- Camera/screenshot icon overlay -->
+  <rect x="20" y="10" width="4" height="3" rx="0.5" fill="#64748b" opacity="0.8"/>
+  <circle cx="22" cy="11.5" r="0.8" fill="#ffffff"/>
+</svg>

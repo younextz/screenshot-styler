@@ -1,82 +1,150 @@
-# Welcome to your Lovable project
+# Screenshot Styler
 
-## Project info
+A focused web tool that lets you **paste or upload screenshots**, **apply preset styles**, pick **color palettes**, toggle **title bars**, choose **aspect ratios**, and **export as PNG** with copy-to-clipboard or download functionality.
 
-**URL**: https://lovable.dev/projects/fa30b8a8-8930-47c6-be55-7b9918496678
+## ✨ Features
 
-## How can I edit this code?
+- **📸 Easy Input**: Paste from clipboard (⌘/Ctrl+V) or upload PNG/JPG files (up to 10MB)
+- **🎨 12 Style Presets**: From subtle gradients to device frames and browser windows
+- **🌈 16+ Color Palettes**: Curated color schemes including JetBrains-inspired themes
+- **💻 Title Bar Options**: macOS, Windows, or no title bar styling
+- **📐 Aspect Ratios**: Auto, 1:1, 16:9, 4:3, 9:16, and social media optimized (1200×630)
+- **📋 Smart Export**: Copy PNG to clipboard or download, with intelligent fallbacks
+- **🔒 Privacy First**: No image storage, no authentication, no analytics - everything processed in-memory
+- **⚡ Fast Performance**: Client-side SVG preview with server-side PNG rendering
 
-There are several ways of editing your application.
+## 🚀 Quick Start
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fa30b8a8-8930-47c6-be55-7b9918496678) and start prompting.
+- Node.js (18+ recommended) - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Python 3.11+ (for backend)
 
-Changes made via Lovable will be committed automatically to this repo.
+### Development Setup
 
-**Use your preferred IDE**
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd screenshot-styler
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. **Install frontend dependencies**
+   ```bash
+   npm install
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-Follow these steps:
+4. **Backend setup** (if running full-stack locally)
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   uvicorn main:app --reload
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+5. **Open your browser**
+   Navigate to `http://localhost:5173` to start styling screenshots!
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🛠️ Technology Stack
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **Tailwind CSS** for styling
+- **shadcn/ui** for UI components
+- **SVG-based rendering** for crisp, scalable previews
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Backend (Optional for full features)
+- **FastAPI** (Python 3.11)
+- **Pillow** for image processing
+- **cairosvg** for SVG to PNG rasterization
+- **In-memory processing** (no file storage)
 
-**Edit a file directly in GitHub**
+## 🎯 How It Works
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. **Upload/Paste**: Add your screenshot via clipboard or file picker
+2. **Style**: Choose from 12 presets (gradients, device frames, cards, etc.)
+3. **Customize**: Pick color palettes, toggle title bars, set aspect ratios
+4. **Preview**: See real-time SVG preview with your changes
+5. **Export**: Copy to clipboard or download PNG at highest quality
 
-**Use GitHub Codespaces**
+## 🔧 Key Design Principles
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **No Cropping**: Screenshots are never cropped, always contained with generous padding
+- **Highest Resolution**: Export maintains original quality without upscaling
+- **Privacy Focused**: Images never stored on servers or disk
+- **Accessibility**: Keyboard navigation and WCAG AA compliance
+- **Cross-Browser**: Works on Chromium and Safari with appropriate fallbacks
 
-## What technologies are used for this project?
+## 📚 Documentation
 
-This project is built with:
+Detailed specifications and build instructions can be found in [`/docs/agent_instructions.md`](./docs/agent_instructions.md).
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🎨 Style Presets
 
-## How can I deploy this project?
+- **Gradient Soft/Bold**: Subtle to vibrant gradient backgrounds
+- **Mesh Gradient**: Multi-stop mesh gradient effects  
+- **Blob Duo/Trio**: Artistic blurred blob backgrounds
+- **Dot Grid**: Subtle pattern backgrounds
+- **Browser macOS/Windows**: Realistic browser frame styling
+- **Device Laptop/Phone**: Generic device bezels
+- **Card Elevated/Outlined**: Floating card and outline effects
 
-Simply open [Lovable](https://lovable.dev/projects/fa30b8a8-8930-47c6-be55-7b9918496678) and click on Share -> Publish.
+## 🌈 Color Palettes
 
-## Can I connect a custom domain to my Lovable project?
+16+ curated color palettes including:
+- JetBrains Dark
+- Neutral tones
+- Bold neons  
+- Soft pastels
+- Professional muted colors
 
-Yes, you can!
+## 📖 Usage Examples
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. **Social Media Posts**: Style screenshots for Twitter, LinkedIn, etc.
+2. **Documentation**: Create polished images for READMEs and docs
+3. **Presentations**: Professional screenshot styling for slides
+4. **Portfolio**: Showcase app interfaces with beautiful backgrounds
+5. **Bug Reports**: Frame screenshots for clear issue communication
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🔒 Privacy & Security
 
+- **No Data Retention**: Images are processed in-memory only
+- **No Authentication**: Use immediately without accounts
+- **No Analytics**: No tracking or usage monitoring  
+- **Rate Limited**: 60 requests per minute per IP for fair usage
+- **Secure Headers**: CSP, CORS, and other security measures implemented
 
-## Themes
+## 🚀 Deployment
 
-This project now supports light and dark themes.
+This project can be deployed to any modern hosting platform:
 
-- A Theme Toggle is available in the header to switch between Light and Dark.
-- Your preference is saved to localStorage and restored on next visit.
-- On first load, the theme follows your system preference. A small inline script in index.html applies the theme early to avoid a flash.
+- **Frontend**: Deploy to Vercel, Netlify, or similar static hosting
+- **Backend**: Deploy to Railway, Heroku, or containerized environments
+- **Full-Stack**: Use Docker for complete deployment setup
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## ⚠️ Important Notes
+
+- **File Size Limit**: 10MB maximum per image
+- **Supported Formats**: PNG and JPG only
+- **Browser Compatibility**: Chromium and Safari supported
+- **Clipboard Access**: May require permissions in some browsers
+
+---
+
+Made with ❤️ for beautiful screenshot styling
