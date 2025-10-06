@@ -24,6 +24,7 @@ const Index = () => {
   const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
   const [svgContent, setSvgContent] = useState('');
+  const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
 
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
@@ -51,6 +52,12 @@ const Index = () => {
     setImageData(dataUrl);
     setImageWidth(width);
     setImageHeight(height);
+    
+    // Set aspect ratio to 16:9 by default when loading the first image
+    if (!hasLoadedFirstImage) {
+      setAspectRatio('16:9');
+      setHasLoadedFirstImage(true);
+    }
   };
 
   const svgToBlob = async (svgString: string): Promise<Blob> => {
