@@ -1,4 +1,5 @@
 import { TitleBarType, AspectRatio } from '@/lib/svgRenderer';
+import { flags } from '@/lib/flags';
 import { cn } from '@/lib/utils';
 
 interface ControlPanelProps {
@@ -33,30 +34,32 @@ export function ControlPanel({
 }: ControlPanelProps) {
   return (
     <div className="grid md:grid-cols-2 gap-6">
-      <div className="space-y-3">
-        <label className="text-sm font-medium">
-          Title Bar {!supportsTitleBar && <span className="text-muted-foreground">(Not available for this preset)</span>}
-        </label>
-        <div className="flex gap-2">
-          {titleBarOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => onTitleBarChange(option.value)}
-              disabled={!supportsTitleBar && option.value !== 'none'}
-              className={cn(
-                'flex-1 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                'hover:border-primary hover:bg-secondary/50',
-                titleBar === option.value
-                  ? 'border-primary bg-primary/10 text-foreground'
-                  : 'border-border bg-card text-muted-foreground'
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
+      {flags.enableTitleBarOptions && (
+        <div className="space-y-3">
+          <label className="text-sm font-medium">
+            Title Bar {!supportsTitleBar && <span className="text-muted-foreground">(Not available for this preset)</span>}
+          </label>
+          <div className="flex gap-2">
+            {titleBarOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => onTitleBarChange(option.value)}
+                disabled={!supportsTitleBar && option.value !== 'none'}
+                className={cn(
+                  'flex-1 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  'hover:border-primary hover:bg-secondary/50',
+                  titleBar === option.value
+                    ? 'border-primary bg-primary/10 text-foreground'
+                    : 'border-border bg-card text-muted-foreground'
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="space-y-3">
         <label className="text-sm font-medium">Aspect Ratio</label>

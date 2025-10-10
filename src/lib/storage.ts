@@ -1,4 +1,5 @@
 import { TitleBarType, AspectRatio } from './svgRenderer';
+import { flags } from './flags';
 
 const STORAGE_KEYS = {
   PRESET_ID: 'screenshot-styler-preset',
@@ -35,10 +36,11 @@ export function saveSettings(settings: Partial<StoredSettings>) {
 
 export function loadSettings(): Partial<StoredSettings> {
   try {
+    const loadedTitleBar = (localStorage.getItem(STORAGE_KEYS.TITLE_BAR) as TitleBarType) || undefined;
     return {
       presetId: localStorage.getItem(STORAGE_KEYS.PRESET_ID) || undefined,
       paletteId: localStorage.getItem(STORAGE_KEYS.PALETTE_ID) || undefined,
-      titleBar: (localStorage.getItem(STORAGE_KEYS.TITLE_BAR) as TitleBarType) || undefined,
+      titleBar: flags.enableTitleBarOptions ? loadedTitleBar : 'none',
       aspectRatio: (localStorage.getItem(STORAGE_KEYS.ASPECT_RATIO) as AspectRatio) || undefined,
     };
   } catch (error) {

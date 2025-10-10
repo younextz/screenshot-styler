@@ -8,6 +8,7 @@ import { ExportButtons } from '@/components/ExportButtons';
 import { presets } from '@/lib/presets';
 import { palettes } from '@/lib/palettes';
 import { generateSVG, TitleBarType, AspectRatio } from '@/lib/svgRenderer';
+import { flags } from '@/lib/flags';
 import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
 import { AlertCircle } from 'lucide-react';
@@ -36,7 +37,7 @@ const Index = () => {
       const svg = generateSVG({
         presetId,
         palette: currentPalette,
-        titleBar: currentPreset.supportsTitle ? titleBar : 'none',
+        titleBar: flags.enableTitleBarOptions && currentPreset.supportsTitle ? titleBar : 'none',
         aspectRatio,
         imageData,
         imageWidth,
@@ -47,7 +48,9 @@ const Index = () => {
   }, [imageData, imageWidth, imageHeight, presetId, paletteId, titleBar, aspectRatio, currentPalette, currentPreset]);
 
   useEffect(() => {
-    saveSettings({ presetId, paletteId, titleBar, aspectRatio });
+    // When feature is disabled, persist 'none' for title bar
+    const titleBarToSave: TitleBarType = flags.enableTitleBarOptions ? titleBar : 'none';
+    saveSettings({ presetId, paletteId, titleBar: titleBarToSave, aspectRatio });
   }, [presetId, paletteId, titleBar, aspectRatio]);
 
   // Theme-aware default palette (applied only when there is no saved preference)
