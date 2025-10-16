@@ -9,11 +9,13 @@ interface PalettePickerProps {
 export function PalettePicker({ selectedId, onChange }: PalettePickerProps) {
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium">Color Palette</label>
+      <label className="text-sm font-medium" htmlFor="palette-picker">Color Palette</label>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {palettes.map((palette) => (
           <button
             key={palette.id}
+            aria-label={`Palette ${palette.label}`}
+            data-testid={`palette-${palette.id}`}
             onClick={() => onChange(palette.id)}
             className={cn(
               'p-3 rounded-lg border-2 transition-all hover:border-primary',
