@@ -9,11 +9,13 @@ interface PresetPickerProps {
 export function PresetPicker({ selectedId, onChange }: PresetPickerProps) {
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium">Preset Style</label>
+      <label className="text-sm font-medium" htmlFor="preset-picker">Preset Style</label>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {presets.map((preset) => (
           <button
             key={preset.id}
+            aria-label={`Preset ${preset.label}`}
+            data-testid={`preset-${preset.id}`}
             onClick={() => onChange(preset.id)}
             className={cn(
               'px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all',

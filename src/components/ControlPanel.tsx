@@ -34,13 +34,15 @@ export function ControlPanel({
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <div className="space-y-3">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium" htmlFor="titlebar-picker">
           Title Bar {!supportsTitleBar && <span className="text-muted-foreground">(Not available for this preset)</span>}
         </label>
         <div className="flex gap-2">
           {titleBarOptions.map((option) => (
             <button
               key={option.value}
+              aria-label={`Title Bar ${option.label}`}
+              data-testid={`titlebar-${option.value}`}
               onClick={() => onTitleBarChange(option.value)}
               disabled={!supportsTitleBar && option.value !== 'none'}
               className={cn(
@@ -59,11 +61,13 @@ export function ControlPanel({
       </div>
 
       <div className="space-y-3">
-        <label className="text-sm font-medium">Aspect Ratio</label>
+        <label className="text-sm font-medium" htmlFor="aspectratio-picker">Aspect Ratio</label>
         <div className="grid grid-cols-3 gap-2">
           {aspectRatioOptions.map((option) => (
             <button
               key={option.value}
+              aria-label={`Aspect Ratio ${option.label}`}
+              data-testid={`aspect-${option.value}`}
               onClick={() => onAspectRatioChange(option.value)}
               className={cn(
                 'px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all',
