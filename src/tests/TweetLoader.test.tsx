@@ -5,9 +5,9 @@ describe('TweetLoader', () => {
 it('calls onTweetLoad with fetched data when the button is clicked', async () => {
     const onTweetLoad = vi.fn();
     const mockTweetData = {
-      author_name: 'John Doe',
-      author_url: 'https://twitter.com/johndoe',
-      html: '<p>This is a mock tweet for demonstration purposes.</p>',
+      author_name: 'Peter Steinberger',
+      author_url: 'https://twitter.com/steipete',
+      html: '<blockquote class=\"twitter-tweet\"><p lang=\"en\" dir=\"ltr\">you can try to massage codex to do a long-running task, or just queue messages. simple wins. <a href=\"https://t.co/oPENz7KdsH\">pic.twitter.com/oPENz7KdsH</a></p>&mdash; Peter Steinberger (@steipete) <a href=\"https://twitter.com/steipete/status/1978099041884897517?ref_src=twsrc%5Etfw\">October 14, 2025</a></blockquote>\n<script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>\n\n',
     };
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -25,11 +25,11 @@ it('calls onTweetLoad with fetched data when the button is clicked', async () =>
     await screen.findByText('Tweet loaded successfully');
 
     expect(onTweetLoad).toHaveBeenCalledWith({
-      author: 'John Doe',
-      handle: 'johndoe',
+      author: 'Peter Steinberger',
+      handle: 'steipete',
       avatar: '/placeholder.svg',
-      text: 'This is a mock tweet for demonstration purposes.',
-      timestamp: '',
+      text: 'you can try to massage codex to do a long-running task, or just queue messages. simple wins. pic.twitter.com/oPENz7KdsH',
+      timestamp: 'October 14, 2025',
       likes: 0,
       retweets: 0,
     });
