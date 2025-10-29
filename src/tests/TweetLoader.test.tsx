@@ -27,7 +27,7 @@ it('calls onTweetLoad with fetched data when the button is clicked', async () =>
     expect(onTweetLoad).toHaveBeenCalledWith({
       author: 'John Doe',
       handle: 'johndoe',
-      avatar: '',
+      avatar: '/placeholder.svg',
       text: 'This is a mock tweet for demonstration purposes.',
       timestamp: '',
       likes: 0,

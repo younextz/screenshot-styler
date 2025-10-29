@@ -25,7 +25,7 @@ try {
       const tweetData = {
         author: data.author_name,
         handle: data.author_url.split('/').pop(),
-        avatar: '', // oEmbed doesn't provide avatar, will leave it empty
+        avatar: '/placeholder.svg',
         text: data.html.replace(/<[^>]*>?/gm, ''), // A simple way to strip html tags
         timestamp: '', // oEmbed doesn't provide timestamp
         likes: 0, // oEmbed doesn't provide likes
