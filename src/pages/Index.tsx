@@ -230,12 +230,18 @@ const Index = () => {
           <TweetLoader onTweetLoad={handleTweetLoad} />
         </div>
 
-        {tweetData && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4">Tweet Preview</h2>
-            <TweetCard {...tweetData} />
-          </div>
-        )}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">Tweet Preview</h2>
+          <TweetCard {...tweetData || {
+            author: 'Placeholder',
+            handle: 'placeholder',
+            avatar: '/placeholder.svg',
+            text: 'Your tweet will appear here.',
+            timestamp: '',
+            likes: 0,
+            retweets: 0,
+          }} />
+        </div>
 
         {imageData && (
           <div className="space-y-8 animate-fade-in-up">

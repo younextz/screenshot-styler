@@ -22,12 +22,23 @@ try {
       }
       const data = await response.json();
 
+      if (!data.html) {
+        throw new Error('Invalid tweet URL or oEmbed response');
+      }
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.html, 'text/html');
+      const text = doc.querySelector('p')?.textContent || '';
+      const links = doc.querySelectorAll('a');
+      const timestamp = links.length > 0 ? links[links.length - 1]?.textContent || '' : '';
+
+
       const tweetData = {
         author: data.author_name,
         handle: data.author_url.split('/').pop(),
-        avatar: '', // oEmbed doesn't provide avatar, will leave it empty
-        text: data.html.replace(/<[^>]*>?/gm, ''), // A simple way to strip html tags
-        timestamp: '', // oEmbed doesn't provide timestamp
+        avatar: '/placeholder.svg',
+        text,
+        timestamp,
         likes: 0, // oEmbed doesn't provide likes
         retweets: 0, // oEmbed doesn't provide retweets
       };
