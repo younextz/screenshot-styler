@@ -38,13 +38,19 @@ export function useTheme() {
     applyTheme(theme);
     try {
       localStorage.setItem(STORAGE_KEY, theme);
-    } catch {}
+    } catch (_error) {
+      // ignore storage write failures (e.g., privacy mode)
+    }
   }, [theme]);
 
   useEffect(() => {
     // react to system changes only when no explicit preference is saved
     let saved: string | null = null;
-    try { saved = localStorage.getItem(STORAGE_KEY); } catch {}
+    try {
+      saved = localStorage.getItem(STORAGE_KEY);
+    } catch (_error) {
+      // ignore storage read failures (e.g., privacy mode)
+    }
     if (saved) return;
 
     const mq = window.matchMedia('(prefers-color-scheme: light)');

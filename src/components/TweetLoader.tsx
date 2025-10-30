@@ -35,7 +35,7 @@ try {
 
       const tweetData = {
         author: data.author_name,
-        handle: data.author_url.split('/').pop(),
+        handle: data.author_url ? data.author_url.split('/').pop() : '',
         avatar: '/placeholder.svg',
         text,
         timestamp,
