@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { AlertCircle, Upload } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
+import { cn } from '@/lib/utils';
 
 const Index = () => {
   const savedSettings = loadSettings();
@@ -199,7 +200,12 @@ const Index = () => {
       </header>
 
       <main className="flex flex-1 overflow-hidden">
-        <section className="relative flex flex-1 items-center justify-center bg-muted/5 px-6 py-10 md:px-10">
+        <section
+          className={cn(
+            'relative flex flex-1 items-center bg-muted/5 pl-2 pr-3 py-10 sm:pl-3 sm:pr-4',
+            svgContent ? 'justify-start' : 'justify-center',
+          )}
+        >
           {svgContent ? (
             <CanvasPreview
               svgContent={svgContent}
