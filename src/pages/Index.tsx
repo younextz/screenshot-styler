@@ -187,74 +187,63 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-                      <ThemeToggle />
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Screenshot Styler
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Transform your screenshots with beautiful styles
-              </p>
-            </div>
+      <header className="border-b border-border bg-card/60 backdrop-blur flex-shrink-0">
+        <div className="mx-auto w-full max-w-[1400px] px-6 py-4 flex items-center justify-between gap-6">
+          <div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Screenshot Styler
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Transform your screenshots with beautiful styles
+            </p>
           </div>
+          <ThemeToggle />
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8 max-w-7xl">
-        {/* Privacy Notice */}
-        <div className="mb-6 p-4 bg-accent/10 border border-accent/20 rounded-lg flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-          <div className="text-sm">
-            <p className="font-medium text-accent mb-1">Privacy First</p>
-            <p className="text-muted-foreground">
-              All processing happens in your browser. Images are never uploaded or stored. Don't upload sensitive data.
-            </p>
-          </div>
-        </div>
-
-        {/* Upload Section */}
-        <div className="mb-8 animate-fade-in">
-          <ImageLoader onImageLoad={handleImageLoad} />
-        </div>
-
-        {imageData && (
-          <div className="space-y-8 animate-fade-in-up">
-            {/* Preview */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Preview</h2>
-              <CanvasPreview svgContent={svgContent} />
+      <main className="flex-1 flex overflow-hidden">
+        <aside className="w-[360px] max-w-[420px] min-w-[320px] border-r border-border/60 bg-card/40 backdrop-blur-sm overflow-y-auto">
+          <div className="px-6 py-8 space-y-8">
+            {/* Privacy Notice */}
+            <div className="p-4 bg-accent/10 border border-accent/20 rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-medium text-accent mb-1">Privacy First</p>
+                <p className="text-muted-foreground">
+                  All processing happens in your browser. Images are never uploaded or stored. Don't upload sensitive data.
+                </p>
+              </div>
             </div>
 
-            {/* Export */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Export</h2>
-              <ExportButtons
-                svgContent={svgContent}
-                onExport={handleExport}
-                disabled={!svgContent}
-              />
+            {/* Upload Section */}
+            <div className="animate-fade-in">
+              <h2 className="text-base font-semibold mb-4">Load Screenshot</h2>
+              <ImageLoader onImageLoad={handleImageLoad} />
             </div>
 
             {/* Preset Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Style Preset</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-semibold">Style Preset</h2>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">{currentPreset.name}</span>
+              </div>
               <PresetPicker selectedId={presetId} onChange={setPresetId} />
             </div>
 
             {/* Palette Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Color Palette</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-semibold">Color Palette</h2>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">{currentPalette.name}</span>
+              </div>
               <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
             </div>
 
             {/* Controls */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Options</h2>
+            <div className="space-y-4 pb-10">
+              <h2 className="text-base font-semibold">Options</h2>
               <ControlPanel
                 titleBar={titleBar}
                 aspectRatio={aspectRatio}
@@ -264,20 +253,53 @@ const Index = () => {
               />
             </div>
           </div>
-        )}
-      </main>
+        </aside>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-card/30 mt-16">
-        <div className="container mx-auto px-6 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p className="mb-2">Screenshot Styler v1.0 • All processing is done locally in your browser</p>
-            <p className="text-xs">
-              By using this tool, you agree not to upload sensitive or confidential information.
-            </p>
+        <section className="flex-1 flex flex-col bg-muted/10 overflow-hidden">
+          <div className="flex-1 flex flex-col lg:flex-row">
+            <div className="flex-1 flex items-center justify-center p-8 lg:p-12 overflow-hidden">
+              {imageData ? (
+                <div className="w-full max-w-4xl h-full flex items-center justify-center">
+                  <CanvasPreview svgContent={svgContent} />
+                </div>
+              ) : (
+                <div className="max-w-md text-center space-y-3 text-muted-foreground">
+                  <h2 className="text-lg font-semibold text-foreground">Upload a screenshot to get started</h2>
+                  <p>
+                    Use the panel on the left to upload an image or paste one from your clipboard. Adjust the style options and the preview will update instantly.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {imageData && (
+              <div className="w-full max-w-sm border-t lg:border-t-0 lg:border-l border-border/60 bg-background/80 backdrop-blur-sm">
+                <div className="p-6 space-y-6">
+                  <div className="space-y-2">
+                    <h2 className="text-base font-semibold">Export</h2>
+                    <p className="text-sm text-muted-foreground">Choose how you want to save or copy your styled screenshot.</p>
+                  </div>
+                  <ExportButtons
+                    svgContent={svgContent}
+                    onExport={handleExport}
+                    disabled={!svgContent}
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </footer>
+
+          {/* Footer */}
+          <footer className="border-t border-border/60 bg-card/40 backdrop-blur-sm">
+            <div className="mx-auto w-full max-w-[1400px] px-6 py-6 text-sm text-muted-foreground text-center">
+              <p className="mb-1">Screenshot Styler v1.0 • All processing is done locally in your browser</p>
+              <p className="text-xs">
+                By using this tool, you agree not to upload sensitive or confidential information.
+              </p>
+            </div>
+          </footer>
+        </section>
+      </main>
     </div>
   );
 };

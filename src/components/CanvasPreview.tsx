@@ -14,11 +14,11 @@ export function CanvasPreview({ svgContent }: CanvasPreviewProps) {
   }, [svgContent]);
 
   return (
-    <div className="w-full bg-muted/30 rounded-lg overflow-hidden border border-border">
-      <div className="p-8 flex items-center justify-center min-h-[400px]">
+    <div className="w-full h-full bg-muted/30 rounded-lg overflow-hidden border border-border">
+      <div className="h-full w-full p-8 flex items-center justify-center overflow-auto min-h-[400px]">
         <div
           ref={containerRef}
-          className="max-w-full max-h-[600px] [&>svg]:max-w-full [&>svg]:h-auto [&>svg]:drop-shadow-2xl"
+          className="max-w-full max-h-full [&>svg]:max-w-full [&>svg]:h-auto [&>svg]:drop-shadow-2xl"
         />
       </div>
     </div>
