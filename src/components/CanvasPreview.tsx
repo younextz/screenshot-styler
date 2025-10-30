@@ -1,26 +1,31 @@
 import { useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface CanvasPreviewProps {
   svgContent: string;
+  className?: string;
 }
 
-export function CanvasPreview({ svgContent }: CanvasPreviewProps) {
+export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (containerRef.current && svgContent) {
-      containerRef.current.innerHTML = svgContent;
+    if (containerRef.current) {
+      containerRef.current.innerHTML = svgContent || '';
     }
   }, [svgContent]);
 
   return (
-    <div className="w-full bg-muted/30 rounded-lg overflow-hidden border border-border">
-      <div className="p-8 flex items-center justify-center min-h-[400px]">
-        <div
-          ref={containerRef}
-          className="max-w-full max-h-[600px] [&>svg]:max-w-full [&>svg]:h-auto [&>svg]:drop-shadow-2xl"
-        />
-      </div>
+    <div
+      className={cn(
+        'flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border border-border bg-muted/30 p-10',
+        className,
+      )}
+    >
+      <div
+        ref={containerRef}
+        className="flex max-h-full max-w-full items-center justify-center [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-2xl"
+      />
     </div>
   );
 }

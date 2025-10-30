@@ -10,7 +10,7 @@ import { palettes } from '@/lib/palettes';
 import { generateSVG, TitleBarType, AspectRatio } from '@/lib/svgRenderer';
 import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Upload } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -187,97 +187,136 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-                      <ThemeToggle />
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Screenshot Styler
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Transform your screenshots with beautiful styles
-              </p>
-            </div>
-          </div>
+    <div className="flex h-screen flex-col bg-background">
+      <header className="flex items-center justify-between border-b border-border px-10 py-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Screenshot Styler</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Transform your screenshots with polished, sharable frames.
+          </p>
         </div>
+        <ThemeToggle />
       </header>
 
-      <main className="container mx-auto px-6 py-8 max-w-7xl">
-        {/* Privacy Notice */}
-        <div className="mb-6 p-4 bg-accent/10 border border-accent/20 rounded-lg flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-          <div className="text-sm">
-            <p className="font-medium text-accent mb-1">Privacy First</p>
-            <p className="text-muted-foreground">
-              All processing happens in your browser. Images are never uploaded or stored. Don't upload sensitive data.
-            </p>
+      <main className="flex flex-1 overflow-hidden">
+        <section className="relative flex flex-1 items-center justify-center bg-muted/5 p-10">
+          {svgContent ? (
+            <CanvasPreview
+              svgContent={svgContent}
+              className="max-h-[calc(100vh-12rem)] max-w-4xl"
+            />
+          ) : (
+            <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-background/80">
+                <Upload className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h2 className="text-xl font-semibold">Drop in a screenshot to get started</h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                Use the import tools on the right to upload a PNG or JPG, or paste directly from your clipboard.
+              </p>
+            </div>
+          )}
+        </section>
+
+        <aside className="flex w-full max-w-xl flex-col border-l border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+          <div className="flex-1 overflow-y-auto px-6 py-8">
+            <div className="space-y-10">
+              <section className="space-y-4">
+                <div>
+                  <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                    Source
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Upload or paste your screenshot to populate the live preview.
+                  </p>
+                </div>
+                <ImageLoader onImageLoad={handleImageLoad} />
+              </section>
+
+              <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 rounded-full bg-accent/20 p-1">
+                    <AlertCircle className="h-4 w-4 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-accent">Privacy First</p>
+                    <p className="mt-1">
+                      All processing happens in your browser. Images are never uploaded or stored. Please avoid sharing sensitive data.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {imageData && (
+                <div className="space-y-10">
+                  <section className="space-y-4">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Export
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Choose how you want to share or download your styled screenshot.
+                      </p>
+                    </div>
+                    <ExportButtons
+                      svgContent={svgContent}
+                      onExport={handleExport}
+                      disabled={!svgContent}
+                    />
+                  </section>
+
+                  <section className="space-y-4">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Style Preset
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Quickly switch between layout styles designed for different content types.
+                      </p>
+                    </div>
+                    <PresetPicker selectedId={presetId} onChange={setPresetId} />
+                  </section>
+
+                  <section className="space-y-4">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Color Palette
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Tune the backdrop colors to match your brand or highlight important details.
+                      </p>
+                    </div>
+                    <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
+                  </section>
+
+                  <section className="space-y-4">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Options
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Adjust the window chrome, aspect ratio, and layout to perfect the frame.
+                      </p>
+                    </div>
+                    <ControlPanel
+                      titleBar={titleBar}
+                      aspectRatio={aspectRatio}
+                      onTitleBarChange={setTitleBar}
+                      onAspectRatioChange={setAspectRatio}
+                      supportsTitleBar={currentPreset.supportsTitle}
+                    />
+                  </section>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Upload Section */}
-        <div className="mb-8 animate-fade-in">
-          <ImageLoader onImageLoad={handleImageLoad} />
-        </div>
-
-        {imageData && (
-          <div className="space-y-8 animate-fade-in-up">
-            {/* Preview */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Preview</h2>
-              <CanvasPreview svgContent={svgContent} />
-            </div>
-
-            {/* Export */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Export</h2>
-              <ExportButtons
-                svgContent={svgContent}
-                onExport={handleExport}
-                disabled={!svgContent}
-              />
-            </div>
-
-            {/* Preset Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Style Preset</h2>
-              <PresetPicker selectedId={presetId} onChange={setPresetId} />
-            </div>
-
-            {/* Palette Selection */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Color Palette</h2>
-              <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-            </div>
-
-            {/* Controls */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Options</h2>
-              <ControlPanel
-                titleBar={titleBar}
-                aspectRatio={aspectRatio}
-                onTitleBarChange={setTitleBar}
-                onAspectRatioChange={setAspectRatio}
-                supportsTitleBar={currentPreset.supportsTitle}
-              />
-            </div>
-          </div>
-        )}
+          <footer className="border-t border-border/80 px-6 py-5 text-xs text-muted-foreground">
+            <p>Screenshot Styler v1.0 — All processing is done locally in your browser.</p>
+            <p className="mt-2">By using this tool you agree not to upload sensitive or confidential information.</p>
+          </footer>
+        </aside>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card/30 mt-16">
-        <div className="container mx-auto px-6 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p className="mb-2">Screenshot Styler v1.0 • All processing is done locally in your browser</p>
-            <p className="text-xs">
-              By using this tool, you agree not to upload sensitive or confidential information.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
