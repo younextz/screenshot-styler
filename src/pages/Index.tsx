@@ -199,11 +199,11 @@ const Index = () => {
       </header>
 
       <main className="flex flex-1 overflow-hidden">
-        <section className="relative flex flex-1 items-center justify-center bg-muted/5 p-10">
+        <section className="relative flex flex-1 items-center justify-center bg-muted/5 px-6 py-10 md:px-10">
           {svgContent ? (
             <CanvasPreview
               svgContent={svgContent}
-              className="max-h-[calc(100vh-12rem)] max-w-4xl"
+              className="max-h-[calc(100vh-12rem)]"
             />
           ) : (
             <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
