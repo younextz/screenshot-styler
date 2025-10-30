@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { TweetLoader } from '@/components/TweetLoader';
+import { TweetCard } from '@/components/TweetCard';
 import { ImageLoader } from '@/components/ImageLoader';
 import { PresetPicker } from '@/components/PresetPicker';
 import { PalettePicker } from '@/components/PalettePicker';
@@ -28,6 +30,7 @@ const Index = () => {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
+  const [tweetData, setTweetData] = useState<any>(null);
 
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
@@ -69,6 +72,10 @@ const Index = () => {
       setAspectRatio('16:9');
       setHasLoadedFirstImage(true);
     }
+  };
+
+  const handleTweetLoad = (data: any) => {
+    setTweetData(data);
   };
 
   const getSvgSize = (svgString: string) => {
