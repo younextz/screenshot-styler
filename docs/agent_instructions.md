@@ -20,7 +20,7 @@ A focused web tool that lets a user **paste or upload a screenshot**, **apply a 
 - **Preset selector** (12 presets; see §6).
 - **Color palette** selector (predefined palettes; includes a JetBrains-inspired option; no free‑form color pickers).
 - **OS title bar**: **macOS / Windows / None** (show/hide). No custom text in v1.
-- **Aspect ratio**: **Auto (match screenshot)**, **1:1**, **16:9**, **4:3**, **9:16**, **1200×630 (OG)**.
+- **Aspect ratio**: **Auto (match screenshot)**, **1:1**, **16:9**, **4:3**.
 
 **Rendering approach**
 - **Client**: instant preview using **SVG** (rendered in-browser).
@@ -128,7 +128,7 @@ All endpoints send `Cache-Control: no-store`.
       "presetId": "browser-macos",
       "paletteId": "jetbrains-dark",
       "titleBar": "macos" | "windows" | "none",
-      "aspectRatio": "auto" | "1:1" | "16:9" | "4:3" | "9:16" | "1200x630"
+      "aspectRatio": "auto" | "1:1" | "16:9" | "4:3"
     }
     ```
 - **Response**: `image/png` body; headers: `Cache-Control: no-store`.
