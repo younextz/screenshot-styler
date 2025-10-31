@@ -1,26 +1,31 @@
 # Screenshot Styler
 
-A focused web tool that lets you **paste or upload screenshots**, **apply preset styles**, pick **color palettes**, toggle **title bars**, choose **aspect ratios**, and **export as PNG** with copy-to-clipboard or download functionality.
+Screenshot Styler is a focused web tool for turning raw screenshots into polished visuals. Paste or upload an image, try curated presets, tweak colors, and export a share-ready frame without leaving your browser.
 
-## ✨ Features
+## ✨ Highlights
 
-- **📸 Easy Input**: Paste from clipboard (⌘/Ctrl+V) or upload PNG/JPG files (up to 10MB)
-- **🎨 12 Style Presets**: From subtle gradients to device frames and browser windows
-- **🌈 16+ Color Palettes**: Curated color schemes including JetBrains-inspired themes
-- **💻 Title Bar Options**: macOS, Windows, or no title bar styling
-- **📐 Aspect Ratios**: Auto, 1:1, 16:9, 4:3, 9:16, and social media optimized (1200×630)
-- **📋 Smart Export**: Copy PNG to clipboard or download, with intelligent fallbacks
-- **🔒 Privacy First**: No image storage, no authentication, no analytics - everything processed in-memory
-- **⚡ Fast Performance**: Client-side SVG preview with server-side PNG rendering
+- **Effortless input** – Drop files, use the uploader, or paste directly with ⌘/Ctrl + V. Images up to 10 MB are processed entirely in-browser.
+- **Updated styling presets** – Twelve modern backgrounds, device frames, and card treatments refreshed with softer gradients and cleaner spacing.
+- **Palette refresh** – Sixteen+ curated color palettes with automatic light/dark defaults that react to the theme.
+- **Granular layout control** – Toggle macOS/Windows chrome, lock aspect ratios (auto, square, 16:9, 4:3, 9:16, 1200×630), and persist your go-to setup between sessions.
+- **Expanded export options** – Copy PNGs to the clipboard, download at original resolution, upscale to 4K, or grab the raw SVG for vector workflows.
+- **Theme-aware UI** – New light theme, system preference detection, and a header toggle with local persistence.
+
+### What’s new this month
+
+- Rebuilt workspace layout keeps the live preview visible alongside the control panel for faster iteration.
+- Added SVG + 4K PNG export buttons with resilient fallbacks when clipboard permissions are denied.
+- Introduced the theme system, including accessible toggle tests and saved preferences.
+- Brought in tweet visualization building blocks for future social post workflows, backed by a Vitest suite.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js (18+ recommended) - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-- Python 3.11+ (for backend)
+- Node.js 18 or newer (use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for painless installs)
+- npm (bundled with Node) or an equivalent package manager
 
-### Development Setup
+### Develop locally
 
 1. **Clone the repository**
    ```bash
@@ -28,103 +33,57 @@ A focused web tool that lets you **paste or upload screenshots**, **apply preset
    cd screenshot-styler
    ```
 
-2. **Install frontend dependencies**
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Start development server**
+3. **Start Vite in dev mode**
    ```bash
    npm run dev
    ```
 
-4. **Backend setup** (if running full-stack locally)
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   uvicorn main:app --reload
-   ```
+4. **Open the app** at [http://localhost:5173](http://localhost:5173) and begin styling.
 
-5. **Open your browser**
-   Navigate to `http://localhost:5173` to start styling screenshots!
+### Useful scripts
+
+- `npm run build` – production bundle
+- `npm run preview` – preview the production build
+- `npm run lint` – run ESLint on the project
+- `npm run test` – execute the Vitest suite (Tweet loader/theme toggle coverage)
 
 ## 🛠️ Technology Stack
 
-### Frontend
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **shadcn/ui** for UI components
-- **SVG-based rendering** for crisp, scalable previews
+- **React 18 + TypeScript** for the interactive UI
+- **Vite** for lightning-fast dev tooling
+- **Tailwind CSS & shadcn/ui** for accessible, composable components
+- **lucide-react & sonner** for icons and non-blocking toasts
+- **Vitest + Testing Library** for fast component-level tests
 
-### Backend (Optional for full features)
-- **FastAPI** (Python 3.11)
-- **Pillow** for image processing
-- **cairosvg** for SVG to PNG rasterization
-- **In-memory processing** (no file storage)
+## 🎯 How it works
 
-## 🎯 How It Works
+1. **Import** – Paste or upload your screenshot (PNG/JPG, ≤10 MB)
+2. **Style** – Pick a preset, refine color palettes, and adjust chrome/aspect ratio controls
+3. **Preview** – Real-time SVG rendering keeps edits crisp at any size
+4. **Export** – Copy to clipboard, download PNG (original or 4K), or export the SVG
 
-1. **Upload/Paste**: Add your screenshot via clipboard or file picker
-2. **Style**: Choose from 12 presets (gradients, device frames, cards, etc.)
-3. **Customize**: Pick color palettes, toggle title bars, set aspect ratios
-4. **Preview**: See real-time SVG preview with your changes
-5. **Export**: Copy to clipboard or download PNG at highest quality
+## 🔧 Design principles
 
-## 🔧 Key Design Principles
+- **Client-only processing** – Images never leave the browser, ensuring privacy by default
+- **Resolution aware** – Smart padding avoids cropping while maintaining aspect ratio
+- **Accessible defaults** – Keyboard-friendly controls, WCAG-conscious color choices, and theme toggle support
+- **Consistent spacing** – Updated layout keeps preview gutters and padding balanced across presets
 
-- **No Cropping**: Screenshots are never cropped, always contained with generous padding
-- **Highest Resolution**: Export maintains original quality without upscaling
-- **Privacy Focused**: Images never stored on servers or disk
-- **Accessibility**: Keyboard navigation and WCAG AA compliance
-- **Cross-Browser**: Works on Chromium and Safari with appropriate fallbacks
+## 🎨 Presets & palettes
 
-## 📚 Documentation
+- **Backgrounds** – Soft/Bold gradient, mesh gradient, blob duo/trio, dot grid
+- **Frames** – macOS/Windows browsers, laptop and phone shells
+- **Cards** – Elevated and outlined presentations for UI snippets
+- **Palettes** – From JetBrains Dark and Minimal Gray to Ocean Blue, Retro Wave, Candy Pop, and Soft Pastel (16+ total)
 
-Detailed specifications and build instructions can be found in [`/docs/agent_instructions.md`](./docs/agent_instructions.md).
+## 📚 Additional documentation
 
-## 🎨 Style Presets
-
-- **Gradient Soft/Bold**: Subtle to vibrant gradient backgrounds
-- **Mesh Gradient**: Multi-stop mesh gradient effects  
-- **Blob Duo/Trio**: Artistic blurred blob backgrounds
-- **Dot Grid**: Subtle pattern backgrounds
-- **Browser macOS/Windows**: Realistic browser frame styling
-- **Device Laptop/Phone**: Generic device bezels
-- **Card Elevated/Outlined**: Floating card and outline effects
-
-## 🌈 Color Palettes
-
-16+ curated color palettes including:
-- JetBrains Dark
-- Neutral tones
-- Bold neons  
-- Soft pastels
-- Professional muted colors
-
-## 📖 Usage Examples
-
-1. **Social Media Posts**: Style screenshots for Twitter, LinkedIn, etc.
-2. **Documentation**: Create polished images for READMEs and docs
-3. **Presentations**: Professional screenshot styling for slides
-4. **Portfolio**: Showcase app interfaces with beautiful backgrounds
-5. **Bug Reports**: Frame screenshots for clear issue communication
-
-## 🔒 Privacy & Security
-
-- **No Data Retention**: Images are processed in-memory only
-- **No Authentication**: Use immediately without accounts
-- **No Analytics**: No tracking or usage monitoring  
-- **Rate Limited**: 60 requests per minute per IP for fair usage
-- **Secure Headers**: CSP, CORS, and other security measures implemented
-
-## 🚀 Deployment
-
-This project can be deployed to any modern hosting platform:
-
-- **Frontend**: Deploy to Vercel, Netlify, or similar static hosting
-- **Backend**: Deploy to Railway, Heroku, or containerized environments
-- **Full-Stack**: Use Docker for complete deployment setup
+More detailed specifications live in [`docs/agent_instructions.md`](./docs/agent_instructions.md).
 
 ## 🤝 Contributing
 
@@ -136,14 +95,7 @@ This project can be deployed to any modern hosting platform:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## ⚠️ Important Notes
-
-- **File Size Limit**: 10MB maximum per image
-- **Supported Formats**: PNG and JPG only
-- **Browser Compatibility**: Chromium and Safari supported
-- **Clipboard Access**: May require permissions in some browsers
+Released under the MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
