@@ -7,7 +7,7 @@ Screenshot Styler is a focused web tool for turning raw screenshots into polishe
 - **Effortless input** – Drop files, use the uploader, or paste directly with ⌘/Ctrl + V. Images up to 10 MB are processed entirely in-browser.
 - **Updated styling presets** – Twelve modern backgrounds, device frames, and card treatments refreshed with softer gradients and cleaner spacing.
 - **Palette refresh** – Sixteen+ curated color palettes with automatic light/dark defaults that react to the theme.
-- **Granular layout control** – Toggle macOS/Windows chrome, lock aspect ratios (auto, square, 16:9, 4:3, 9:16, 1200×630), and persist your go-to setup between sessions.
+- **Granular layout control** – Toggle macOS/Windows chrome, lock aspect ratios (auto, square, 16:9, 4:3), and persist your go-to setup between sessions.
 - **Expanded export options** – Copy PNGs to the clipboard, download at original resolution, upscale to 4K, or grab the raw SVG for vector workflows.
 - **Theme-aware UI** – New light theme, system preference detection, and a header toggle with local persistence.
 

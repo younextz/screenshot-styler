@@ -1,7 +1,7 @@
 import { Palette } from './palettes';
 
 export type TitleBarType = 'macos' | 'windows' | 'none';
-export type AspectRatio = 'auto' | '1:1' | '16:9' | '4:3' | '9:16' | '1200x630';
+export type AspectRatio = 'auto' | '1:1' | '16:9' | '4:3';
 
 interface RenderOptions {
   presetId: string;
@@ -30,8 +30,6 @@ export function calculateOutputSize(
     '1:1': 1,
     '16:9': 16 / 9,
     '4:3': 4 / 3,
-    '9:16': 9 / 16,
-    '1200x630': 1200 / 630,
   };
 
   const r = ratioMap[aspectRatio];
