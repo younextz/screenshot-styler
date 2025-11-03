@@ -234,7 +234,7 @@ const Index = () => {
         <aside className="flex w-full max-w-xl flex-col border-l border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="space-y-10">
-              <section className="space-y-4">
+              <section className="space-y-6">
                 <div>
                   <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
                     Source
@@ -244,6 +244,17 @@ const Index = () => {
                   </p>
                 </div>
                 <ImageLoader onImageLoad={handleImageLoad} />
+                <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-foreground">Fetch Tweet (optional)</p>
+                      <p className="text-xs text-muted-foreground">
+                        Paste a tweet URL to pull its text details without leaving the app.
+                      </p>
+                    </div>
+                    <TweetLoader onTweetLoad={handleTweetLoad} />
+                  </div>
+                </div>
               </section>
 
               <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
@@ -325,7 +336,7 @@ const Index = () => {
           </div>
 
           <footer className="border-t border-border/80 px-6 py-5 text-xs text-muted-foreground">
-            <p>Screenshot Styler v1.0 — All processing is done locally in your browser.</p>
+            <p>Screenshot Styler v1.0 &mdash; All processing is done locally in your browser.</p>
             <p className="mt-2">By using this tool you agree not to upload sensitive or confidential information.</p>
           </footer>
         </aside>
