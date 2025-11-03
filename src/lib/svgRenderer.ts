@@ -18,7 +18,7 @@ export function calculateOutputSize(
   hs: number,
   aspectRatio: AspectRatio
 ): { width: number; height: number } {
-  const padding = 60;
+  const padding = 62;
   const baseWidth = Math.ceil(ws + padding * 2);
   const baseHeight = Math.ceil(hs + padding * 2);
 
