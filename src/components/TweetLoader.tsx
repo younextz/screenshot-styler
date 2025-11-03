@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
+
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { toast } from 'sonner';
 
 interface TweetLoaderProps {
   onTweetLoad: (tweetData: any) => void;
@@ -15,7 +16,8 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
       toast.error('Please enter a tweet URL');
       return;
     }
-try {
+
+    try {
       const response = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}`);
       if (!response.ok) {
         throw new Error('Failed to fetch tweet');
@@ -52,16 +54,25 @@ try {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
+      <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">Tweet URL</p>
       <div className="flex gap-3">
         <Input
           type="text"
           placeholder="Enter Tweet URL"
           value={tweetUrl}
           onChange={(e) => setTweetUrl(e.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              handleFetchTweet();
+            }
+          }}
           className="flex-1"
         />
-        <Button onClick={handleFetchTweet}>Fetch Tweet</Button>
+        <Button type="button" onClick={handleFetchTweet}>
+          Fetch Tweet
+        </Button>
       </div>
     </div>
   );
