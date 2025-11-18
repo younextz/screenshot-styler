@@ -31,6 +31,7 @@ const Index = () => {
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
   const [tweetData, setTweetData] = useState<any>(null);
+  const [gradientStyle, setGradientStyle] = useState('');
 
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
@@ -53,6 +54,35 @@ const Index = () => {
   useEffect(() => {
     saveSettings({ presetId, paletteId, titleBar, aspectRatio });
   }, [presetId, paletteId, titleBar, aspectRatio]);
+
+  useEffect(() => {
+    const updateGradient = () => {
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+      const startHue = 220 + progress * 90;
+      const endHue = 280 + progress * 90;
+      const accentHue = 180 + progress * 90;
+
+      const lightModeBase = theme === 'light';
+      const baseLightness = lightModeBase ? 92 : 6;
+      const endLightness = lightModeBase ? 78 : 12;
+
+      const gradient = [
+        `radial-gradient(circle at 15% 20%, hsla(${accentHue}, 70%, ${lightModeBase ? 72 : 55}%, 0.4), transparent 45%)`,
+        `radial-gradient(circle at 80% 0%, hsla(${startHue}, 75%, ${lightModeBase ? 70 : 50}%, 0.35), transparent 40%)`,
+        `linear-gradient(135deg, hsl(${startHue}, 45%, ${baseLightness}%), hsl(${endHue}, 40%, ${endLightness}%))`,
+      ].join(', ');
+
+      setGradientStyle(gradient);
+    };
+
+    updateGradient();
+    window.addEventListener('scroll', updateGradient, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateGradient);
+    };
+  }, [theme]);
 
   // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {
@@ -195,7 +225,10 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div
+      className="flex min-h-screen flex-col bg-background transition-[background-image] duration-700"
+      style={{ backgroundImage: gradientStyle }}
+    >
       <header className="flex items-center justify-between border-b border-border px-10 py-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Screenshot Styler</h1>
