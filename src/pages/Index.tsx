@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TweetLoader } from '@/components/TweetLoader';
-import { TweetCard } from '@/components/TweetCard';
 import { ImageLoader } from '@/components/ImageLoader';
 import { PresetPicker } from '@/components/PresetPicker';
 import { PalettePicker } from '@/components/PalettePicker';
 import { ControlPanel } from '@/components/ControlPanel';
 import { CanvasPreview } from '@/components/CanvasPreview';
 import { ExportButtons } from '@/components/ExportButtons';
+import { FrameSelector } from '@/components/FrameSelector';
 import { presets } from '@/lib/presets';
 import { palettes } from '@/lib/palettes';
 import { generateSVG, TitleBarType, AspectRatio } from '@/lib/svgRenderer';
@@ -16,6 +16,7 @@ import { AlertCircle, Upload } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
+import { FrameStyleId } from '@/lib/frames';
 
 const Index = () => {
   const savedSettings = loadSettings();
@@ -28,6 +29,7 @@ const Index = () => {
   const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
   const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
+  const [frameStyle, setFrameStyle] = useState<FrameStyleId>(savedSettings.frameStyle || 'stack-light');
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
   const [tweetData, setTweetData] = useState<any>(null);
@@ -37,22 +39,23 @@ const Index = () => {
 
   useEffect(() => {
     if (imageData && imageWidth && imageHeight) {
-      const svg = generateSVG({
+        const svg = generateSVG({
         presetId,
         palette: currentPalette,
         titleBar: currentPreset.supportsTitle ? titleBar : 'none',
         aspectRatio,
+          frameStyle,
         imageData,
         imageWidth,
         imageHeight,
       });
       setSvgContent(svg);
-    }
-  }, [imageData, imageWidth, imageHeight, presetId, paletteId, titleBar, aspectRatio, currentPalette, currentPreset]);
+      }
+    }, [imageData, imageWidth, imageHeight, presetId, paletteId, titleBar, aspectRatio, currentPalette, currentPreset, frameStyle]);
 
   useEffect(() => {
-    saveSettings({ presetId, paletteId, titleBar, aspectRatio });
-  }, [presetId, paletteId, titleBar, aspectRatio]);
+    saveSettings({ presetId, paletteId, titleBar, aspectRatio, frameStyle });
+  }, [presetId, paletteId, titleBar, aspectRatio, frameStyle]);
 
   // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {
@@ -287,21 +290,33 @@ const Index = () => {
                       onExport={handleExport}
                       disabled={!svgContent}
                     />
-                  </section>
+                    </section>
 
-                  <section className="space-y-4">
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Style Preset
-                      </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Quickly switch between layout styles designed for different content types.
-                      </p>
-                    </div>
-                    <PresetPicker selectedId={presetId} onChange={setPresetId} />
-                  </section>
+                    <section className="space-y-4">
+                      <div>
+                        <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                          Style Preset
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Quickly switch between layout styles designed for different content types.
+                        </p>
+                      </div>
+                      <PresetPicker selectedId={presetId} onChange={setPresetId} />
+                    </section>
 
-                  <section className="space-y-4">
+                    <section className="space-y-4">
+                      <div>
+                        <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                          Frame
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Wrap your screenshot in polished chrome just like the Pika editor.
+                        </p>
+                      </div>
+                      <FrameSelector selectedId={frameStyle} onChange={setFrameStyle} />
+                    </section>
+
+                    <section className="space-y-4">
                     <div>
                       <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
                         Color Palette

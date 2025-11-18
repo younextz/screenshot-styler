@@ -1,4 +1,5 @@
 import { Palette } from './palettes';
+import { FrameStyleId } from './frames';
 
 export type TitleBarType = 'macos' | 'windows' | 'none';
 export type AspectRatio = 'auto' | '1:1' | '16:9' | '4:3';
@@ -8,9 +9,144 @@ interface RenderOptions {
   palette: Palette;
   titleBar: TitleBarType;
   aspectRatio: AspectRatio;
+  frameStyle: FrameStyleId;
   imageData: string;
   imageWidth: number;
   imageHeight: number;
+}
+
+interface FrameDecorationResult {
+  defs?: string;
+  outer?: string;
+  innerBefore?: string;
+  innerAfter?: string;
+  cardFill?: string;
+  cardRadius?: number;
+  cardStroke?: string;
+  cardStrokeWidth?: number;
+}
+
+function getFrameDecorations(
+  frameStyle: FrameStyleId,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  uniqueId: string
+): FrameDecorationResult {
+  switch (frameStyle) {
+    case 'stack-light': {
+      return {
+        outer: `
+          <rect x="${x - 18}" y="${y - 12}" width="${width + 36}" height="${height + 36}" rx="36"
+                fill="rgba(255, 228, 247, 0.7)"/>
+          <rect x="${x - 8}" y="${y - 4}" width="${width + 16}" height="${height + 20}" rx="32"
+                fill="rgba(253, 242, 248, 0.9)"/>
+        `,
+        cardFill: '#fff',
+        cardRadius: 26,
+        cardStroke: 'rgba(244,114,182,0.18)',
+        cardStrokeWidth: 1.4,
+      };
+    }
+    case 'stack-dark': {
+      return {
+        outer: `
+          <rect x="${x - 16}" y="${y - 8}" width="${width + 32}" height="${height + 36}" rx="34"
+                fill="rgba(2,6,23,0.85)"/>
+          <rect x="${x - 4}" y="${y + 4}" width="${width + 8}" height="${height + 16}" rx="30"
+                fill="rgba(15,23,42,0.9)" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+        `,
+        cardFill: '#1e293b',
+        cardRadius: 22,
+        cardStroke: 'rgba(15,23,42,0.65)',
+        cardStrokeWidth: 1.2,
+      };
+    }
+    case 'arc': {
+      const gradientId = `${uniqueId}-arc`;
+      const left = x - 90;
+      const right = x + width + 90;
+      const top = y - height * 0.6;
+      const bottom = y + height * 0.4;
+      const lower = bottom + 120;
+      const mid = x + width / 2;
+      return {
+        defs: `
+          <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#34d399" stop-opacity="0.25"/>
+            <stop offset="50%" stop-color="#22d3ee" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#6366f1" stop-opacity="0.35"/>
+          </linearGradient>
+        `,
+        outer: `
+          <path d="M ${left} ${bottom}
+                   Q ${mid} ${top} ${right} ${bottom}
+                   L ${right} ${lower}
+                   L ${left} ${lower}
+                   Z"
+                fill="url(#${gradientId})" opacity="0.95"/>
+        `,
+        cardFill: '#0f172a',
+        cardRadius: 20,
+        cardStroke: 'rgba(148,163,184,0.45)',
+        cardStrokeWidth: 1.2,
+      };
+    }
+    case 'macos-light': {
+      const windowX = x - 24;
+      const windowY = y - 54;
+      const windowWidth = width + 48;
+      const windowHeight = height + 68;
+      const headerHeight = 44;
+      const dotsY = windowY + headerHeight / 2;
+      return {
+        outer: `
+          <rect x="${windowX}" y="${windowY}" width="${windowWidth}" height="${windowHeight}" rx="32"
+                fill="#f8fafc" stroke="rgba(148,163,184,0.35)" stroke-width="1.4"/>
+          <rect x="${windowX}" y="${windowY}" width="${windowWidth}" height="${headerHeight}" rx="32"
+                fill="#e2e8f0"/>
+          <g transform="translate(${windowX + 26}, ${dotsY - 4})">
+            <circle cx="0" cy="0" r="5" fill="#fb7185"/>
+            <circle cx="16" cy="0" r="5" fill="#fbbf24"/>
+            <circle cx="32" cy="0" r="5" fill="#34d399"/>
+          </g>
+        `,
+        cardFill: '#ffffff',
+        cardRadius: 20,
+        cardStroke: 'rgba(203,213,225,0.8)',
+        cardStrokeWidth: 1,
+      };
+    }
+    case 'macos-dark': {
+      const windowX = x - 24;
+      const windowY = y - 54;
+      const windowWidth = width + 48;
+      const windowHeight = height + 68;
+      const headerHeight = 44;
+      const dotsY = windowY + headerHeight / 2;
+      return {
+        outer: `
+          <rect x="${windowX}" y="${windowY}" width="${windowWidth}" height="${windowHeight}" rx="32"
+                fill="#0f172a" stroke="rgba(148,163,184,0.25)" stroke-width="1.4"/>
+          <rect x="${windowX}" y="${windowY}" width="${windowWidth}" height="${headerHeight}" rx="32"
+                fill="#1e293b"/>
+          <g transform="translate(${windowX + 26}, ${dotsY - 4})">
+            <circle cx="0" cy="0" r="5" fill="#fb7185"/>
+            <circle cx="16" cy="0" r="5" fill="#fbbf24"/>
+            <circle cx="32" cy="0" r="5" fill="#34d399"/>
+          </g>
+        `,
+        cardFill: '#1f2937',
+        cardRadius: 18,
+        cardStroke: 'rgba(15,23,42,0.7)',
+        cardStrokeWidth: 1.2,
+      };
+    }
+    case 'none':
+    default:
+      return {};
+  }
 }
 
 export function calculateOutputSize(
@@ -197,6 +333,7 @@ function generateWindowsTitleBar(palette: Palette, x: number, y: number, width: 
 }
 
 export function generateSVG(options: RenderOptions): string {
+  const uniqueId = `frame-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
   const hasMacTitleBar = options.presetId === 'browser-macos' && options.titleBar === 'macos';
   const hasWindowsTitleBar = options.presetId === 'browser-windows' && options.titleBar === 'windows';
   const titleBarHeight = hasMacTitleBar ? 48 : hasWindowsTitleBar ? 36 : 0;
@@ -297,21 +434,43 @@ export function generateSVG(options: RenderOptions): string {
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
   }
 
+  const frameDecoration = getFrameDecorations(
+    options.frameStyle,
+    frameX,
+    imageY,
+    options.imageWidth,
+    options.imageHeight,
+    uniqueId
+  );
+
+  const cardFill = frameDecoration.cardFill || 'white';
+  const cardStroke =
+    frameDecoration.cardStroke && frameDecoration.cardStrokeWidth
+      ? `stroke="${frameDecoration.cardStroke}" stroke-width="${frameDecoration.cardStrokeWidth}"`
+      : '';
+  if (frameDecoration.cardRadius !== undefined) {
+    cardRadius = frameDecoration.cardRadius;
+  }
+
   return `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         ${shadowFilter}
+        ${frameDecoration.defs || ''}
       </defs>
       ${backgroundSVG}
       ${frameSVG}
+      ${frameDecoration.outer || ''}
       <g filter="${shadowFilter ? 'url(#shadow)' : ''}">
+        ${frameDecoration.innerBefore || ''}
         <rect x="${frameX}" y="${imageY}" width="${options.imageWidth}" height="${options.imageHeight}"
-              rx="${cardRadius}" fill="white" />
+              rx="${cardRadius}" fill="${cardFill}" ${cardStroke} />
         <image href="${options.imageData}"
                x="${frameX}" y="${imageY}"
                width="${options.imageWidth}" height="${options.imageHeight}"
                clip-path="inset(0 round ${cardRadius}px)"
                preserveAspectRatio="xMidYMid meet" />
+        ${frameDecoration.innerAfter || ''}
       </g>
     </svg>
   `.trim();
