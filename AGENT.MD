@@ -1,45 +1,45 @@
-# Project Guidance for Agents
+# Насоки за агентите в проекта
 
-Welcome to the **screenshot-styler** project. This document outlines conventions and workflows that all agents must follow when making changes.
+Добре дошли в проекта **screenshot-styler**. Този документ описва конвенциите и работните потоци, които всички агенти трябва да следват при въвеждане на промени.
 
-## Repository Overview
-- The project is a Vite + React + TypeScript application styled primarily with Tailwind CSS.
-- UI components are organized under `src/components/`, while reusable hooks live in `src/hooks/`.
-- Styles are largely declarative via Tailwind utility classes; avoid custom CSS unless Tailwind cannot express the design.
+## Преглед на хранилището
+- Проектът е приложение Vite + React + TypeScript, стилизирано основно с Tailwind CSS.
+- UI компонентите се намират в `src/components/`, докато многократно използваемите hooks са в `src/hooks/`.
+- Стилизирането е предимно декларативно с Tailwind класове; избягвайте персонализирано CSS, освен ако Tailwind не може да покрие нуждата.
 
-## General Contribution Rules
-1. **Follow Existing Patterns:** Before adding new functionality, inspect nearby files to match coding style, naming conventions, and component structure.
-2. **Type Safety:** Always prefer explicit TypeScript types and interfaces. Avoid using `any`—leverage discriminated unions or generics when appropriate.
-3. **Component Structure:**
-   - Use functional components and React hooks.
-   - Keep components focused; extract helpers into the same file if they are component-specific, or into `src/utils/` when reusable.
-4. **State Management:** Use React state/hooks. Only introduce new global state libraries after confirming none already exist.
-5. **Styling:**
-   - Use Tailwind classes defined in `tailwind.config.ts`.
-   - Keep class lists sorted logically (layout → spacing → typography → color → effects).
-   - If custom CSS is necessary, place it in `src/styles/` and reference it explicitly.
-6. **Accessibility:** Ensure interactive elements have appropriate ARIA labels and keyboard interactions.
-7. **Testing:**
-   - Run `npm run lint` and `npm run test` when applicable.
-   - For visual changes, update or add screenshots using the provided tooling if possible.
-8. **Documentation:** Update `README.md` or relevant docs when introducing new features or modifying existing workflows.
+## Общи правила за принос
+1. **Следвайте съществуващите шаблони:** Преди да добавите нова функционалност, прегледайте близките файлове, за да съобразите стил, наименования и структура.
+2. **Типова безопасност:** Винаги предпочитайте изрични TypeScript типове и интерфейси. Избягвайте `any`, а при възможност използвайте дискриминирани обединения или генератори.
+3. **Структура на компонентите:**
+   - Използвайте функционални компоненти и React hooks.
+   - Дръжте компонентите фокусирани; помощни функции остават в същия файл, ако са специфични, или в `src/utils/`, когато са многократно използваеми.
+4. **Управление на състоянието:** Използвайте React state/hooks. Въвеждайте нови библиотеки за глобално състояние само ако вече няма такива.
+5. **Стилиране:**
+   - Използвайте Tailwind класовете, дефинирани в `tailwind.config.ts`.
+   - Подреждайте класовете логично (layout → spacing → typography → color → effects).
+   - Ако е нужно персонализирано CSS, поставяйте го в `src/styles/` и го реферирайте изрично.
+6. **Достъпност:** Осигурявайте подходящи ARIA етикети и клавиатурни взаимодействия за интерактивните елементи.
+7. **Тестване:**
+   - Изпълнявайте `npm run lint` и `npm run test`, когато е приложимо.
+   - При визуални промени актуализирайте или добавяйте скрийншоти чрез наличните инструменти.
+8. **Документация:** Обновявайте `README.md` или релевантните документи при нови функционалности или промени в процесите.
 9. **Pull Requests:**
-   - Provide concise summaries highlighting user-facing changes.
-   - Mention any new dependencies and justify their inclusion.
+   - Добавяйте кратки резюмета, които изтъкват промените, видими за потребителите.
+   - Споменавайте новите зависимости и аргументирайте нуждата от тях.
 
-## File-Specific Notes
-- `index.html`: Only adjust metadata or root mounting points when necessary.
-- `src/main.tsx`: Keep imports tidy and grouped; avoid side effects.
-- `src/components/`: Each component should export a default component and named helper types if needed.
-- `tailwind.config.ts`: Update this file cautiously; ensure new utilities align with project design tokens.
+## Бележки за конкретни файлове
+- `index.html`: Променяйте метаданни или root mounting точки само при нужда.
+- `src/main.tsx`: Поддържайте импорти подредени и групирани; избягвайте странични ефекти.
+- `src/components/`: Всеки компонент трябва да експортира компонент по подразбиране и, при нужда, именувани помощни типове.
+- `tailwind.config.ts`: Актуализирайте внимателно; уверете се, че новите utilities съответстват на дизайн токените на проекта.
 
-## Git Workflow
-1. Create focused commits with descriptive messages.
-2. Run formatting commands (`npm run lint`, `npm run format`) before committing.
-3. Ensure the commit history stays clean—squash or rebase locally if required.
+## Git работен процес
+1. Създавайте фокусирани commit-и с описателни съобщения.
+2. Изпълнявайте инструменти за форматиране (`npm run lint`, `npm run format`) преди commit.
+3. Поддържайте историята чиста—използвайте squash или rebase локално, когато е нужно.
 
-## Communication
-- Leave `TODO` comments only when follow-up work is tracked. Reference ticket numbers when available.
-- Document non-obvious implementation details directly in the code using succinct comments.
+## Комуникация
+- Оставяйте `TODO` коментари само когато последващата работа е проследена. При възможност реферирайте номера на задачата.
+- Документирайте неочевидните детайли за реализация директно в кода с кратки коментари.
 
-Following this guidance will keep the project maintainable and consistent. Thank you for contributing!
+Спазването на тези насоки ще запази проекта поддържаем и последователен. Благодарим ви за приноса!
