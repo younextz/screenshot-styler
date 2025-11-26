@@ -45,6 +45,16 @@ Screenshot Styler is a focused web tool for turning raw screenshots into polishe
 
 4. **Open the app** at [http://localhost:5173](http://localhost:5173) and begin styling.
 
+### Run the dev server anytime
+
+Once dependencies are installed you can jump straight back into development:
+
+```bash
+npm run dev
+```
+
+This launches Vite’s hot-reloading server (default port `5173`) so you can preview live changes as you tweak components or styles.
+
 ### Useful scripts
 
 - `npm run build` – production bundle
