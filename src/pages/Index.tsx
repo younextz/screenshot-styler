@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TweetLoader } from '@/components/TweetLoader';
 import { TweetCard } from '@/components/TweetCard';
 import { ImageLoader } from '@/components/ImageLoader';
@@ -18,22 +18,22 @@ import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 const Index = () => {
-  const savedSettings = loadSettings();
   const { theme } = useTheme();
 
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
-  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-soft');
-  const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
-  const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
+  const [presetId, setPresetId] = useState(() => loadSettings().presetId || 'gradient-soft');
+  const [paletteId, setPaletteId] = useState(() => loadSettings().paletteId || 'jetbrains-dark');
+  const [titleBar, setTitleBar] = useState<TitleBarType>(() => loadSettings().titleBar || 'none');
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(() => loadSettings().aspectRatio || 'auto');
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
-  const [tweetData, setTweetData] = useState<any>(null);
+  const [tweetData, setTweetData] = useState<unknown>(null);
+  const [hasSavedPalettePreference] = useState(() => !!loadSettings().paletteId);
 
-  const currentPreset = presets.find(p => p.id === presetId) || presets[0];
-  const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
+  const currentPreset = useMemo(() => presets.find(p => p.id === presetId) || presets[0], [presetId]);
+  const currentPalette = useMemo(() => palettes.find(p => p.id === paletteId) || palettes[0], [paletteId]);
 
   useEffect(() => {
     if (imageData && imageWidth && imageHeight) {
@@ -56,11 +56,10 @@ const Index = () => {
 
   // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {
-    if (!savedSettings.paletteId) {
+    if (!hasSavedPalettePreference) {
       setPaletteId(theme === 'light' ? 'soft-pastel' : 'jetbrains-dark');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme]);
+  }, [theme, hasSavedPalettePreference]);
 
   const handleImageLoad = (dataUrl: string, width: number, height: number) => {
     setImageData(dataUrl);
