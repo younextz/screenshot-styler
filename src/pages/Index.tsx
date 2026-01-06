@@ -86,13 +86,14 @@ const Index = () => {
         aspectRatio,
         code: codeContent,
         codeTheme,
+        languageId: codeLanguage.id,
         fontSize: 14,
         lineHeight: 22,
         padding: 24,
       });
       setCodeSvgContent(svg);
     }
-  }, [codeContent, presetId, paletteId, aspectRatio, codeTheme, currentPalette]);
+  }, [codeContent, presetId, paletteId, aspectRatio, codeTheme, codeLanguage, currentPalette]);
 
   // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { Palette } from './palettes';
 import { AspectRatio, calculateOutputSize } from './svgRenderer';
 import { CodeTheme } from './codeThemes';
+import { highlightCodeToTokens, HighlightedToken } from './syntaxHighlighter';
 
 interface CodeSnippetRenderOptions {
   presetId: string;
@@ -8,6 +9,7 @@ interface CodeSnippetRenderOptions {
   aspectRatio: AspectRatio;
   code: string;
   codeTheme: CodeTheme;
+  languageId: string;
   fontSize: number;
   lineHeight: number;
   padding: number;
@@ -147,19 +149,42 @@ function escapeXml(text: string): string {
     .replace(/'/g, '&apos;');
 }
 
-function generateCodeLines(
+function preserveWhitespace(text: string): string {
+  return text
+    .replace(/\t/g, '    ')
+    .replace(/ /g, '\u00A0');
+}
+
+function generateHighlightedCodeLines(
   code: string,
+  languageId: string,
+  themeId: string,
   x: number,
   y: number,
   fontSize: number,
   lineHeight: number,
-  foreground: string
+  defaultColor: string
 ): string {
-  const lines = code.split('\n');
-  return lines
-    .map((line, index) => {
+  const highlightedLines = highlightCodeToTokens(code, languageId, themeId);
+  const fontFamily = "'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace";
+
+  return highlightedLines
+    .map((lineTokens: HighlightedToken[], index: number) => {
       const lineY = y + index * lineHeight;
-      return `<text x="${x}" y="${lineY}" font-family="'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace" font-size="${fontSize}" fill="${foreground}">${escapeXml(line) || ' '}</text>`;
+
+      if (lineTokens.length === 0 || (lineTokens.length === 1 && lineTokens[0].text === '')) {
+        return `<text x="${x}" y="${lineY}" xml:space="preserve" font-family="${fontFamily}" font-size="${fontSize}" fill="${defaultColor}">\u00A0</text>`;
+      }
+
+      const tspans = lineTokens
+        .map((token: HighlightedToken) => {
+          const preservedText = preserveWhitespace(token.text);
+          const escapedText = escapeXml(preservedText);
+          return `<tspan fill="${token.color}">${escapedText}</tspan>`;
+        })
+        .join('');
+
+      return `<text x="${x}" y="${lineY}" xml:space="preserve" font-family="${fontFamily}" font-size="${fontSize}">${tspans}</text>`;
     })
     .join('\n');
 }
@@ -185,6 +210,7 @@ export function generateCodeSnippetSVG(options: CodeSnippetRenderOptions): strin
     aspectRatio,
     code,
     codeTheme,
+    languageId,
     fontSize = 14,
     lineHeight = 22,
     padding = 24,
@@ -243,7 +269,7 @@ export function generateCodeSnippetSVG(options: CodeSnippetRenderOptions): strin
 
   const codeTextX = codeBlockX + padding;
   const codeTextY = codeBlockY + padding + fontSize;
-  const codeLines = generateCodeLines(code, codeTextX, codeTextY, fontSize, lineHeight, codeTheme.foreground);
+  const codeLines = generateHighlightedCodeLines(code, languageId, codeTheme.id, codeTextX, codeTextY, fontSize, lineHeight, codeTheme.foreground);
 
   return `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
