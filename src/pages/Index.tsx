@@ -1,18 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TweetLoader } from '@/components/TweetLoader';
-import { TweetCard } from '@/components/TweetCard';
 import { ImageLoader } from '@/components/ImageLoader';
 import { PresetPicker } from '@/components/PresetPicker';
 import { PalettePicker } from '@/components/PalettePicker';
 import { ControlPanel } from '@/components/ControlPanel';
 import { CanvasPreview } from '@/components/CanvasPreview';
 import { ExportButtons } from '@/components/ExportButtons';
+import { ModeTabs, AppMode } from '@/components/ModeTabs';
+import { CodeSnippetEditor } from '@/components/CodeSnippetEditor';
+import { CodeSnippetPreview } from '@/components/CodeSnippetPreview';
+import { CodeSnippetControls } from '@/components/CodeSnippetControls';
 import { presets } from '@/lib/presets';
 import { palettes } from '@/lib/palettes';
 import { generateSVG, TitleBarType, AspectRatio } from '@/lib/svgRenderer';
+import { generateCodeSnippetSVG } from '@/lib/codeSnippetRenderer';
 import { saveSettings, loadSettings } from '@/lib/storage';
+import { codeThemes, getCodeThemeById, CodeTheme } from '@/lib/codeThemes';
+import { codeLanguages, getCodeLanguageById, CodeLanguage } from '@/lib/codeLanguages';
 import { toast } from 'sonner';
-import { AlertCircle, Upload } from 'lucide-react';
+import { AlertCircle, Upload, Code } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
@@ -21,6 +27,7 @@ const Index = () => {
   const savedSettings = loadSettings();
   const { theme } = useTheme();
 
+  const [appMode, setAppMode] = useState<AppMode>(savedSettings.appMode || 'screenshot');
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
@@ -30,7 +37,16 @@ const Index = () => {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
-  const [tweetData, setTweetData] = useState<any>(null);
+  const [tweetData, setTweetData] = useState<{ author_name?: string; text?: string } | null>(null);
+
+  const [codeContent, setCodeContent] = useState(savedSettings.codeContent || codeLanguages[0].defaultCode);
+  const [codeLanguage, setCodeLanguage] = useState<CodeLanguage>(
+    getCodeLanguageById(savedSettings.codeLanguageId || 'javascript')
+  );
+  const [codeTheme, setCodeTheme] = useState<CodeTheme>(
+    getCodeThemeById(savedSettings.codeThemeId || 'dracula')
+  );
+  const [codeSvgContent, setCodeSvgContent] = useState('');
 
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
@@ -51,8 +67,32 @@ const Index = () => {
   }, [imageData, imageWidth, imageHeight, presetId, paletteId, titleBar, aspectRatio, currentPalette, currentPreset]);
 
   useEffect(() => {
-    saveSettings({ presetId, paletteId, titleBar, aspectRatio });
-  }, [presetId, paletteId, titleBar, aspectRatio]);
+    saveSettings({ presetId, paletteId, titleBar, aspectRatio, appMode });
+  }, [presetId, paletteId, titleBar, aspectRatio, appMode]);
+
+  useEffect(() => {
+    saveSettings({
+      codeLanguageId: codeLanguage.id,
+      codeThemeId: codeTheme.id,
+      codeContent,
+    });
+  }, [codeLanguage, codeTheme, codeContent]);
+
+  useEffect(() => {
+    if (codeContent) {
+      const svg = generateCodeSnippetSVG({
+        presetId,
+        palette: currentPalette,
+        aspectRatio,
+        code: codeContent,
+        codeTheme,
+        fontSize: 14,
+        lineHeight: 22,
+        padding: 24,
+      });
+      setCodeSvgContent(svg);
+    }
+  }, [codeContent, presetId, paletteId, aspectRatio, codeTheme, currentPalette]);
 
   // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {
@@ -74,7 +114,7 @@ const Index = () => {
     }
   };
 
-  const handleTweetLoad = (data: any) => {
+  const handleTweetLoad = (data: { author_name?: string; text?: string } | null) => {
     setTweetData(data);
   };
 
@@ -150,16 +190,19 @@ const Index = () => {
   };
 
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
-    if (!svgContent) return;
+    const currentSvg = appMode === 'screenshot' ? svgContent : codeSvgContent;
+    const filePrefix = appMode === 'screenshot' ? 'styled-screenshot' : 'code-snippet';
+    
+    if (!currentSvg) return;
 
     try {
       if (type === 'downloadSvg') {
-        downloadSvg(svgContent);
+        downloadSvg(currentSvg);
         toast.success('SVG downloaded!');
         return;
       }
 
-      const blob = await svgToBlob(svgContent, type === 'download4k' ? 3840 : undefined);
+      const blob = await svgToBlob(currentSvg, type === 'download4k' ? 3840 : undefined);
 
       if (type === 'copy') {
         try {
@@ -170,11 +213,10 @@ const Index = () => {
         } catch (clipboardError) {
           console.error('Clipboard error:', clipboardError);
           toast.error('Copy failed. Downloading instead...');
-          // Fallback to download
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `styled-screenshot-${Date.now()}.png`;
+          a.download = `${filePrefix}-${Date.now()}.png`;
           a.click();
           URL.revokeObjectURL(url);
           toast.success('Downloaded successfully!');
@@ -183,7 +225,7 @@ const Index = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `styled-screenshot-${Date.now()}.png`;
+        a.download = `${filePrefix}-${Date.now()}.png`;
         a.click();
         URL.revokeObjectURL(url);
         toast.success(type === 'download4k' ? '4K PNG downloaded!' : 'PNG downloaded!');
@@ -194,14 +236,31 @@ const Index = () => {
     }
   };
 
+  const handleLanguageChange = useCallback((language: CodeLanguage) => {
+    setCodeLanguage(language);
+    if (!savedSettings.codeContent) {
+      setCodeContent(language.defaultCode);
+    }
+  }, [savedSettings.codeContent]);
+
+  const handleThemeChange = useCallback((theme: CodeTheme) => {
+    setCodeTheme(theme);
+  }, []);
+
+  const currentSvgForPreview = appMode === 'screenshot' ? svgContent : codeSvgContent;
+  const hasContent = appMode === 'screenshot' ? !!imageData : !!codeContent;
+
   return (
     <div className="flex h-screen flex-col bg-background">
       <header className="flex items-center justify-between border-b border-border px-10 py-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Screenshot Styler</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Transform your screenshots with polished, sharable frames.
-          </p>
+        <div className="flex items-center gap-8">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">Screenshot Styler</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Transform your screenshots with polished, sharable frames.
+            </p>
+          </div>
+          <ModeTabs mode={appMode} onChange={setAppMode} />
         </div>
         <ThemeToggle />
       </header>
@@ -210,89 +269,221 @@ const Index = () => {
         <section
           className={cn(
             'relative flex flex-1 items-center bg-muted/5 pl-2 pr-3 py-10 sm:pl-3 sm:pr-4',
-            svgContent ? 'justify-start' : 'justify-center',
+            currentSvgForPreview ? 'justify-start' : 'justify-center',
           )}
         >
-          {svgContent ? (
-            <CanvasPreview
-              svgContent={svgContent}
-              className="max-h-[calc(100vh-12rem)]"
-            />
-          ) : (
-            <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-background/80">
-                <Upload className="h-6 w-6 text-muted-foreground" />
+          {appMode === 'screenshot' ? (
+            svgContent ? (
+              <CanvasPreview
+                svgContent={svgContent}
+                className="max-h-[calc(100vh-12rem)]"
+              />
+            ) : (
+              <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-background/80">
+                  <Upload className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h2 className="text-xl font-semibold">Drop in a screenshot to get started</h2>
+                <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                  Use the import tools on the right to upload a PNG or JPG, or paste directly from your clipboard.
+                </p>
               </div>
-              <h2 className="text-xl font-semibold">Drop in a screenshot to get started</h2>
-              <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                Use the import tools on the right to upload a PNG or JPG, or paste directly from your clipboard.
-              </p>
-            </div>
+            )
+          ) : (
+            codeSvgContent ? (
+              <CodeSnippetPreview
+                svgContent={codeSvgContent}
+                className="max-h-[calc(100vh-12rem)]"
+              />
+            ) : (
+              <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-background/80">
+                  <Code className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h2 className="text-xl font-semibold">Write some code to get started</h2>
+                <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                  Use the code editor on the right to write or paste your code snippet.
+                </p>
+              </div>
+            )
           )}
         </section>
 
         <aside className="flex w-full max-w-xl flex-col border-l border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="space-y-10">
-              <section className="space-y-6">
-                <div>
-                  <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                    Source
-                  </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Upload or paste your screenshot to populate the live preview.
-                  </p>
-                </div>
-                <ImageLoader onImageLoad={handleImageLoad} />
-                <div className="rounded-xl border border-border/60 bg-card/60 p-4">
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">Fetch Tweet (optional)</p>
-                      <p className="text-xs text-muted-foreground">
-                        Paste a tweet URL to pull its text details without leaving the app.
+              {appMode === 'screenshot' ? (
+                <>
+                  <section className="space-y-6">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Source
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Upload or paste your screenshot to populate the live preview.
                       </p>
                     </div>
-                    <TweetLoader onTweetLoad={handleTweetLoad} />
-                  </div>
-                </div>
-              </section>
+                    <ImageLoader onImageLoad={handleImageLoad} />
+                    <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+                      <div className="space-y-3">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-foreground">Fetch Tweet (optional)</p>
+                          <p className="text-xs text-muted-foreground">
+                            Paste a tweet URL to pull its text details without leaving the app.
+                          </p>
+                        </div>
+                        <TweetLoader onTweetLoad={handleTweetLoad} />
+                      </div>
+                    </div>
+                  </section>
 
-              <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 rounded-full bg-accent/20 p-1">
-                    <AlertCircle className="h-4 w-4 text-accent" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-accent">Privacy First</p>
-                    <p className="mt-1">
-                      All processing happens in your browser. Images are never uploaded or stored. Please avoid sharing sensitive data.
-                    </p>
-                  </div>
-                </div>
-              </section>
+                  <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 rounded-full bg-accent/20 p-1">
+                        <AlertCircle className="h-4 w-4 text-accent" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-accent">Privacy First</p>
+                        <p className="mt-1">
+                          All processing happens in your browser. Images are never uploaded or stored. Please avoid sharing sensitive data.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
 
-              {imageData && (
-                <div className="space-y-10">
+                  {imageData && (
+                    <div className="space-y-10">
+                      <section className="space-y-4">
+                        <div>
+                          <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                            Export
+                          </h2>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            Choose how you want to share or download your styled screenshot.
+                          </p>
+                        </div>
+                        <ExportButtons
+                          svgContent={svgContent}
+                          onExport={handleExport}
+                          disabled={!svgContent}
+                        />
+                      </section>
+
+                      <section className="space-y-4">
+                        <div>
+                          <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                            Style Preset
+                          </h2>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            Quickly switch between layout styles designed for different content types.
+                          </p>
+                        </div>
+                        <PresetPicker selectedId={presetId} onChange={setPresetId} />
+                      </section>
+
+                      <section className="space-y-4">
+                        <div>
+                          <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                            Color Palette
+                          </h2>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            Tune the backdrop colors to match your brand or highlight important details.
+                          </p>
+                        </div>
+                        <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
+                      </section>
+
+                      <section className="space-y-4">
+                        <div>
+                          <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                            Options
+                          </h2>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            Adjust the window chrome, aspect ratio, and layout to perfect the frame.
+                          </p>
+                        </div>
+                        <ControlPanel
+                          titleBar={titleBar}
+                          aspectRatio={aspectRatio}
+                          onTitleBarChange={setTitleBar}
+                          onAspectRatioChange={setAspectRatio}
+                          supportsTitleBar={currentPreset.supportsTitle}
+                        />
+                      </section>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <section className="space-y-6">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Code Editor
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Write or paste your code snippet to generate a styled preview.
+                      </p>
+                    </div>
+                    <CodeSnippetEditor
+                      code={codeContent}
+                      onChange={setCodeContent}
+                      language={codeLanguage}
+                      theme={codeTheme}
+                      className="h-64 border border-border rounded-xl"
+                    />
+                  </section>
+
+                  <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 rounded-full bg-accent/20 p-1">
+                        <AlertCircle className="h-4 w-4 text-accent" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-accent">Privacy First</p>
+                        <p className="mt-1">
+                          All processing happens in your browser. Code is never uploaded or stored.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+
                   <section className="space-y-4">
                     <div>
                       <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
                         Export
                       </h2>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Choose how you want to share or download your styled screenshot.
+                        Choose how you want to share or download your code snippet.
                       </p>
                     </div>
                     <ExportButtons
-                      svgContent={svgContent}
+                      svgContent={codeSvgContent}
                       onExport={handleExport}
-                      disabled={!svgContent}
+                      disabled={!codeSvgContent}
                     />
                   </section>
 
                   <section className="space-y-4">
                     <div>
                       <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Style Preset
+                        Code Settings
+                      </h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Choose the programming language and syntax highlighting theme.
+                      </p>
+                    </div>
+                    <CodeSnippetControls
+                      selectedLanguageId={codeLanguage.id}
+                      selectedThemeId={codeTheme.id}
+                      onLanguageChange={handleLanguageChange}
+                      onThemeChange={handleThemeChange}
+                    />
+                  </section>
+
+                  <section className="space-y-4">
+                    <div>
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                        Background Style
                       </h2>
                       <p className="mt-2 text-sm text-muted-foreground">
                         Quickly switch between layout styles designed for different content types.
@@ -312,25 +503,7 @@ const Index = () => {
                     </div>
                     <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
                   </section>
-
-                  <section className="space-y-4">
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Options
-                      </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Adjust the window chrome, aspect ratio, and layout to perfect the frame.
-                      </p>
-                    </div>
-                    <ControlPanel
-                      titleBar={titleBar}
-                      aspectRatio={aspectRatio}
-                      onTitleBarChange={setTitleBar}
-                      onAspectRatioChange={setAspectRatio}
-                      supportsTitleBar={currentPreset.supportsTitle}
-                    />
-                  </section>
-                </div>
+                </>
               )}
             </div>
           </div>
