@@ -6,7 +6,7 @@ import {
   materialDark,
   materialLight,
   nord,
-  oneDark,
+  atomone,
   solarizedDark,
   solarizedLight,
   tokyoNight,
@@ -73,7 +73,7 @@ export const codeThemes: CodeTheme[] = [
   {
     id: 'one-dark',
     label: 'One Dark',
-    extension: oneDark,
+    extension: atomone,
     isDark: true,
     background: '#282c34',
     foreground: '#abb2bf',
