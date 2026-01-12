@@ -18,47 +18,89 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 53066259-aabd-4f17-8d1b-c15751f38da9 -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
-
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+**Completed**: Created `spec.md` with:
+- Task difficulty assessment: **Medium**
+- Competitive analysis of Pika.style, CleanShot X, Xnapper, InstantGradient
+- New preset design: 16 background presets across 4 categories
+- SVG rendering approach for each preset type
+- Verification approach using existing test/lint/build commands
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Update Presets Definition
 
-Implement the task according to the technical specification and general engineering best practices.
+Modify `src/lib/presets.ts` with the new preset array:
+- Replace 6 existing background presets with 16 new ones
+- Organize into categories: Gradients (6), Mesh (4), Solid (3), Pattern (3)
+- Keep frame presets (4) and card presets (2) unchanged
+- Update preset labels with evocative names (Sunset, Ocean, Aurora, etc.)
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Verification**: `npm run build` should pass with no TypeScript errors
+
+---
+
+### [ ] Step: Implement SVG Generators
+
+Update `src/lib/svgRenderer.ts` with new background generators:
+
+1. **Gradient generators** (6 functions):
+   - `generateGradientSunset` - Warm orange-pink-purple horizontal
+   - `generateGradientOcean` - Cool blue-teal diagonal
+   - `generateGradientAurora` - Multi-color flowing gradient
+   - `generateGradientRose` - Soft pink-peach
+   - `generateGradientMidnight` - Deep purple-blue dark
+   - `generateGradientMint` - Green-teal light
+
+2. **Mesh generators** (4 functions):
+   - `generateMeshCosmic` - Purple-pink-blue flowing
+   - `generateMeshTropical` - Orange-pink-cyan vibrant
+   - `generateMeshPastel` - Soft pastel multi-color
+   - `generateMeshNeon` - Electric blue-pink-green
+
+3. **Solid generators** (3 functions):
+   - `generateSolidDark` - Clean dark gray
+   - `generateSolidLight` - Clean light gray/white
+   - `generateSolidGradient` - Subtle monochrome gradient
+
+4. **Pattern generators** (3 functions):
+   - `generatePatternDots` - Grid of dots
+   - `generatePatternGrid` - Subtle grid lines
+   - `generatePatternNoise` - Textured noise
+
+5. Update `generateSVG` switch statement
+6. Remove old unused generator functions
+
+**Verification**: `npm run build` and `npm run test`
+
+---
+
+### [ ] Step: Update Palettes (Optional Enhancement)
+
+Modify `src/lib/palettes.ts`:
+- Reorder palettes to put most versatile ones first
+- Add 2-3 new palettes optimized for new gradient styles
+- Ensure good variety for both light and dark themes
+
+**Verification**: Visual testing with dev server
+
+---
+
+### [ ] Step: Testing & Refinement
+
+1. Run automated checks:
+   - `npm run lint`
+   - `npm run test`
+   - `npm run build`
+
+2. Manual visual testing:
+   - Test all 16 background presets with multiple palettes
+   - Verify export functionality (PNG, SVG, 4K)
+   - Test all aspect ratios
+   - Ensure frame/card presets still work
+
+3. Write completion report to `report.md`
+
+**Verification**: All tests pass, visual quality meets standards
