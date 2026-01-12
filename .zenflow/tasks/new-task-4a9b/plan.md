@@ -106,11 +106,17 @@ Update `src/components/ExportButtons.tsx`:
 
 ---
 
-### [ ] Step: Update Picker Components
+### [x] Step: Update Picker Components
+<!-- chat-id: 54019be9-deac-49b5-aaa0-3f3b13b4296d -->
 Update picker components for compact display:
 - `src/components/PresetPicker.tsx`: Compact grid, smaller buttons
 - `src/components/PalettePicker.tsx`: Smaller swatches, improved selection
 - `src/components/ControlPanel.tsx`: Inline controls, pill-style toggles
+
+**Completed:** Updated all picker components with:
+- **PresetPicker**: Flex-wrap layout with pill-style buttons (px-2.5 py-1), smaller text (text-xs), selected state uses filled primary background
+- **PalettePicker**: 3-column compact grid, smaller swatches (h-3), removed labels in favor of title tooltip, subtle ring on selection
+- **ControlPanel**: Inline flex layout with segmented toggle controls, pill-style buttons in bg-secondary/50 container, selected state uses bg-background with shadow
 
 ---
 
