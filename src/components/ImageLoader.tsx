@@ -104,24 +104,24 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
         <Button
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
-          className="flex-1 h-32 border-2 border-dashed hover:border-primary transition-colors"
+          className="flex-1 h-28 border border-dashed border-border/60 hover:border-border hover:bg-muted/30 transition-all duration-200"
         >
-          <div className="flex flex-col items-center gap-2">
-            <Upload className="w-8 h-8" />
+          <div className="flex flex-col items-center gap-1.5">
+            <Upload className="w-6 h-6 text-muted-foreground" />
             <span className="text-sm font-medium">Upload Image</span>
-            <span className="text-xs text-muted-foreground">PNG or JPG, max 10MB</span>
+            <span className="text-xs text-muted-foreground/70">PNG or JPG, max 10MB</span>
           </div>
         </Button>
 
         <Button
           variant="outline"
           onClick={handlePasteFromClipboard}
-          className="flex-1 h-32 border-2 border-dashed hover:border-primary transition-colors"
+          className="flex-1 h-28 border border-dashed border-border/60 hover:border-border hover:bg-muted/30 transition-all duration-200"
         >
-          <div className="flex flex-col items-center gap-2">
-            <Clipboard className="w-8 h-8" />
+          <div className="flex flex-col items-center gap-1.5">
+            <Clipboard className="w-6 h-6 text-muted-foreground" />
             <span className="text-sm font-medium">From Clipboard</span>
-            <span className="text-xs text-muted-foreground">Or press Ctrl/⌘+V</span>
+            <span className="text-xs text-muted-foreground/70">Or press Ctrl/⌘+V</span>
           </div>
         </Button>
       </div>

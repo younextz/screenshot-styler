@@ -95,19 +95,24 @@ Completed. Refined the main page layout for cleaner visual hierarchy and improve
 
 ---
 
-### [ ] Step: Refine Image Upload Components
+### [x] Step: Refine Image Upload Components
+<!-- chat-id: 0c88c47e-eb3e-44dd-ae02-5bcde674b4f7 -->
 
-Update ImageLoader for a cleaner drop zone experience.
+Completed. Refined ImageLoader for a cleaner, minimal drop zone experience.
 
-**Tasks:**
-1. Update `src/components/ImageLoader.tsx`:
-   - Change from `border-2` to `border`
-   - Soften dashed border appearance
-   - Refine icon and text styling
+**Changes Made:**
+1. Updated `src/components/ImageLoader.tsx`:
+   - Changed from `border-2` to `border` for softer appearance
+   - Softened dashed border with `border-border/60` and subtle hover state `hover:border-border`
+   - Reduced button height from `h-32` to `h-28` for tighter layout
+   - Added subtle background hover effect `hover:bg-muted/30`
+   - Changed transition from `transition-colors` to `transition-all duration-200` for smoother feedback
+   - Reduced icon size from `w-8 h-8` to `w-6 h-6` with `text-muted-foreground` color
+   - Tightened inner gap from `gap-2` to `gap-1.5`
+   - Softened helper text with `text-muted-foreground/70`
 
 **Verification:**
-- Visual check of upload buttons
-- Test file upload and paste functionality
+- `npm run build` - passed successfully
 
 ---
 
