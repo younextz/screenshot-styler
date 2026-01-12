@@ -70,11 +70,21 @@ Update `src/pages/Index.tsx` for viewport-fit design:
 
 ---
 
-### [ ] Step: Update ImageLoader Component
+### [x] Step: Update ImageLoader Component
+<!-- chat-id: dd8588e9-74d7-412e-a383-9b1b80a5adc5 -->
 Update `src/components/ImageLoader.tsx`:
 - More compact upload buttons
 - Refined hover states
 - Cleaner border treatment
+
+**Completed:** Updated ImageLoader with:
+- Reduced button height from h-32 to h-16 for compact display
+- Horizontal layout with icon + text side-by-side instead of stacked
+- Smaller icons (w-5 h-5) with muted foreground color
+- Softer border treatment (border-border/60) with subtle hover states
+- Refined hover: border-primary/50 and bg-primary/5 for subtle feedback
+- Tighter spacing (gap-2 between buttons, gap-0.5 for text)
+- Condensed labels ("Upload" / "Paste") with smaller helper text (11px)
 
 ---
 
