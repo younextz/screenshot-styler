@@ -88,11 +88,21 @@ Update `src/components/ImageLoader.tsx`:
 
 ---
 
-### [ ] Step: Update ExportButtons Component
+### [x] Step: Update ExportButtons Component
+<!-- chat-id: d5f846c5-3f03-4128-80f8-54b31e9a59f4 -->
 Update `src/components/ExportButtons.tsx`:
 - Horizontal compact layout
 - Primary action emphasis
 - Refined button styling
+
+**Completed:** Updated ExportButtons with:
+- Horizontal flex layout replacing the grid structure
+- Primary "Copy" action with filled button style (default variant, size="sm")
+- Secondary download actions (PNG, 4K, SVG) using ghost variant with muted colors
+- Visual separator (border-l) between primary and secondary actions
+- Compact button sizing with smaller icons (w-4 h-4) and tighter padding
+- Simplified labels ("Copy", "PNG", "4K", "SVG") for cleaner appearance
+- Hover states transition text from muted-foreground to foreground
 
 ---
 
