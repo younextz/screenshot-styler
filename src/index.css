@@ -2,113 +2,116 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/*
+ * Design System
+ * Following shadcn/ui best practices for minimal, clean aesthetics.
+ * All colors use HSL format for consistency.
+ */
 
 @layer base {
   :root {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 98%;
+    /* Core colors - Dark theme (default) */
+    --background: 240 10% 4%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 189 100% 50%;
-    --primary-foreground: 0 0% 5%;
+    --primary: 210 100% 52%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 240 5% 12%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 240 5% 16%;
+    --muted-foreground: 240 5% 55%;
 
-    --accent: 335 100% 60%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 240 5% 16%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 189 100% 50%;
+    --border: 240 5% 18%;
+    --input: 240 5% 18%;
+    --ring: 210 100% 52%;
 
     --radius: 0.5rem;
 
-    /* JetBrains inspired colors */
-    --jetbrains-cyan: 189 100% 50%;
-    --jetbrains-pink: 335 100% 60%;
-    --jetbrains-yellow: 48 100% 50%;
-    --jetbrains-purple: 270 70% 60%;
-    --jetbrains-orange: 24 100% 60%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(189 100% 50%), hsl(335 100% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(270 70% 60%), hsl(189 100% 50%));
-    --gradient-warm: linear-gradient(135deg, hsl(335 100% 60%), hsl(24 100% 60%));
-    
-    /* Shadows */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 20px hsl(189 100% 50% / 0.3);
-    
+    /* Semantic accent colors - softer, less saturated */
+    --color-cyan: 190 75% 55%;
+    --color-pink: 330 65% 60%;
+    --color-yellow: 45 90% 55%;
+    --color-purple: 270 55% 60%;
+    --color-orange: 25 85% 55%;
+
+    /* Gradients - refined for subtlety */
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 52%), hsl(270 55% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(190 75% 55%), hsl(210 100% 52%));
+    --gradient-warm: linear-gradient(135deg, hsl(330 65% 60%), hsl(25 85% 55%));
+
+    /* Shadows - subtle depth */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --shadow-glow: 0 0 16px hsl(210 100% 52% / 0.2);
+
     /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Light theme */
   :root[data-theme="light"] {
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 240 10% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 240 10% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 240 10% 4%;
 
-    --primary: 222 89% 56%; /* a bit deeper blue for light bg */
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
 
-    --accent: 335 83% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 222 89% 56%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 221 83% 53%;
 
-    /* JetBrains inspired colors (unchanged hues, adjusted contrast if needed) */
-    --jetbrains-cyan: 189 100% 45%;
-    --jetbrains-pink: 335 88% 55%;
-    --jetbrains-yellow: 48 100% 50%;
-    --jetbrains-purple: 270 70% 55%;
-    --jetbrains-orange: 24 100% 55%;
+    /* Semantic accent colors - slightly adjusted for light bg contrast */
+    --color-cyan: 190 80% 42%;
+    --color-pink: 330 70% 50%;
+    --color-yellow: 45 95% 48%;
+    --color-purple: 270 60% 52%;
+    --color-orange: 25 90% 50%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(189 100% 45%), hsl(335 88% 55%));
-    --gradient-secondary: linear-gradient(135deg, hsl(270 70% 55%), hsl(189 100% 45%));
-    --gradient-warm: linear-gradient(135deg, hsl(335 88% 55%), hsl(24 100% 55%));
+    /* Gradients - adjusted for light theme */
+    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%), hsl(270 60% 52%));
+    --gradient-secondary: linear-gradient(135deg, hsl(190 80% 42%), hsl(221 83% 53%));
+    --gradient-warm: linear-gradient(135deg, hsl(330 70% 50%), hsl(25 90% 50%));
 
-    /* Shadows for light */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-    --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 20px rgba(0,0,0,0.1);
-    --shadow-xl: 0 16px 40px rgba(0,0,0,0.12);
-    --shadow-glow: 0 0 18px hsl(222 89% 56% / 0.25);
+    /* Shadows - lighter for light theme */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 12px hsl(221 83% 53% / 0.15);
   }
 }
 
