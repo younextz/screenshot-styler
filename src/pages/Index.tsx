@@ -196,10 +196,10 @@ const Index = () => {
 
   return (
     <div className="flex h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b border-border px-10 py-6">
+      <header className="flex items-center justify-between border-b border-border/60 px-8 py-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Screenshot Styler</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="text-xl font-medium tracking-tight text-foreground">Screenshot Styler</h1>
+          <p className="mt-1 text-sm text-muted-foreground/80">
             Transform your screenshots with polished, sharable frames.
           </p>
         </div>
@@ -219,35 +219,35 @@ const Index = () => {
               className="max-h-[calc(100vh-12rem)]"
             />
           ) : (
-            <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-background/80">
-                <Upload className="h-6 w-6 text-muted-foreground" />
+            <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/30 p-12 text-center">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-border/40 bg-muted/30">
+                <Upload className="h-5 w-5 text-muted-foreground/70" />
               </div>
-              <h2 className="text-xl font-semibold">Drop in a screenshot to get started</h2>
-              <p className="mt-2 max-w-md text-sm text-muted-foreground">
+              <h2 className="text-lg font-medium text-foreground">Drop in a screenshot to get started</h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground/80">
                 Use the import tools on the right to upload a PNG or JPG, or paste directly from your clipboard.
               </p>
             </div>
           )}
         </section>
 
-        <aside className="flex w-full max-w-xl flex-col border-l border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-          <div className="flex-1 overflow-y-auto px-6 py-8">
-            <div className="space-y-10">
-              <section className="space-y-6">
+        <aside className="flex w-full max-w-xl flex-col border-l border-border/60 bg-background/98 backdrop-blur-sm supports-[backdrop-filter]:bg-background/95">
+          <div className="flex-1 overflow-y-auto px-6 py-6">
+            <div className="space-y-8">
+              <section className="space-y-5">
                 <div>
-                  <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                  <h2 className="text-sm font-medium text-foreground">
                     Source
                   </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-1.5 text-sm text-muted-foreground">
                     Upload or paste your screenshot to populate the live preview.
                   </p>
                 </div>
                 <ImageLoader onImageLoad={handleImageLoad} />
-                <div className="rounded-xl border border-border/60 bg-card/60 p-4">
+                <div className="rounded-lg border border-border/40 bg-muted/20 p-4">
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">Fetch Tweet (optional)</p>
+                      <p className="text-sm font-medium text-foreground/90">Fetch tweet (optional)</p>
                       <p className="text-xs text-muted-foreground">
                         Paste a tweet URL to pull its text details without leaving the app.
                       </p>
@@ -257,14 +257,14 @@ const Index = () => {
                 </div>
               </section>
 
-              <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
+              <section className="rounded-lg border border-border/30 bg-muted/10 p-4 text-sm text-muted-foreground">
                 <div className="flex items-start gap-3">
-                  <div className="mt-1 rounded-full bg-accent/20 p-1">
-                    <AlertCircle className="h-4 w-4 text-accent" />
+                  <div className="mt-0.5 rounded-full bg-muted/40 p-1.5">
+                    <AlertCircle className="h-3.5 w-3.5 text-muted-foreground/70" />
                   </div>
                   <div>
-                    <p className="font-medium text-accent">Privacy First</p>
-                    <p className="mt-1">
+                    <p className="font-medium text-foreground/80">Privacy first</p>
+                    <p className="mt-1 text-muted-foreground/80">
                       All processing happens in your browser. Images are never uploaded or stored. Please avoid sharing sensitive data.
                     </p>
                   </div>
@@ -272,13 +272,13 @@ const Index = () => {
               </section>
 
               {imageData && (
-                <div className="space-y-10">
+                <div className="space-y-8">
                   <section className="space-y-4">
                     <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                      <h2 className="text-sm font-medium text-foreground">
                         Export
                       </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
+                      <p className="mt-1.5 text-sm text-muted-foreground">
                         Choose how you want to share or download your styled screenshot.
                       </p>
                     </div>
@@ -291,10 +291,10 @@ const Index = () => {
 
                   <section className="space-y-4">
                     <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Style Preset
+                      <h2 className="text-sm font-medium text-foreground">
+                        Style preset
                       </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
+                      <p className="mt-1.5 text-sm text-muted-foreground">
                         Quickly switch between layout styles designed for different content types.
                       </p>
                     </div>
@@ -303,10 +303,10 @@ const Index = () => {
 
                   <section className="space-y-4">
                     <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Color Palette
+                      <h2 className="text-sm font-medium text-foreground">
+                        Color palette
                       </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
+                      <p className="mt-1.5 text-sm text-muted-foreground">
                         Tune the backdrop colors to match your brand or highlight important details.
                       </p>
                     </div>
@@ -315,10 +315,10 @@ const Index = () => {
 
                   <section className="space-y-4">
                     <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                      <h2 className="text-sm font-medium text-foreground">
                         Options
                       </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
+                      <p className="mt-1.5 text-sm text-muted-foreground">
                         Adjust the window chrome, aspect ratio, and layout to perfect the frame.
                       </p>
                     </div>
@@ -335,9 +335,9 @@ const Index = () => {
             </div>
           </div>
 
-          <footer className="border-t border-border/80 px-6 py-5 text-xs text-muted-foreground">
+          <footer className="border-t border-border/40 px-6 py-4 text-xs text-muted-foreground/70">
             <p>Screenshot Styler v1.0 &mdash; All processing is done locally in your browser.</p>
-            <p className="mt-2">By using this tool you agree not to upload sensitive or confidential information.</p>
+            <p className="mt-1.5">By using this tool you agree not to upload sensitive or confidential information.</p>
           </footer>
         </aside>
       </main>

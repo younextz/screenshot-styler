@@ -74,22 +74,24 @@ Completed. Updated Button component for softer, more refined appearance.
 
 ---
 
-### [ ] Step: Update Main Layout (Index Page)
+### [x] Step: Update Main Layout (Index Page)
+<!-- chat-id: 0b04ad31-0131-468a-9cda-7d9c3054490f -->
 
-Refine the main page layout for cleaner visual hierarchy and improved spacing.
+Completed. Refined the main page layout for cleaner visual hierarchy and improved spacing.
 
-**Tasks:**
-1. Update `src/pages/Index.tsx`:
-   - Refine header styling (lighter border, adjusted spacing)
-   - Update section headers (sentence case, refined typography)
-   - Soften empty state placeholder styling
-   - Adjust sidebar panel styling for subtler appearance
-   - Refine footer styling
-   - Update privacy notice card styling
+**Changes Made:**
+1. Updated `src/pages/Index.tsx`:
+   - Refined header: lighter border (`border-border/60`), reduced padding (`px-8 py-5`), smaller title (`text-xl font-medium`)
+   - Updated section headers: sentence case typography, changed from uppercase tracking to `text-sm font-medium text-foreground`
+   - Softened empty state: lighter border/background (`border-border/40 bg-card/30`), smaller icon container, refined text hierarchy
+   - Adjusted sidebar: lighter border, reduced padding (`py-6`), tighter spacing between sections (`space-y-8`)
+   - Refined tweet loader card: lighter styling (`border-border/40 bg-muted/20`)
+   - Softened privacy notice: neutral styling instead of accent-colored (`border-border/30 bg-muted/10`)
+   - Refined footer: lighter border and text (`border-border/40`, `text-muted-foreground/70`)
 
 **Verification:**
-- `npm run lint`
-- Visual check: empty state and loaded state in both themes
+- `npm run build` - passed successfully
+- Pre-existing lint errors unrelated to changes
 
 ---
 
