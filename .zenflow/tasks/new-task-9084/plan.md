@@ -18,47 +18,158 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 091d868f-4176-4a9e-ae72-6fd9f7a03d3d -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
+Completed. See `spec.md` for full details.
 
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+**Summary:**
+- Task Difficulty: Medium
+- Stack: React 18 + TypeScript, Tailwind CSS, shadcn/ui
+- Approach: Apply shadcn minimal design principles across all UI components
+- Changes: Softer colors, lighter borders, refined spacing, improved typography
+- No API/data model changes required
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Refine Design System Foundation
 
-Implement the task according to the technical specification and general engineering best practices.
+Update the core design tokens and base styles to establish a cleaner, more minimal aesthetic.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Tasks:**
+1. Update `src/index.css`:
+   - Soften color palette (reduce saturation, improve contrast)
+   - Refine shadow tokens for subtler depth
+   - Adjust accent colors for less visual competition
+2. Clean up `src/App.css` (remove unused Vite boilerplate)
+3. Update `tailwind.config.ts` if additional utilities are needed
+
+**Verification:**
+- `npm run lint`
+- `npm run build`
+- Visual check: both themes render without issues
+
+---
+
+### [ ] Step: Refine shadcn/ui Button Component
+
+Update the Button component for a softer, more refined appearance aligned with shadcn best practices.
+
+**Tasks:**
+1. Update `src/components/ui/button.tsx`:
+   - Soften hover states
+   - Refine outline variant border and background
+   - Ensure consistent focus ring styling
+
+**Verification:**
+- Visual check of all button variants in both themes
+- Test export buttons functionality
+
+---
+
+### [ ] Step: Update Main Layout (Index Page)
+
+Refine the main page layout for cleaner visual hierarchy and improved spacing.
+
+**Tasks:**
+1. Update `src/pages/Index.tsx`:
+   - Refine header styling (lighter border, adjusted spacing)
+   - Update section headers (sentence case, refined typography)
+   - Soften empty state placeholder styling
+   - Adjust sidebar panel styling for subtler appearance
+   - Refine footer styling
+   - Update privacy notice card styling
+
+**Verification:**
+- `npm run lint`
+- Visual check: empty state and loaded state in both themes
+
+---
+
+### [ ] Step: Refine Image Upload Components
+
+Update ImageLoader for a cleaner drop zone experience.
+
+**Tasks:**
+1. Update `src/components/ImageLoader.tsx`:
+   - Change from `border-2` to `border`
+   - Soften dashed border appearance
+   - Refine icon and text styling
+
+**Verification:**
+- Visual check of upload buttons
+- Test file upload and paste functionality
+
+---
+
+### [ ] Step: Refine Control Panel Components
+
+Update the preset, palette, and options pickers for visual consistency.
+
+**Tasks:**
+1. Update `src/components/PresetPicker.tsx`:
+   - Remove redundant label (handled by parent)
+   - Soften button borders and selected states
+2. Update `src/components/PalettePicker.tsx`:
+   - Remove redundant label
+   - Refine swatch card styling
+3. Update `src/components/ControlPanel.tsx`:
+   - Soften toggle button borders
+   - Refine selected state appearance
+
+**Verification:**
+- Visual check of all picker components
+- Test preset/palette/option selection functionality
+
+---
+
+### [ ] Step: Refine Export and Preview Components
+
+Update export buttons and canvas preview for visual consistency.
+
+**Tasks:**
+1. Update `src/components/ExportButtons.tsx`:
+   - Ensure consistent button spacing
+2. Update `src/components/CanvasPreview.tsx`:
+   - Refine container border and background
+
+**Verification:**
+- Visual check of export button group
+- Test all export functions (copy, download, 4K, SVG)
+
+---
+
+### [ ] Step: Refine Theme Toggle and Tweet Components
+
+Update remaining components for design system alignment.
+
+**Tasks:**
+1. Update `src/components/ThemeToggle.tsx`:
+   - Refine container styling
+2. Update `src/components/TweetLoader.tsx`:
+   - Align input/button styling with design system
+3. Update `src/components/TweetCard.tsx`:
+   - Replace hardcoded colors with design tokens
+
+**Verification:**
+- Visual check of theme toggle
+- Test theme switching
+- Visual check of tweet loader
+
+---
+
+### [ ] Step: Final Verification and Cleanup
+
+Run all checks and ensure the revamp is complete.
+
+**Tasks:**
+1. Run `npm run lint` and fix any issues
+2. Run `npm run test` and ensure all tests pass
+3. Run `npm run build` and verify production build
+4. Manual visual inspection of entire app in both themes
+5. Write implementation report to `report.md`
+
+**Verification:**
+- All automated checks pass
+- No visual regressions
+- Both themes look polished and minimal
