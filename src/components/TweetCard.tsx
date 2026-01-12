@@ -20,24 +20,24 @@ export const TweetCard: React.FC<TweetCardProps> = ({
   retweets,
 }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md max-w-md mx-auto">
-      <div className="flex items-center mb-4">
-        <img src={avatar} alt={`${author}'s avatar`} className="w-12 h-12 rounded-full mr-4" />
+    <div className="bg-card border border-border/40 p-5 rounded-xl max-w-md mx-auto transition-colors duration-200">
+      <div className="flex items-center mb-3">
+        <img src={avatar} alt={`${author}'s avatar`} className="w-11 h-11 rounded-full mr-3" />
         <div>
-          <p className="font-bold text-gray-900 dark:text-white">{author}</p>
-          <p className="text-gray-500 dark:text-gray-400">@{handle}</p>
+          <p className="font-medium text-foreground">{author}</p>
+          <p className="text-sm text-muted-foreground">@{handle}</p>
         </div>
       </div>
-      <p className="text-gray-800 dark:text-gray-200 mb-4">{text}</p>
-      <div className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+      <p className="text-foreground/90 mb-3 leading-relaxed">{text}</p>
+      <div className="text-muted-foreground/70 text-sm mb-3">
         <span>{timestamp}</span>
       </div>
-      <div className="flex text-gray-500 dark:text-gray-400 text-sm">
-        <div className="mr-4">
-          <span className="font-bold text-gray-900 dark:text-white">{retweets}</span> Retweets
+      <div className="flex text-muted-foreground text-sm gap-4">
+        <div>
+          <span className="font-medium text-foreground">{retweets}</span> Retweets
         </div>
         <div>
-          <span className="font-bold text-gray-900 dark:text-white">{likes}</span> Likes
+          <span className="font-medium text-foreground">{likes}</span> Likes
         </div>
       </div>
     </div>

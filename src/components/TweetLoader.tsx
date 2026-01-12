@@ -54,12 +54,12 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
   };
 
   return (
-    <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">Tweet URL</p>
-      <div className="flex gap-3">
+    <div className="space-y-2">
+      <p className="text-xs font-medium text-muted-foreground">Tweet URL</p>
+      <div className="flex gap-2">
         <Input
           type="text"
-          placeholder="Enter Tweet URL"
+          placeholder="Paste tweet URL..."
           value={tweetUrl}
           onChange={(e) => setTweetUrl(e.target.value)}
           onKeyDown={(event) => {
@@ -70,8 +70,8 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
           }}
           className="flex-1"
         />
-        <Button type="button" onClick={handleFetchTweet}>
-          Fetch Tweet
+        <Button type="button" onClick={handleFetchTweet} size="default">
+          Fetch
         </Button>
       </div>
     </div>

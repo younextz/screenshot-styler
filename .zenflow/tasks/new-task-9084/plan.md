@@ -182,22 +182,46 @@ Completed. Refined export buttons and canvas preview for visual consistency.
 
 ---
 
-### [ ] Step: Refine Theme Toggle and Tweet Components
+### [x] Step: Refine Theme Toggle and Tweet Components
+<!-- chat-id: aab3cd70-c2e1-46cb-ba3f-3af5f53199c9 -->
 
-Update remaining components for design system alignment.
+Completed. Refined all remaining components for design system alignment.
 
-**Tasks:**
-1. Update `src/components/ThemeToggle.tsx`:
-   - Refine container styling
-2. Update `src/components/TweetLoader.tsx`:
-   - Align input/button styling with design system
-3. Update `src/components/TweetCard.tsx`:
-   - Replace hardcoded colors with design tokens
+**Changes Made:**
+1. Updated `src/components/ThemeToggle.tsx`:
+   - Softened border from `border-border` to `border-border/60`
+   - Reduced background opacity from `bg-card/60` to `bg-card/50`
+   - Changed hover to `hover:bg-card/80` for subtler effect
+   - Added `transition-all duration-200` for smoother feedback
+   - Tightened inner gap from `gap-2` to `gap-1.5`
+   - Changed icon colors to design tokens: `text-amber-500/80` (light) and `text-primary/70` (dark)
+   - Added `text-muted-foreground` to theme label text
+
+2. Updated `src/components/TweetLoader.tsx`:
+   - Reduced spacing from `space-y-3` to `space-y-2`
+   - Changed label from uppercase tracking to `text-xs font-medium text-muted-foreground`
+   - Reduced button gap from `gap-3` to `gap-2`
+   - Simplified placeholder text and button label ("Fetch Tweet" → "Fetch")
+
+3. Updated `src/components/TweetCard.tsx`:
+   - Replaced all hardcoded colors (`bg-white`, `dark:bg-gray-800`, `text-gray-*`) with design tokens
+   - Changed to `bg-card border border-border/40` for consistent card styling
+   - Used `text-foreground`, `text-muted-foreground`, `text-foreground/90` for text hierarchy
+   - Changed from `rounded-lg` to `rounded-xl` for consistency
+   - Reduced padding from `p-6` to `p-5`, tightened margins
+   - Added `transition-colors duration-200` for theme transitions
+   - Improved stats layout with `gap-4` instead of `mr-4`
+
+4. Updated `src/components/ui/input.tsx`:
+   - Softened border from `border-input` to `border-border/60`
+   - Lighter placeholder with `placeholder:text-muted-foreground/60`
+   - Reduced focus ring from `ring-2` to `ring-1` with `/50` opacity
+   - Added hover state `hover:border-border`
+   - Added `transition-all duration-200` for smoother feedback
+   - Reduced disabled opacity from `/50` to `/40`
 
 **Verification:**
-- Visual check of theme toggle
-- Test theme switching
-- Visual check of tweet loader
+- `npm run build` - passed successfully
 
 ---
 
