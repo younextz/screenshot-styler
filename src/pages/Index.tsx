@@ -195,150 +195,103 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b border-border px-10 py-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Screenshot Styler</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Transform your screenshots with polished, sharable frames.
-          </p>
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
+      <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+            <span className="text-sm font-bold text-primary">SS</span>
+          </div>
+          <div>
+            <h1 className="text-base font-semibold text-foreground">Screenshot Styler</h1>
+            <p className="text-xs text-muted-foreground">Transform screenshots into polished frames</p>
+          </div>
         </div>
         <ThemeToggle />
       </header>
 
-      <main className="flex flex-1 overflow-hidden">
+      <main className="flex min-h-0 flex-1 overflow-hidden">
         <section
           className={cn(
-            'relative flex flex-1 items-center bg-muted/5 pl-2 pr-3 py-10 sm:pl-3 sm:pr-4',
-            svgContent ? 'justify-start' : 'justify-center',
+            'relative flex min-w-0 flex-1 items-center p-4',
+            svgContent ? 'justify-center' : 'justify-center',
           )}
         >
           {svgContent ? (
             <CanvasPreview
               svgContent={svgContent}
-              className="max-h-[calc(100vh-12rem)]"
+              className="max-h-[calc(100vh-5rem)]"
             />
           ) : (
-            <div className="flex h-full max-h-[640px] w-full max-w-3xl flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/40 p-12 text-center">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-background/80">
-                <Upload className="h-6 w-6 text-muted-foreground" />
+            <div className="flex h-full max-h-[480px] w-full max-w-2xl flex-col items-center justify-center rounded-xl border border-border/40 bg-card/30 p-8 text-center shadow-[var(--shadow-sm)]">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
+                <Upload className="h-5 w-5 text-muted-foreground" />
               </div>
-              <h2 className="text-xl font-semibold">Drop in a screenshot to get started</h2>
-              <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                Use the import tools on the right to upload a PNG or JPG, or paste directly from your clipboard.
+              <h2 className="text-lg font-medium text-foreground">Drop a screenshot to begin</h2>
+              <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
+                Upload a PNG/JPG or paste from clipboard using the controls on the right.
               </p>
             </div>
           )}
         </section>
 
-        <aside className="flex w-full max-w-xl flex-col border-l border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-          <div className="flex-1 overflow-y-auto px-6 py-8">
-            <div className="space-y-10">
-              <section className="space-y-6">
-                <div>
-                  <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                    Source
-                  </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Upload or paste your screenshot to populate the live preview.
-                  </p>
-                </div>
-                <ImageLoader onImageLoad={handleImageLoad} />
-                <div className="rounded-xl border border-border/60 bg-card/60 p-4">
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">Fetch Tweet (optional)</p>
-                      <p className="text-xs text-muted-foreground">
-                        Paste a tweet URL to pull its text details without leaving the app.
-                      </p>
-                    </div>
-                    <TweetLoader onTweetLoad={handleTweetLoad} />
-                  </div>
-                </div>
-              </section>
+        <aside className="flex w-80 shrink-0 flex-col border-l border-border/50 bg-card/50">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {/* Source Section */}
+            <section className="space-y-3">
+              <h2 className="text-xs font-medium text-muted-foreground">Source</h2>
+              <ImageLoader onImageLoad={handleImageLoad} />
+              <div className="rounded-lg border border-border/40 bg-background/50 p-3">
+                <p className="mb-2 text-xs font-medium text-foreground">Fetch Tweet</p>
+                <TweetLoader onTweetLoad={handleTweetLoad} />
+              </div>
+            </section>
 
-              <section className="rounded-xl border border-accent/20 bg-accent/5 p-5 text-sm text-muted-foreground">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 rounded-full bg-accent/20 p-1">
-                    <AlertCircle className="h-4 w-4 text-accent" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-accent">Privacy First</p>
-                    <p className="mt-1">
-                      All processing happens in your browser. Images are never uploaded or stored. Please avoid sharing sensitive data.
-                    </p>
-                  </div>
-                </div>
-              </section>
+            {imageData && (
+              <>
+                {/* Export Section */}
+                <section className="space-y-2">
+                  <h2 className="text-xs font-medium text-muted-foreground">Export</h2>
+                  <ExportButtons
+                    svgContent={svgContent}
+                    onExport={handleExport}
+                    disabled={!svgContent}
+                  />
+                </section>
 
-              {imageData && (
-                <div className="space-y-10">
-                  <section className="space-y-4">
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Export
-                      </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Choose how you want to share or download your styled screenshot.
-                      </p>
-                    </div>
-                    <ExportButtons
-                      svgContent={svgContent}
-                      onExport={handleExport}
-                      disabled={!svgContent}
-                    />
-                  </section>
+                {/* Style Preset Section */}
+                <section className="space-y-2">
+                  <h2 className="text-xs font-medium text-muted-foreground">Style Preset</h2>
+                  <PresetPicker selectedId={presetId} onChange={setPresetId} />
+                </section>
 
-                  <section className="space-y-4">
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Style Preset
-                      </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Quickly switch between layout styles designed for different content types.
-                      </p>
-                    </div>
-                    <PresetPicker selectedId={presetId} onChange={setPresetId} />
-                  </section>
+                {/* Color Palette Section */}
+                <section className="space-y-2">
+                  <h2 className="text-xs font-medium text-muted-foreground">Color Palette</h2>
+                  <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
+                </section>
 
-                  <section className="space-y-4">
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Color Palette
-                      </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Tune the backdrop colors to match your brand or highlight important details.
-                      </p>
-                    </div>
-                    <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-                  </section>
-
-                  <section className="space-y-4">
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                        Options
-                      </h2>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Adjust the window chrome, aspect ratio, and layout to perfect the frame.
-                      </p>
-                    </div>
-                    <ControlPanel
-                      titleBar={titleBar}
-                      aspectRatio={aspectRatio}
-                      onTitleBarChange={setTitleBar}
-                      onAspectRatioChange={setAspectRatio}
-                      supportsTitleBar={currentPreset.supportsTitle}
-                    />
-                  </section>
-                </div>
-              )}
-            </div>
+                {/* Options Section */}
+                <section className="space-y-2">
+                  <h2 className="text-xs font-medium text-muted-foreground">Options</h2>
+                  <ControlPanel
+                    titleBar={titleBar}
+                    aspectRatio={aspectRatio}
+                    onTitleBarChange={setTitleBar}
+                    onAspectRatioChange={setAspectRatio}
+                    supportsTitleBar={currentPreset.supportsTitle}
+                  />
+                </section>
+              </>
+            )}
           </div>
 
-          <footer className="border-t border-border/80 px-6 py-5 text-xs text-muted-foreground">
-            <p>Screenshot Styler v1.0 &mdash; All processing is done locally in your browser.</p>
-            <p className="mt-2">By using this tool you agree not to upload sensitive or confidential information.</p>
-          </footer>
+          {/* Compact Footer with Privacy Note */}
+          <div className="shrink-0 border-t border-border/40 bg-background/30 px-4 py-2.5">
+            <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <AlertCircle className="h-3 w-3 shrink-0" />
+              <span>All processing is local. Images are never uploaded.</span>
+            </p>
+          </div>
         </aside>
       </main>
     </div>

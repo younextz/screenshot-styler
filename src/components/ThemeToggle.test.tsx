@@ -14,9 +14,11 @@ describe('ThemeToggle', () => {
 
     render(<ThemeToggle />);
 
-    expect(screen.getByText('Light')).toBeInTheDocument();
+    // Component now uses icon-only button with aria-label
+    const button = screen.getByRole('button', { name: 'Switch to dark theme' });
+    expect(button).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(button);
     expect(toggle).toHaveBeenCalledTimes(1);
   });
 
@@ -26,9 +28,11 @@ describe('ThemeToggle', () => {
 
     render(<ThemeToggle />);
 
-    expect(screen.getByText('Dark')).toBeInTheDocument();
+    // Component now uses icon-only button with aria-label
+    const button = screen.getByRole('button', { name: 'Switch to light theme' });
+    expect(button).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(button);
     expect(toggle).toHaveBeenCalledTimes(1);
   });
 });

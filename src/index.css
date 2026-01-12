@@ -8,107 +8,111 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 98%;
+    --background: 220 15% 6%;
+    --foreground: 220 10% 96%;
 
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 15% 9%;
+    --card-foreground: 220 10% 96%;
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 220 10% 96%;
 
-    --primary: 189 100% 50%;
-    --primary-foreground: 0 0% 5%;
+    --primary: 200 85% 55%;
+    --primary-foreground: 220 15% 6%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 220 12% 14%;
+    --secondary-foreground: 220 10% 92%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 220 12% 18%;
+    --muted-foreground: 220 10% 55%;
 
-    --accent: 335 100% 60%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 340 75% 58%;
+    --accent-foreground: 220 10% 98%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 189 100% 50%;
+    --border: 220 12% 22%;
+    --input: 220 12% 16%;
+    --ring: 200 85% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
+    --radius-sm: 0.375rem;
+    --radius-lg: 0.875rem;
 
-    /* JetBrains inspired colors */
-    --jetbrains-cyan: 189 100% 50%;
-    --jetbrains-pink: 335 100% 60%;
-    --jetbrains-yellow: 48 100% 50%;
-    --jetbrains-purple: 270 70% 60%;
-    --jetbrains-orange: 24 100% 60%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(189 100% 50%), hsl(335 100% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(270 70% 60%), hsl(189 100% 50%));
-    --gradient-warm: linear-gradient(135deg, hsl(335 100% 60%), hsl(24 100% 60%));
-    
-    /* Shadows */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 20px hsl(189 100% 50% / 0.3);
-    
+    /* Modern accent palette */
+    --color-cyan: 190 80% 52%;
+    --color-pink: 340 75% 58%;
+    --color-amber: 42 95% 55%;
+    --color-violet: 265 65% 58%;
+    --color-orange: 28 90% 58%;
+
+    /* Subtle gradients for backgrounds */
+    --gradient-primary: linear-gradient(145deg, hsl(200 85% 55% / 0.12), hsl(340 75% 58% / 0.08));
+    --gradient-secondary: linear-gradient(145deg, hsl(265 65% 58% / 0.1), hsl(200 85% 55% / 0.08));
+    --gradient-surface: linear-gradient(180deg, hsl(220 15% 10%), hsl(220 15% 8%));
+
+    /* Refined shadows - softer, more natural */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.35), 0 16px 48px rgba(0, 0, 0, 0.25);
+    --shadow-glow: 0 0 16px hsl(200 85% 55% / 0.2);
+    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+
     /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.2s ease-out;
   }
 
   /* Light theme */
   :root[data-theme="light"] {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 220 20% 98%;
+    --foreground: 220 20% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 220 20% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 220 20% 12%;
 
-    --primary: 222 89% 56%; /* a bit deeper blue for light bg */
+    --primary: 210 85% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 220 15% 94%;
+    --secondary-foreground: 220 15% 20%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 335 83% 50%;
+    --accent: 340 72% 52%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 222 89% 56%;
+    --border: 220 15% 88%;
+    --input: 220 15% 90%;
+    --ring: 210 85% 48%;
 
-    /* JetBrains inspired colors (unchanged hues, adjusted contrast if needed) */
-    --jetbrains-cyan: 189 100% 45%;
-    --jetbrains-pink: 335 88% 55%;
-    --jetbrains-yellow: 48 100% 50%;
-    --jetbrains-purple: 270 70% 55%;
-    --jetbrains-orange: 24 100% 55%;
+    /* Modern accent palette for light mode */
+    --color-cyan: 190 75% 42%;
+    --color-pink: 340 72% 52%;
+    --color-amber: 42 90% 48%;
+    --color-violet: 265 60% 52%;
+    --color-orange: 28 85% 52%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(189 100% 45%), hsl(335 88% 55%));
-    --gradient-secondary: linear-gradient(135deg, hsl(270 70% 55%), hsl(189 100% 45%));
-    --gradient-warm: linear-gradient(135deg, hsl(335 88% 55%), hsl(24 100% 55%));
+    /* Subtle gradients for light backgrounds */
+    --gradient-primary: linear-gradient(145deg, hsl(210 85% 48% / 0.08), hsl(340 72% 52% / 0.05));
+    --gradient-secondary: linear-gradient(145deg, hsl(265 60% 52% / 0.06), hsl(210 85% 48% / 0.05));
+    --gradient-surface: linear-gradient(180deg, hsl(220 20% 99%), hsl(220 20% 97%));
 
-    /* Shadows for light */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-    --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 20px rgba(0,0,0,0.1);
-    --shadow-xl: 0 16px 40px rgba(0,0,0,0.12);
-    --shadow-glow: 0 0 18px hsl(222 89% 56% / 0.25);
+    /* Refined shadows for light mode - soft and natural */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05), 0 4px 10px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.12);
+    --shadow-glow: 0 0 14px hsl(210 85% 48% / 0.18);
+    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 }
 
