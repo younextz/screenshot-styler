@@ -30,11 +30,22 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step: Update Design System
+### [x] Step: Update Design System
+<!-- chat-id: 092ccaa7-203d-46d0-abbf-dd3b03504664 -->
 Update `src/index.css` with refined CSS variables for a modern look:
 - Softer shadows and subtle gradients
 - Refined color variables for better contrast
 - Modern border radius values
+
+**Completed:** Updated design system with:
+- Moved from pure grayscale (0 0% x%) to blue-tinted neutrals (220 15% x%) for depth
+- Softer, desaturated accent colors (200 85% vs 189 100%)
+- Multi-layered shadows for natural depth
+- Added --radius-sm and --radius-lg for varied corner radii
+- Subtle gradient backgrounds for surfaces
+- New accent color palette (cyan, pink, amber, violet, orange)
+- Inner shadow variable for recessed elements
+- Consistent light/dark theme parity
 
 ---
 
