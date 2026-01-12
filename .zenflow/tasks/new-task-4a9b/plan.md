@@ -120,10 +120,15 @@ Update picker components for compact display:
 
 ---
 
-### [ ] Step: Update Preview and Theme Components
+### [x] Step: Update Preview and Theme Components
+<!-- chat-id: 936376af-b371-46ce-ae2c-d79fbfeeba19 -->
 Update remaining components:
 - `src/components/CanvasPreview.tsx`: Maximize space, refined styling
 - `src/components/ThemeToggle.tsx`: Simplified toggle design
+
+**Completed:** Updated preview and theme components with:
+- **CanvasPreview**: Refined container with softer border (border-border/50), subtle background (bg-secondary/30), dot-grid pattern overlay for visual interest, constrained SVG sizing with proper padding, reduced drop shadow (drop-shadow-lg vs drop-shadow-2xl)
+- **ThemeToggle**: Simplified to single icon button (h-8 w-8), removed Switch component and text label, muted icon color with hover state, clean focus-visible ring styling
 
 ---
 
