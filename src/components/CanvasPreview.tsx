@@ -18,13 +18,13 @@ export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
   return (
     <div
       className={cn(
-        'flex h-full max-h-full max-w-full items-center justify-center overflow-hidden rounded-2xl border border-border bg-muted/30 px-3 py-6 sm:px-4 sm:py-8',
+        'flex h-full max-h-full max-w-full items-center justify-center overflow-hidden rounded-xl border border-border/40 bg-muted/20 p-4 transition-colors duration-200',
         className,
       )}
     >
       <div
         ref={containerRef}
-        className="flex max-h-full max-w-full items-center justify-center [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-2xl"
+        className="flex max-h-full max-w-full items-center justify-center [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-xl"
       />
     </div>
   );

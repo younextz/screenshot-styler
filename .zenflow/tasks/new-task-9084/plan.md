@@ -155,19 +155,30 @@ Completed. Refined all control panel components for visual consistency and minim
 
 ---
 
-### [ ] Step: Refine Export and Preview Components
+### [x] Step: Refine Export and Preview Components
+<!-- chat-id: a6f621cd-b9f6-4d33-bf39-af4c187d96cd -->
 
-Update export buttons and canvas preview for visual consistency.
+Completed. Refined export buttons and canvas preview for visual consistency.
 
-**Tasks:**
-1. Update `src/components/ExportButtons.tsx`:
-   - Ensure consistent button spacing
-2. Update `src/components/CanvasPreview.tsx`:
-   - Refine container border and background
+**Changes Made:**
+1. Updated `src/components/ExportButtons.tsx`:
+   - Simplified grid layout to `grid-cols-2` with `gap-2` for tighter spacing
+   - Made "Copy PNG" primary action span full width (`col-span-2`)
+   - Reduced icon sizes from `w-5 h-5` to `w-4 h-4` for better proportion
+   - Changed secondary buttons from `size="lg"` to `size="default"` for visual hierarchy
+   - Simplified button labels ("PNG (Original)" → "PNG", "PNG 4K" → "4K")
+   - Made "Download SVG" span full width for balanced layout
+
+2. Updated `src/components/CanvasPreview.tsx`:
+   - Changed from `rounded-2xl` to `rounded-xl` for consistency with other components
+   - Softened border from `border-border` to `border-border/40`
+   - Reduced background from `bg-muted/30` to `bg-muted/20`
+   - Simplified padding from responsive `px-3 py-6 sm:px-4 sm:py-8` to uniform `p-4`
+   - Added `transition-colors duration-200` for smoother theme transitions
+   - Reduced drop shadow from `drop-shadow-2xl` to `drop-shadow-xl` for subtler effect
 
 **Verification:**
-- Visual check of export button group
-- Test all export functions (copy, download, 4K, SVG)
+- `npm run build` - passed successfully
 
 ---
 

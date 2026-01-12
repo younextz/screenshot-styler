@@ -23,17 +23,17 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 gap-2">
       <Button
         onClick={() => handleExport('copy')}
         disabled={disabled || isExporting || !svgContent}
-        className="flex-1 gap-2"
+        className="col-span-2 gap-2"
         size="lg"
       >
         {isExporting ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
+          <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
-          <Copy className="w-5 h-5" />
+          <Copy className="w-4 h-4" />
         )}
         Copy PNG
       </Button>
@@ -42,48 +42,46 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
         onClick={() => handleExport('download')}
         disabled={disabled || isExporting || !svgContent}
         variant="outline"
-        className="flex-1 gap-2"
-        size="lg"
+        className="gap-2"
+        size="default"
       >
         {isExporting ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
+          <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
-          <ImageDown className="w-5 h-5" />
+          <ImageDown className="w-4 h-4" />
         )}
-        PNG (Original)
+        PNG
       </Button>
 
-      <div className="grid grid-cols-2 gap-3 sm:col-span-3 md:col-span-1 md:grid-cols-2">
-        <Button
-          onClick={() => handleExport('download4k')}
-          disabled={disabled || isExporting || !svgContent}
-          variant="outline"
-          className="flex-1 gap-2"
-          size="lg"
-        >
-          {isExporting ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Download className="w-5 h-5" />
-          )}
-          PNG 4K
-        </Button>
+      <Button
+        onClick={() => handleExport('download4k')}
+        disabled={disabled || isExporting || !svgContent}
+        variant="outline"
+        className="gap-2"
+        size="default"
+      >
+        {isExporting ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <Download className="w-4 h-4" />
+        )}
+        4K
+      </Button>
 
-        <Button
-          onClick={() => handleExport('downloadSvg')}
-          disabled={disabled || isExporting || !svgContent}
-          variant="outline"
-          className="flex-1 gap-2"
-          size="lg"
-        >
-          {isExporting ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <FileDown className="w-5 h-5" />
-          )}
-          SVG
-        </Button>
-      </div>
+      <Button
+        onClick={() => handleExport('downloadSvg')}
+        disabled={disabled || isExporting || !svgContent}
+        variant="outline"
+        className="col-span-2 gap-2"
+        size="default"
+      >
+        {isExporting ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <FileDown className="w-4 h-4" />
+        )}
+        Download SVG
+      </Button>
     </div>
   );
 }
