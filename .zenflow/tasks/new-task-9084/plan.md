@@ -116,24 +116,42 @@ Completed. Refined ImageLoader for a cleaner, minimal drop zone experience.
 
 ---
 
-### [ ] Step: Refine Control Panel Components
+### [x] Step: Refine Control Panel Components
+<!-- chat-id: 7993ae6a-6d7d-4eb7-adfb-174d70ba206e -->
 
-Update the preset, palette, and options pickers for visual consistency.
+Completed. Refined all control panel components for visual consistency and minimal aesthetic.
 
-**Tasks:**
-1. Update `src/components/PresetPicker.tsx`:
-   - Remove redundant label (handled by parent)
-   - Soften button borders and selected states
-2. Update `src/components/PalettePicker.tsx`:
-   - Remove redundant label
-   - Refine swatch card styling
-3. Update `src/components/ControlPanel.tsx`:
-   - Soften toggle button borders
-   - Refine selected state appearance
+**Changes Made:**
+1. Updated `src/components/PresetPicker.tsx`:
+   - Removed redundant label wrapper (handled by parent section)
+   - Changed `border-2` to `border` for softer appearance
+   - Softened border colors: `border-border/60` default, `border-primary/60` selected
+   - Reduced padding from `py-3` to `py-2.5` for tighter layout
+   - Changed hover to `hover:border-border hover:bg-muted/50` (neutral instead of primary)
+   - Added `transition-all duration-200` for smoother state changes
+   - Softened selected state: `bg-primary/5` instead of `bg-primary/10`
+
+2. Updated `src/components/PalettePicker.tsx`:
+   - Removed redundant label wrapper
+   - Changed gap from `gap-3` to `gap-2` for tighter grid
+   - Softened padding from `p-3` to `p-2.5`
+   - Changed `border-2` to `border` with `/60` opacity
+   - Added `hover:border-border hover:bg-muted/30` for subtle hover effect
+   - Reduced swatch height from `h-6` to `h-5`, added `rounded-sm`
+   - Tightened swatch margin from `mb-2` to `mb-1.5`
+   - Added `text-muted-foreground` to palette label
+
+3. Updated `src/components/ControlPanel.tsx`:
+   - Reduced label/button spacing from `space-y-3` to `space-y-2`
+   - Changed labels to `text-xs font-medium text-muted-foreground` with sentence case
+   - Softened disabled state indicator to `/60` opacity
+   - Changed `border-2` to `border` with consistent `/60` opacity
+   - Reduced disabled opacity from `/50` to `/40`
+   - Updated hover states to neutral `hover:border-border hover:bg-muted/50`
+   - Changed aspect ratio grid to `grid-cols-4` for all 4 options in one row
 
 **Verification:**
-- Visual check of all picker components
-- Test preset/palette/option selection functionality
+- `npm run build` - passed successfully
 
 ---
 
