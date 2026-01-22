@@ -43,6 +43,18 @@ export const presets: Preset[] = [
     supportsTitle: false,
   },
   {
+    id: 'bg-picture-dark',
+    label: 'Picture - Dark',
+    kind: 'background',
+    supportsTitle: false,
+  },
+  {
+    id: 'bg-picture-light',
+    label: 'Picture - Light',
+    kind: 'background',
+    supportsTitle: false,
+  },
+  {
     id: 'browser-macos',
     label: 'Browser – macOS',
     kind: 'frame',

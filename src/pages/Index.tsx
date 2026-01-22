@@ -9,7 +9,7 @@ import { CanvasPreview } from '@/components/CanvasPreview';
 import { ExportButtons } from '@/components/ExportButtons';
 import { presets } from '@/lib/presets';
 import { palettes } from '@/lib/palettes';
-import { generateSVG, TitleBarType, AspectRatio } from '@/lib/svgRenderer';
+import { generateSVG, TitleBarType, AspectRatio, preloadBackgroundImages } from '@/lib/svgRenderer';
 import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
 import { AlertCircle, Upload } from 'lucide-react';
@@ -53,6 +53,11 @@ const Index = () => {
   useEffect(() => {
     saveSettings({ presetId, paletteId, titleBar, aspectRatio });
   }, [presetId, paletteId, titleBar, aspectRatio]);
+
+  // Preload background images for picture presets
+  useEffect(() => {
+    preloadBackgroundImages().catch(console.error);
+  }, []);
 
   // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {

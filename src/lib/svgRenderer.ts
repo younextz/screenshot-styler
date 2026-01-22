@@ -1,5 +1,54 @@
 import { Palette } from './palettes';
 
+const BACKGROUND_IMAGE_URLS = {
+  'bg-picture-dark': '/backgrounds/bg-dark-bubbles.png',
+  'bg-picture-light': '/backgrounds/bg-light-bubbles.png',
+} as const;
+
+// Cache for loaded background images as data URLs
+const backgroundImageCache: Record<string, string> = {};
+
+// Load a background image and convert to data URL
+async function loadBackgroundImage(url: string): Promise<string> {
+  if (backgroundImageCache[url]) {
+    return backgroundImageCache[url];
+  }
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Could not get canvas context'));
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      const dataUrl = canvas.toDataURL('image/png');
+      backgroundImageCache[url] = dataUrl;
+      resolve(dataUrl);
+    };
+    img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+    img.src = url;
+  });
+}
+
+// Pre-load all background images
+export async function preloadBackgroundImages(): Promise<void> {
+  const urls = Object.values(BACKGROUND_IMAGE_URLS);
+  await Promise.all(urls.map(url => loadBackgroundImage(url)));
+}
+
+// Get cached background image data URL
+export function getBackgroundImageDataUrl(presetId: string): string | null {
+  const url = BACKGROUND_IMAGE_URLS[presetId as keyof typeof BACKGROUND_IMAGE_URLS];
+  if (!url) return null;
+  return backgroundImageCache[url] || null;
+}
+
 export type TitleBarType = 'macos' | 'windows' | 'none';
 export type AspectRatio = 'auto' | '1:1' | '16:9' | '4:3';
 
@@ -173,6 +222,21 @@ function generateDotGrid(palette: Palette, width: number, height: number): strin
   `;
 }
 
+function generateBackgroundPicture(
+  imageUrl: string,
+  width: number,
+  height: number
+): string {
+  return `
+    <image
+      href="${imageUrl}"
+      x="0" y="0"
+      width="${width}" height="${height}"
+      preserveAspectRatio="xMidYMid slice"
+    />
+  `;
+}
+
 function generateMacOSTitleBar(palette: Palette, x: number, y: number, width: number): string {
   return `
     <g transform="translate(${x}, ${y})">
@@ -247,6 +311,13 @@ export function generateSVG(options: RenderOptions): string {
       cardRadius = 16;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.1"/></filter>';
       break;
+    case 'bg-picture-dark':
+    case 'bg-picture-light': {
+      // Background is handled separately in the picture background section below
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
+      break;
+    }
     case 'browser-macos':
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
       cardRadius = 12;
@@ -295,6 +366,45 @@ export function generateSVG(options: RenderOptions): string {
       break;
     default:
       backgroundSVG = `<rect width="${width}" height="${height}" fill="${options.palette.swatches[0]}" />`;
+  }
+
+  // For picture backgrounds, render screenshot at ~80% width with background padding
+  const isPictureBackground = options.presetId === 'bg-picture-dark' || options.presetId === 'bg-picture-light';
+
+  if (isPictureBackground) {
+    // Calculate dimensions so screenshot fills ~80% of width
+    const targetWidthRatio = 0.8;
+    const picWidth = Math.ceil(options.imageWidth / targetWidthRatio);
+    const horizontalPadding = (picWidth - options.imageWidth) / 2;
+    const verticalPadding = horizontalPadding; // Same padding on all sides
+    const picHeight = Math.ceil(options.imageHeight + verticalPadding * 2);
+
+    const picFrameX = horizontalPadding;
+    const picFrameY = verticalPadding;
+
+    // Use cached data URL if available, otherwise fall back to relative URL
+    const bgDataUrl = getBackgroundImageDataUrl(options.presetId);
+    const bgUrl = bgDataUrl || BACKGROUND_IMAGE_URLS[options.presetId as keyof typeof BACKGROUND_IMAGE_URLS];
+    const picBackgroundSVG = generateBackgroundPicture(bgUrl, picWidth, picHeight);
+
+    return `
+      <svg width="${picWidth}" height="${picHeight}" viewBox="0 0 ${picWidth} ${picHeight}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          ${shadowFilter}
+          <clipPath id="rounded-clip">
+            <rect x="${picFrameX}" y="${picFrameY}" width="${options.imageWidth}" height="${options.imageHeight}" rx="${cardRadius}" />
+          </clipPath>
+        </defs>
+        ${picBackgroundSVG}
+        <g filter="${shadowFilter ? 'url(#shadow)' : ''}">
+          <image href="${options.imageData}"
+                 x="${picFrameX}" y="${picFrameY}"
+                 width="${options.imageWidth}" height="${options.imageHeight}"
+                 clip-path="url(#rounded-clip)"
+                 preserveAspectRatio="xMidYMid meet" />
+        </g>
+      </svg>
+    `.trim();
   }
 
   return `
