@@ -30,24 +30,26 @@ export function ControlPanel({
   supportsTitleBar,
 }: ControlPanelProps) {
   return (
-    <div className="grid md:grid-cols-2 gap-6">
-      <div className="space-y-3">
-        <label className="text-sm font-medium">
-          Title Bar {!supportsTitleBar && <span className="text-muted-foreground">(Not available for this preset)</span>}
-        </label>
-        <div className="flex gap-2">
+    <div className="flex flex-wrap items-center gap-4">
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+          Title Bar
+        </span>
+        <div className={cn(
+          'inline-flex rounded-md bg-secondary/50 p-0.5',
+          !supportsTitleBar && 'opacity-50'
+        )}>
           {titleBarOptions.map((option) => (
             <button
               key={option.value}
               onClick={() => onTitleBarChange(option.value)}
               disabled={!supportsTitleBar && option.value !== 'none'}
               className={cn(
-                'flex-1 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                'hover:border-primary hover:bg-secondary/50',
+                'px-2 py-0.5 rounded text-xs transition-colors',
+                'disabled:cursor-not-allowed',
                 titleBar === option.value
-                  ? 'border-primary bg-primary/10 text-foreground'
-                  : 'border-border bg-card text-muted-foreground'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {option.label}
@@ -56,19 +58,20 @@ export function ControlPanel({
         </div>
       </div>
 
-      <div className="space-y-3">
-        <label className="text-sm font-medium">Aspect Ratio</label>
-        <div className="grid grid-cols-3 gap-2">
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+          Ratio
+        </span>
+        <div className="inline-flex rounded-md bg-secondary/50 p-0.5">
           {aspectRatioOptions.map((option) => (
             <button
               key={option.value}
               onClick={() => onAspectRatioChange(option.value)}
               className={cn(
-                'px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all',
-                'hover:border-primary hover:bg-secondary/50',
+                'px-2 py-0.5 rounded text-xs transition-colors',
                 aspectRatio === option.value
-                  ? 'border-primary bg-primary/10 text-foreground'
-                  : 'border-border bg-card text-muted-foreground'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {option.label}

@@ -18,13 +18,18 @@ export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
   return (
     <div
       className={cn(
-        'flex h-full max-h-full max-w-full items-center justify-center overflow-hidden rounded-2xl border border-border bg-muted/30 px-3 py-6 sm:px-4 sm:py-8',
+        'relative flex h-full min-h-0 flex-1 items-center justify-center overflow-hidden rounded-lg border border-border/50 bg-secondary/30',
         className,
       )}
     >
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.015]" style={{
+        backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
+        backgroundSize: '24px 24px'
+      }} />
       <div
         ref={containerRef}
-        className="flex max-h-full max-w-full items-center justify-center [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-2xl"
+        className="relative z-10 flex max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] items-center justify-center p-4 [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-lg"
       />
     </div>
   );

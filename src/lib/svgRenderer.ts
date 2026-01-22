@@ -122,13 +122,293 @@ function softOverlays(width: number, height: number, baseId: string) {
   `;
 }
 
-function generateGradientSoft(palette: Palette, width: number, height: number): string {
-  const id = 'grad-soft';
+// ===========================================
+// GRADIENT GENERATORS (6 presets)
+// ===========================================
+
+function generateGradientSunset(palette: Palette, width: number, height: number): string {
+  const id = 'grad-sunset';
+  // Warm orange → pink → soft purple horizontal gradient
+  return `
+    <defs>
+      <linearGradient id="${id}" x1="0%" y1="50%" x2="100%" y2="50%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="50%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
+        <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[3] || palette.swatches[1]}" />
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateGradientOcean(palette: Palette, width: number, height: number): string {
+  const id = 'grad-ocean';
+  // Cool blue → teal diagonal gradient
   return `
     <defs>
       <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="${palette.swatches[0]}" />
-        <stop offset="70%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="50%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
+        <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[3] || palette.swatches[1]}" />
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateGradientAurora(palette: Palette, width: number, height: number): string {
+  const id = 'grad-aurora';
+  // Multi-color flowing gradient with wave effect
+  return `
+    <defs>
+      <linearGradient id="${id}-base" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="35%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="65%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
+        <stop offset="100%" stop-color="${palette.swatches[3] || palette.swatches[2] || palette.swatches[0]}" />
+      </linearGradient>
+      <radialGradient id="${id}-glow1" cx="20%" cy="80%" r="60%">
+        <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[2]}" stop-opacity="0.4" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-glow2" cx="80%" cy="30%" r="50%">
+        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[1]}" stop-opacity="0.35" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id}-base)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-glow1)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-glow2)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateGradientRose(palette: Palette, width: number, height: number): string {
+  const id = 'grad-rose';
+  // Soft pink-peach gradient
+  return `
+    <defs>
+      <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="60%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
+      </linearGradient>
+      <radialGradient id="${id}-shimmer" cx="70%" cy="30%" r="50%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15" />
+        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-shimmer)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateGradientMidnight(palette: Palette, width: number, height: number): string {
+  const id = 'grad-midnight';
+  // Deep purple-blue dark gradient
+  return `
+    <defs>
+      <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="50%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
+      </linearGradient>
+      <radialGradient id="${id}-stars" cx="50%" cy="50%" r="70%">
+        <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[3] || '#FFFFFF'}" stop-opacity="0.08" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-stars)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateGradientMint(palette: Palette, width: number, height: number): string {
+  const id = 'grad-mint';
+  // Green-teal light gradient
+  return `
+    <defs>
+      <linearGradient id="${id}" x1="100%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="50%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id})" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+// ===========================================
+// MESH GENERATORS (4 presets)
+// ===========================================
+
+function generateMeshCosmic(palette: Palette, width: number, height: number): string {
+  const id = 'mesh-cosmic';
+  // Purple-pink-blue flowing mesh
+  return `
+    <defs>
+      <radialGradient id="${id}-1" cx="25%" cy="25%" r="50%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-2" cx="75%" cy="30%" r="45%">
+        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[1]}" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-3" cx="50%" cy="75%" r="55%">
+        <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[2]}" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-4" cx="20%" cy="70%" r="40%">
+        <stop offset="0%" stop-color="${palette.swatches[1] || palette.swatches[0]}" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-1)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-2)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-3)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-4)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateMeshTropical(palette: Palette, width: number, height: number): string {
+  const id = 'mesh-tropical';
+  // Orange-pink-cyan vibrant mesh
+  return `
+    <defs>
+      <radialGradient id="${id}-1" cx="15%" cy="40%" r="55%">
+        <stop offset="0%" stop-color="${palette.swatches[1] || palette.swatches[0]}" stop-opacity="0.95" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-2" cx="85%" cy="25%" r="50%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[1]}" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-3" cx="60%" cy="80%" r="60%">
+        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[2]}" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-4" cx="30%" cy="90%" r="45%">
+        <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[3]}" stop-opacity="0.75" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-1)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-2)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-3)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-4)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateMeshPastel(palette: Palette, width: number, height: number): string {
+  const id = 'mesh-pastel';
+  // Soft pastel multi-color mesh
+  return `
+    <defs>
+      <radialGradient id="${id}-1" cx="30%" cy="20%" r="50%">
+        <stop offset="0%" stop-color="${palette.swatches[1] || palette.swatches[0]}" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-2" cx="70%" cy="35%" r="45%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[1]}" stop-opacity="0.65" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-3" cx="45%" cy="70%" r="55%">
+        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[2]}" stop-opacity="0.6" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-4" cx="85%" cy="75%" r="40%">
+        <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[3]}" stop-opacity="0.55" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-1)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-2)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-3)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-4)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateMeshNeon(palette: Palette, width: number, height: number): string {
+  const id = 'mesh-neon';
+  // Electric blue-pink-green mesh with glow effect
+  return `
+    <defs>
+      <filter id="${id}-glow">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <radialGradient id="${id}-1" cx="20%" cy="30%" r="55%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" stop-opacity="0.95" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-2" cx="80%" cy="20%" r="50%">
+        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[1]}" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-3" cx="50%" cy="80%" r="60%">
+        <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[2]}" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="${id}-4" cx="75%" cy="65%" r="45%">
+        <stop offset="0%" stop-color="${palette.swatches[1] || palette.swatches[0]}" stop-opacity="0.8" />
+        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    <g filter="url(#${id}-glow)">
+      <rect width="${width}" height="${height}" fill="url(#${id}-1)" />
+      <rect width="${width}" height="${height}" fill="url(#${id}-2)" />
+      <rect width="${width}" height="${height}" fill="url(#${id}-3)" />
+      <rect width="${width}" height="${height}" fill="url(#${id}-4)" />
+    </g>
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+// ===========================================
+// SOLID GENERATORS (3 presets)
+// ===========================================
+
+function generateSolidDark(palette: Palette, width: number, height: number): string {
+  const id = 'solid-dark';
+  // Clean dark gray background
+  return `
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateSolidLight(palette: Palette, width: number, height: number): string {
+  const id = 'solid-light';
+  // Clean light gray/white background
+  return `
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generateSolidGradient(palette: Palette, width: number, height: number): string {
+  const id = 'solid-gradient';
+  // Very subtle monochrome gradient
+  return `
+    <defs>
+      <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
         <stop offset="100%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
       </linearGradient>
     </defs>
@@ -137,87 +417,57 @@ function generateGradientSoft(palette: Palette, width: number, height: number): 
   `;
 }
 
-function generateGradientBold(palette: Palette, width: number, height: number): string {
-  const id = 'grad-bold';
-  return `
-    <defs>
-      <linearGradient id="${id}" x1="-20%" y1="0%" x2="120%" y2="100%">
-        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" />
-        <stop offset="55%" stop-color="${palette.swatches[3] || palette.swatches[1]}" />
-        <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[0]}" />
-      </linearGradient>
-    </defs>
-    <rect width="${width}" height="${height}" fill="url(#${id})" />
-    ${softOverlays(width, height, id)}
-  `;
-}
+// ===========================================
+// PATTERN GENERATORS (3 presets)
+// ===========================================
 
-function generateMeshGradient(palette: Palette, width: number, height: number): string {
-  const id = 'mesh';
+function generatePatternDots(palette: Palette, width: number, height: number): string {
+  const id = 'pattern-dots';
+  // Grid of dots on solid background
   return `
     <defs>
-      <radialGradient id="${id}-1" cx="28%" cy="32%" r="45%">
-        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" stop-opacity="0.9" />
-        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="1" />
-      </radialGradient>
-      <radialGradient id="${id}-2" cx="72%" cy="68%" r="50%">
-        <stop offset="0%" stop-color="${palette.swatches[3] || palette.swatches[1]}" stop-opacity="0.9" />
-        <stop offset="100%" stop-color="${palette.swatches[0]}" stop-opacity="1" />
-      </radialGradient>
-    </defs>
-    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
-    <rect width="${width}" height="${height}" fill="url(#${id}-1)" opacity="0.9" />
-    <rect width="${width}" height="${height}" fill="url(#${id}-2)" opacity="0.9" />
-    ${softOverlays(width, height, id)}
-  `;
-}
-
-function generateBlobDuo(palette: Palette, width: number, height: number): string {
-  const id = 'blur-duo';
-  return `
-    <defs>
-      <filter id="${id}">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="80" />
-      </filter>
-    </defs>
-    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
-    <ellipse cx="${width * 0.3}" cy="${height * 0.4}" rx="${width * 0.3}" ry="${height * 0.35}" 
-             fill="${palette.swatches[2] || palette.swatches[0]}" filter="url(#${id})" opacity="0.6" />
-    <ellipse cx="${width * 0.7}" cy="${height * 0.6}" rx="${width * 0.35}" ry="${height * 0.3}" 
-             fill="${palette.swatches[3] || palette.swatches[1]}" filter="url(#${id})" opacity="0.6" />
-    ${softOverlays(width, height, id)}
-  `;
-}
-
-function generateBlobTrio(palette: Palette, width: number, height: number): string {
-  const id = 'blur-trio';
-  return `
-    <defs>
-      <filter id="${id}">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="70" />
-      </filter>
-    </defs>
-    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
-    <ellipse cx="${width * 0.25}" cy="${height * 0.35}" rx="${width * 0.25}" ry="${height * 0.3}" 
-             fill="${palette.swatches[2] || palette.swatches[0]}" filter="url(#${id})" opacity="0.55" />
-    <ellipse cx="${width * 0.75}" cy="${height * 0.45}" rx="${width * 0.3}" ry="${height * 0.25}" 
-             fill="${palette.swatches[3] || palette.swatches[1]}" filter="url(#${id})" opacity="0.55" />
-    <ellipse cx="${width * 0.5}" cy="${height * 0.75}" rx="${width * 0.35}" ry="${height * 0.28}" 
-             fill="${palette.swatches[4] || palette.swatches[2]}" filter="url(#${id})" opacity="0.55" />
-    ${softOverlays(width, height, id)}
-  `;
-}
-
-function generateDotGrid(palette: Palette, width: number, height: number): string {
-  const id = 'dot';
-  return `
-    <defs>
-      <pattern id="dot-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-        <circle cx="15" cy="15" r="2" fill="${palette.swatches[2] || palette.swatches[1]}" opacity="0.25" />
+      <pattern id="${id}-pattern" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="12" cy="12" r="2" fill="${palette.swatches[2] || palette.swatches[1]}" opacity="0.3" />
       </pattern>
     </defs>
     <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
-    <rect width="${width}" height="${height}" fill="url(#dot-pattern)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-pattern)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generatePatternGrid(palette: Palette, width: number, height: number): string {
+  const id = 'pattern-grid';
+  // Subtle grid lines pattern
+  return `
+    <defs>
+      <pattern id="${id}-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <line x1="40" y1="0" x2="40" y2="40" stroke="${palette.swatches[2] || palette.swatches[1]}" stroke-width="1" opacity="0.15" />
+        <line x1="0" y1="40" x2="40" y2="40" stroke="${palette.swatches[2] || palette.swatches[1]}" stroke-width="1" opacity="0.15" />
+      </pattern>
+    </defs>
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-pattern)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
+function generatePatternNoise(palette: Palette, width: number, height: number): string {
+  const id = 'pattern-noise';
+  // Textured noise background
+  return `
+    <defs>
+      <filter id="${id}-noise" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="5" result="noise" />
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.12" />
+        </feComponentTransfer>
+        <feBlend in="SourceGraphic" mode="overlay" />
+      </filter>
+    </defs>
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" />
+    <rect width="${width}" height="${height}" fill="${palette.swatches[0]}" filter="url(#${id}-noise)" />
     ${softOverlays(width, height, id)}
   `;
 }
@@ -284,30 +534,77 @@ export function generateSVG(options: RenderOptions): string {
 
   // Generate background based on preset
   switch (options.presetId) {
-    case 'gradient-soft':
-      backgroundSVG = generateGradientSoft(options.palette, width, height);
+    // Gradient presets (6)
+    case 'gradient-sunset':
+      backgroundSVG = generateGradientSunset(options.palette, width, height);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
-    case 'gradient-bold':
-      backgroundSVG = generateGradientBold(options.palette, width, height);
+    case 'gradient-ocean':
+      backgroundSVG = generateGradientOcean(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
+      break;
+    case 'gradient-aurora':
+      backgroundSVG = generateGradientAurora(options.palette, width, height);
       cardRadius = 28;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="24" flood-opacity="0.2"/></filter>';
       break;
-    case 'mesh-gradient':
-      backgroundSVG = generateMeshGradient(options.palette, width, height);
+    case 'gradient-rose':
+      backgroundSVG = generateGradientRose(options.palette, width, height);
       cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
-    case 'blob-duo':
-      backgroundSVG = generateBlobDuo(options.palette, width, height);
+    case 'gradient-midnight':
+      backgroundSVG = generateGradientMidnight(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-opacity="0.25"/></filter>';
+      break;
+    case 'gradient-mint':
+      backgroundSVG = generateGradientMint(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
+      break;
+    // Mesh presets (4)
+    case 'mesh-cosmic':
+      backgroundSVG = generateMeshCosmic(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-opacity="0.18"/></filter>';
+      break;
+    case 'mesh-tropical':
+      backgroundSVG = generateMeshTropical(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-opacity="0.18"/></filter>';
+      break;
+    case 'mesh-pastel':
+      backgroundSVG = generateMeshPastel(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.12"/></filter>';
+      break;
+    case 'mesh-neon':
+      backgroundSVG = generateMeshNeon(options.palette, width, height);
+      cardRadius = 28;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="24" flood-opacity="0.22"/></filter>';
+      break;
+    // Solid presets (3)
+    case 'solid-dark':
+      backgroundSVG = generateSolidDark(options.palette, width, height);
       cardRadius = 20;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.3"/></filter>';
       break;
-    case 'blob-trio':
-      backgroundSVG = generateBlobTrio(options.palette, width, height);
+    case 'solid-light':
+      backgroundSVG = generateSolidLight(options.palette, width, height);
       cardRadius = 20;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="12" flood-opacity="0.1"/></filter>';
       break;
-    case 'dot-grid':
-      backgroundSVG = generateDotGrid(options.palette, width, height);
+    case 'solid-gradient':
+      backgroundSVG = generateSolidGradient(options.palette, width, height);
+      cardRadius = 20;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="14" flood-opacity="0.12"/></filter>';
+      break;
+    // Pattern presets (3)
+    case 'pattern-dots':
+      backgroundSVG = generatePatternDots(options.palette, width, height);
       cardRadius = 16;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.1"/></filter>';
       break;

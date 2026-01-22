@@ -99,29 +99,33 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-3">
+    <div className="space-y-3">
+      <div className="flex gap-2">
         <Button
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
-          className="flex-1 h-32 border-2 border-dashed hover:border-primary transition-colors"
+          className="flex-1 h-16 border-dashed border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all"
         >
-          <div className="flex flex-col items-center gap-2">
-            <Upload className="w-8 h-8" />
-            <span className="text-sm font-medium">Upload Image</span>
-            <span className="text-xs text-muted-foreground">PNG or JPG, max 10MB</span>
+          <div className="flex items-center gap-3">
+            <Upload className="w-5 h-5 text-muted-foreground" />
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-sm font-medium">Upload</span>
+              <span className="text-[11px] text-muted-foreground">PNG, JPG · 10MB</span>
+            </div>
           </div>
         </Button>
 
         <Button
           variant="outline"
           onClick={handlePasteFromClipboard}
-          className="flex-1 h-32 border-2 border-dashed hover:border-primary transition-colors"
+          className="flex-1 h-16 border-dashed border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all"
         >
-          <div className="flex flex-col items-center gap-2">
-            <Clipboard className="w-8 h-8" />
-            <span className="text-sm font-medium">From Clipboard</span>
-            <span className="text-xs text-muted-foreground">Or press Ctrl/⌘+V</span>
+          <div className="flex items-center gap-3">
+            <Clipboard className="w-5 h-5 text-muted-foreground" />
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-sm font-medium">Paste</span>
+              <span className="text-[11px] text-muted-foreground">⌘V / Ctrl+V</span>
+            </div>
           </div>
         </Button>
       </div>

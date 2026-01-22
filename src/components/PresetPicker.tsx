@@ -8,19 +8,19 @@ interface PresetPickerProps {
 
 export function PresetPicker({ selectedId, onChange }: PresetPickerProps) {
   return (
-    <div className="space-y-3">
-      <label className="text-sm font-medium">Preset Style</label>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+    <div className="space-y-2">
+      <label className="text-xs font-medium text-muted-foreground">Preset</label>
+      <div className="flex flex-wrap gap-1.5">
         {presets.map((preset) => (
           <button
             key={preset.id}
             onClick={() => onChange(preset.id)}
             className={cn(
-              'px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all',
-              'hover:border-primary hover:bg-secondary/50',
+              'px-2.5 py-1 rounded-md text-xs transition-colors',
+              'border border-transparent',
               selectedId === preset.id
-                ? 'border-primary bg-primary/10 text-foreground'
-                : 'border-border bg-card text-muted-foreground'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground'
             )}
           >
             {preset.label}
