@@ -2,9 +2,11 @@
 
 ## Setup
 
-**At the start of each session**, run these commands to ensure environment is ready:
+A SessionStart hook in `.claude/settings.json` auto-runs `npm install` when node_modules is missing.
+
+To start the dev server:
 ```bash
-npm install && npm run dev
+npm run dev
 ```
 
 - Project uses Vite + React + TypeScript with Tailwind CSS
