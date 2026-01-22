@@ -40,6 +40,7 @@
 - Run `npm run test` when applicable
 - Run formatting commands (`npm run lint`, `npm run format`) before committing
 - For visual changes, update or add screenshots using provided tooling if possible
+- Always use `test.png` (located in project root) for manual testing of screenshot styling features
 
 ## Pull Requests
 
