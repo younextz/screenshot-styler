@@ -2,9 +2,13 @@
 
 ## Setup
 
-- Run `npm install` to install dependencies
-- Run `npm run dev` to start the development server
+**At the start of each session**, run these commands to ensure environment is ready:
+```bash
+npm install && npm run dev
+```
+
 - Project uses Vite + React + TypeScript with Tailwind CSS
+- Dev server runs at http://localhost:8080
 
 ## Code Style
 
