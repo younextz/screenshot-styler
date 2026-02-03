@@ -1,4 +1,5 @@
 import { Palette } from './palettes';
+import { createAnimateElement, getAnimationDuration } from './animations';
 
 const BACKGROUND_IMAGE_URLS = {
   'bg-picture-dark': '/backgrounds/bg-dark-bubbles.png',
@@ -122,6 +123,42 @@ function softOverlays(width: number, height: number, baseId: string) {
   `;
 }
 
+/**
+ * Creates a shimmer animation effect by animating a moving highlight across the canvas
+ * The highlight passes from top-left to bottom-right with a quick, smooth motion
+ */
+function createShimmerAnimation(baseId: string, speed: 'slow' | 'medium' | 'fast' = 'fast'): string {
+  const duration = getAnimationDuration(speed);
+
+  return `
+    <defs>
+      <radialGradient id="${baseId}-shimmer-animated" cx="0%" cy="0%" r="35%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35" />
+        <stop offset="70%" stop-color="#FFFFFF" stop-opacity="0.1" />
+        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <g>
+      <circle cx="-50%" cy="-50%" r="200" fill="url(#${baseId}-shimmer-animated)" opacity="0.8">
+        ${createAnimateElement({
+          attributeName: 'cx',
+          values: '-50%;150%',
+          dur: duration,
+          calcMode: 'spline',
+          keySplines: '0.42 0 0.58 1',
+        })}
+        ${createAnimateElement({
+          attributeName: 'cy',
+          values: '-50%;150%',
+          dur: duration,
+          calcMode: 'spline',
+          keySplines: '0.42 0 0.58 1',
+        })}
+      </circle>
+    </g>
+  `;
+}
+
 // ===========================================
 // GRADIENT GENERATORS (6 presets)
 // ===========================================
@@ -187,7 +224,7 @@ function generateGradientAurora(palette: Palette, width: number, height: number)
 
 function generateGradientRose(palette: Palette, width: number, height: number): string {
   const id = 'grad-rose';
-  // Soft pink-peach gradient
+  // Soft pink-peach gradient with shimmer animation effect
   return `
     <defs>
       <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -195,13 +232,9 @@ function generateGradientRose(palette: Palette, width: number, height: number): 
         <stop offset="60%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
         <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
       </linearGradient>
-      <radialGradient id="${id}-shimmer" cx="70%" cy="30%" r="50%">
-        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15" />
-        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
-      </radialGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#${id})" />
-    <rect width="${width}" height="${height}" fill="url(#${id}-shimmer)" />
+    ${createShimmerAnimation(id, 'fast')}
     ${softOverlays(width, height, id)}
   `;
 }
