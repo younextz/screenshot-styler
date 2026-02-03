@@ -1,8 +1,11 @@
+import { AnimationConfig } from './animations';
+
 export interface Preset {
   id: string;
   label: string;
   kind: 'background' | 'frame' | 'card';
   supportsTitle: boolean;
+  animation?: AnimationConfig;
 }
 
 export const presets: Preset[] = [
@@ -12,36 +15,42 @@ export const presets: Preset[] = [
     label: 'Sunset',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'medium', enabled: true },
   },
   {
     id: 'gradient-ocean',
     label: 'Ocean',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'medium', enabled: true },
   },
   {
     id: 'gradient-aurora',
     label: 'Aurora',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'slow', enabled: true },
   },
   {
     id: 'gradient-rose',
     label: 'Rose Gold',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'medium', enabled: true },
   },
   {
     id: 'gradient-midnight',
     label: 'Midnight',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'slow', enabled: true },
   },
   {
     id: 'gradient-mint',
     label: 'Fresh Mint',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'medium', enabled: true },
   },
   {
     id: 'gradient-wave',

@@ -1,5 +1,5 @@
 import { Palette } from './palettes';
-import { createAnimateElement, getAnimationDuration } from './animations';
+import { AnimationConfig, createAnimateElement, getAnimationDuration, prefersReducedMotion } from './animations';
 
 const BACKGROUND_IMAGE_URLS = {
   'bg-picture-dark': '/backgrounds/bg-dark-bubbles.png',
@@ -61,6 +61,7 @@ interface RenderOptions {
   imageData: string;
   imageWidth: number;
   imageHeight: number;
+  animation?: AnimationConfig;
 }
 
 export function calculateOutputSize(
@@ -160,18 +161,150 @@ function createShimmerAnimation(baseId: string, speed: 'slow' | 'medium' | 'fast
 }
 
 // ===========================================
+// ANIMATION GENERATORS
+// ===========================================
+
+/**
+ * Generates SVG animate elements for flow animation on linear gradients.
+ * Flow animation shifts the gradient position smoothly across the canvas.
+ */
+function createFlowAnimation(animationConfig: AnimationConfig): string {
+  if (!animationConfig.enabled || prefersReducedMotion()) {
+    return '';
+  }
+
+  const duration = getAnimationDuration(animationConfig.speed);
+
+  // Create smooth flow animation by animating x1, x2, y1, y2 coordinates
+  // This creates a horizontal flow effect
+  const animateX1 = createAnimateElement({
+    attributeName: 'x1',
+    values: '0%;100%;0%',
+    dur: duration,
+    calcMode: 'linear',
+  });
+
+  const animateX2 = createAnimateElement({
+    attributeName: 'x2',
+    values: '100%;200%;100%',
+    dur: duration,
+    calcMode: 'linear',
+  });
+
+  return `${animateX1}${animateX2}`;
+}
+
+/**
+ * Generates SVG animate elements for diagonal flow animation.
+ * Used for gradients like Ocean that benefit from diagonal movement.
+ */
+function createDiagonalFlowAnimation(animationConfig: AnimationConfig): string {
+  if (!animationConfig.enabled || prefersReducedMotion()) {
+    return '';
+  }
+
+  const duration = getAnimationDuration(animationConfig.speed);
+
+  // Animate diagonal gradient coordinates
+  const animateX1 = createAnimateElement({
+    attributeName: 'x1',
+    values: '0%;50%;0%',
+    dur: duration,
+    calcMode: 'linear',
+  });
+
+  const animateY1 = createAnimateElement({
+    attributeName: 'y1',
+    values: '0%;50%;0%',
+    dur: duration,
+    calcMode: 'linear',
+  });
+
+  const animateX2 = createAnimateElement({
+    attributeName: 'x2',
+    values: '100%;150%;100%',
+    dur: duration,
+    calcMode: 'linear',
+  });
+
+  const animateY2 = createAnimateElement({
+    attributeName: 'y2',
+    values: '100%;150%;100%',
+    dur: duration,
+    calcMode: 'linear',
+  });
+
+  return `${animateX1}${animateY1}${animateX2}${animateY2}`;
+}
+
+/**
+ * Generates SVG animate elements for radial gradient position animation.
+ * Used for mesh gradients with multiple radial gradients.
+ */
+function createRadialFlowAnimation(
+  animationConfig: AnimationConfig,
+  gradientIndex: number,
+  totalGradients: number
+): string {
+  if (!animationConfig.enabled || prefersReducedMotion()) {
+    return '';
+  }
+
+  const duration = getAnimationDuration(animationConfig.speed);
+
+  // Offset each radial gradient's animation slightly for a flowing effect
+  const delayRatio = (gradientIndex / totalGradients) * 0.5;
+  const begin = `${delayRatio}s`;
+
+  // Define different animation paths for each blob to create organic movement
+  const cxValues = ['25%', '35%', '20%'];
+  const cyValues = ['30%', '35%', '25%'];
+
+  if (gradientIndex % 2 === 1) {
+    cxValues.reverse();
+  }
+
+  const animateCx = createAnimateElement({
+    attributeName: 'cx',
+    values: cxValues.join(';'),
+    dur: duration,
+    calcMode: 'spline',
+    keySplines: '0.42 0 0.58 1; 0.42 0 0.58 1',
+    begin,
+  });
+
+  const animateCy = createAnimateElement({
+    attributeName: 'cy',
+    values: cyValues.join(';'),
+    dur: duration,
+    calcMode: 'spline',
+    keySplines: '0.42 0 0.58 1; 0.42 0 0.58 1',
+    begin,
+  });
+
+  return `${animateCx}${animateCy}`;
+}
+
+// ===========================================
 // GRADIENT GENERATORS (6 presets)
 // ===========================================
 
-function generateGradientSunset(palette: Palette, width: number, height: number): string {
+function generateGradientSunset(
+  palette: Palette,
+  width: number,
+  height: number,
+  animation?: AnimationConfig
+): string {
   const id = 'grad-sunset';
   // Warm orange → pink → soft purple horizontal gradient
+  const animationElements = animation ? createFlowAnimation(animation) : '';
   return `
     <defs>
       <linearGradient id="${id}" x1="0%" y1="50%" x2="100%" y2="50%">
         <stop offset="0%" stop-color="${palette.swatches[0]}" />
         <stop offset="50%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
         <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[3] || palette.swatches[1]}" />
+        ${animationElements}
       </linearGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#${id})" />
@@ -179,15 +312,22 @@ function generateGradientSunset(palette: Palette, width: number, height: number)
   `;
 }
 
-function generateGradientOcean(palette: Palette, width: number, height: number): string {
+function generateGradientOcean(
+  palette: Palette,
+  width: number,
+  height: number,
+  animation?: AnimationConfig
+): string {
   const id = 'grad-ocean';
   // Cool blue → teal diagonal gradient
+  const animationElements = animation ? createDiagonalFlowAnimation(animation) : '';
   return `
     <defs>
       <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="${palette.swatches[0]}" />
         <stop offset="50%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
         <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[3] || palette.swatches[1]}" />
+        ${animationElements}
       </linearGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#${id})" />
@@ -195,9 +335,15 @@ function generateGradientOcean(palette: Palette, width: number, height: number):
   `;
 }
 
-function generateGradientAurora(palette: Palette, width: number, height: number): string {
+function generateGradientAurora(
+  palette: Palette,
+  width: number,
+  height: number,
+  animation?: AnimationConfig
+): string {
   const id = 'grad-aurora';
   // Multi-color flowing gradient with wave effect
+  const animationElements = animation ? createDiagonalFlowAnimation(animation) : '';
   return `
     <defs>
       <linearGradient id="${id}-base" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -205,6 +351,7 @@ function generateGradientAurora(palette: Palette, width: number, height: number)
         <stop offset="35%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
         <stop offset="65%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
         <stop offset="100%" stop-color="${palette.swatches[3] || palette.swatches[2] || palette.swatches[0]}" />
+        ${animationElements}
       </linearGradient>
       <radialGradient id="${id}-glow1" cx="20%" cy="80%" r="60%">
         <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[2]}" stop-opacity="0.4" />
@@ -222,15 +369,22 @@ function generateGradientAurora(palette: Palette, width: number, height: number)
   `;
 }
 
-function generateGradientRose(palette: Palette, width: number, height: number): string {
+function generateGradientRose(
+  palette: Palette,
+  width: number,
+  height: number,
+  animation?: AnimationConfig
+): string {
   const id = 'grad-rose';
   // Soft pink-peach gradient with shimmer animation effect
+  const animationElements = animation ? createDiagonalFlowAnimation(animation) : '';
   return `
     <defs>
       <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="${palette.swatches[0]}" />
         <stop offset="60%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
         <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
+        ${animationElements}
       </linearGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#${id})" />
@@ -239,15 +393,22 @@ function generateGradientRose(palette: Palette, width: number, height: number): 
   `;
 }
 
-function generateGradientMidnight(palette: Palette, width: number, height: number): string {
+function generateGradientMidnight(
+  palette: Palette,
+  width: number,
+  height: number,
+  animation?: AnimationConfig
+): string {
   const id = 'grad-midnight';
   // Deep purple-blue dark gradient
+  const animationElements = animation ? createFlowAnimation(animation) : '';
   return `
     <defs>
       <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="${palette.swatches[0]}" />
         <stop offset="50%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
         <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
+        ${animationElements}
       </linearGradient>
       <radialGradient id="${id}-stars" cx="50%" cy="50%" r="70%">
         <stop offset="0%" stop-color="${palette.swatches[4] || palette.swatches[3] || '#FFFFFF'}" stop-opacity="0.08" />
@@ -260,15 +421,22 @@ function generateGradientMidnight(palette: Palette, width: number, height: numbe
   `;
 }
 
-function generateGradientMint(palette: Palette, width: number, height: number): string {
+function generateGradientMint(
+  palette: Palette,
+  width: number,
+  height: number,
+  animation?: AnimationConfig
+): string {
   const id = 'grad-mint';
   // Green-teal light gradient
+  const animationElements = animation ? createDiagonalFlowAnimation(animation) : '';
   return `
     <defs>
       <linearGradient id="${id}" x1="100%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stop-color="${palette.swatches[0]}" />
         <stop offset="50%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
         <stop offset="100%" stop-color="${palette.swatches[2] || palette.swatches[1] || palette.swatches[0]}" />
+        ${animationElements}
       </linearGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#${id})" />
@@ -598,32 +766,32 @@ export function generateSVG(options: RenderOptions): string {
   switch (options.presetId) {
     // Gradient presets (6)
     case 'gradient-sunset':
-      backgroundSVG = generateGradientSunset(options.palette, width, height);
+      backgroundSVG = generateGradientSunset(options.palette, width, height, options.animation);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
     case 'gradient-ocean':
-      backgroundSVG = generateGradientOcean(options.palette, width, height);
+      backgroundSVG = generateGradientOcean(options.palette, width, height, options.animation);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
     case 'gradient-aurora':
-      backgroundSVG = generateGradientAurora(options.palette, width, height);
+      backgroundSVG = generateGradientAurora(options.palette, width, height, options.animation);
       cardRadius = 28;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="24" flood-opacity="0.2"/></filter>';
       break;
     case 'gradient-rose':
-      backgroundSVG = generateGradientRose(options.palette, width, height);
+      backgroundSVG = generateGradientRose(options.palette, width, height, options.animation);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
     case 'gradient-midnight':
-      backgroundSVG = generateGradientMidnight(options.palette, width, height);
+      backgroundSVG = generateGradientMidnight(options.palette, width, height, options.animation);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="20" flood-opacity="0.25"/></filter>';
       break;
     case 'gradient-mint':
-      backgroundSVG = generateGradientMint(options.palette, width, height);
+      backgroundSVG = generateGradientMint(options.palette, width, height, options.animation);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
