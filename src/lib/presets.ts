@@ -43,6 +43,12 @@ export const presets: Preset[] = [
     kind: 'background',
     supportsTitle: false,
   },
+  {
+    id: 'gradient-wave',
+    label: 'Wave',
+    kind: 'background',
+    supportsTitle: false,
+  },
   // Mesh Category (4 presets)
   {
     id: 'mesh-cosmic',

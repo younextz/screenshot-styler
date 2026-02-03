@@ -276,6 +276,35 @@ function generateGradientMint(palette: Palette, width: number, height: number): 
   `;
 }
 
+function generateGradientWave(palette: Palette, width: number, height: number): string {
+  const id = 'grad-wave';
+  // Multi-color flowing wave gradient with smooth sinusoidal animation
+  return `
+    <defs>
+      <linearGradient id="${id}-base" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${palette.swatches[0]}" />
+        <stop offset="33%" stop-color="${palette.swatches[1] || palette.swatches[0]}" />
+        <stop offset="66%" stop-color="${palette.swatches[2] || palette.swatches[1]}" />
+        <stop offset="100%" stop-color="${palette.swatches[3] || palette.swatches[2] || palette.swatches[1]}" />
+      </linearGradient>
+      <linearGradient id="${id}-wave" x1="0%" y1="50%" x2="100%" y2="50%">
+        <stop offset="0%" stop-color="${palette.swatches[2] || palette.swatches[0]}" stop-opacity="0.3">
+          <animate attributeName="stop-color" values="${palette.swatches[2] || palette.swatches[0]};${palette.swatches[3] || palette.swatches[1]};${palette.swatches[4] || palette.swatches[2]};${palette.swatches[2] || palette.swatches[0]}" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1; 0.42 0 0.58 1"/>
+        </stop>
+        <stop offset="50%" stop-color="${palette.swatches[3] || palette.swatches[1]}" stop-opacity="0.4">
+          <animate attributeName="stop-color" values="${palette.swatches[3] || palette.swatches[1]};${palette.swatches[4] || palette.swatches[2]};${palette.swatches[2] || palette.swatches[0]};${palette.swatches[3] || palette.swatches[1]}" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1; 0.42 0 0.58 1"/>
+        </stop>
+        <stop offset="100%" stop-color="${palette.swatches[4] || palette.swatches[2]}" stop-opacity="0.35">
+          <animate attributeName="stop-color" values="${palette.swatches[4] || palette.swatches[2]};${palette.swatches[2] || palette.swatches[0]};${palette.swatches[3] || palette.swatches[1]};${palette.swatches[4] || palette.swatches[2]}" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1; 0.42 0 0.58 1"/>
+        </stop>
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${height}" fill="url(#${id}-base)" />
+    <rect width="${width}" height="${height}" fill="url(#${id}-wave)" />
+    ${softOverlays(width, height, id)}
+  `;
+}
+
 // ===========================================
 // MESH GENERATORS (4 presets)
 // ===========================================
@@ -595,6 +624,11 @@ export function generateSVG(options: RenderOptions): string {
       break;
     case 'gradient-mint':
       backgroundSVG = generateGradientMint(options.palette, width, height);
+      cardRadius = 24;
+      shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
+      break;
+    case 'gradient-wave':
+      backgroundSVG = generateGradientWave(options.palette, width, height);
       cardRadius = 24;
       shadowFilter = '<filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.15"/></filter>';
       break;
