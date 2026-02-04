@@ -1,11 +1,14 @@
 import { TitleBarType, AspectRatio } from '@/lib/svgRenderer';
+import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 
 interface ControlPanelProps {
   titleBar: TitleBarType;
   aspectRatio: AspectRatio;
+  animationsEnabled: boolean;
   onTitleBarChange: (value: TitleBarType) => void;
   onAspectRatioChange: (value: AspectRatio) => void;
+  onAnimationsChange: (value: boolean) => void;
   supportsTitleBar: boolean;
 }
 
@@ -25,8 +28,10 @@ const aspectRatioOptions: { value: AspectRatio; label: string }[] = [
 export function ControlPanel({
   titleBar,
   aspectRatio,
+  animationsEnabled,
   onTitleBarChange,
   onAspectRatioChange,
+  onAnimationsChange,
   supportsTitleBar,
 }: ControlPanelProps) {
   return (
@@ -78,6 +83,17 @@ export function ControlPanel({
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+          Animations
+        </span>
+        <Switch
+          checked={animationsEnabled}
+          onCheckedChange={onAnimationsChange}
+          aria-label="Toggle animations"
+        />
       </div>
     </div>
   );

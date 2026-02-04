@@ -184,3 +184,42 @@ export function createDefaultAnimationConfig(
     enabled,
   };
 }
+
+/**
+ * Generates a pulse opacity animation for SVG elements
+ * Animates opacity from 1 to a minimum value and back
+ */
+export function createPulseOpacityAnimation(
+  speed: AnimationSpeed,
+  minOpacity: number = 0.7
+): string {
+  const duration = getAnimationDuration(speed);
+  return createAnimateElement({
+    attributeName: 'stop-opacity',
+    values: `1;${minOpacity};1`,
+    dur: duration,
+    calcMode: 'spline',
+    keyTimes: '0;0.5;1',
+    keySplines: '0.42 0 0.58 1; 0.42 0 0.58 1',
+  });
+}
+
+/**
+ * Generates a pulse scale animation for SVG gradient positions
+ * Animates radial gradient radius for a pulsing effect
+ */
+export function createPulseRadiusAnimation(
+  speed: AnimationSpeed,
+  minRadius: number = 40,
+  maxRadius: number = 60
+): string {
+  const duration = getAnimationDuration(speed);
+  return createAnimateElement({
+    attributeName: 'r',
+    values: `${maxRadius}%;${minRadius}%;${maxRadius}%`,
+    dur: duration,
+    calcMode: 'spline',
+    keyTimes: '0;0.5;1',
+    keySplines: '0.42 0 0.58 1; 0.42 0 0.58 1',
+  });
+}

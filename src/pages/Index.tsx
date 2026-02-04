@@ -28,6 +28,9 @@ const Index = () => {
   const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
   const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
+  const [animationsEnabled, setAnimationsEnabled] = useState<boolean>(
+    savedSettings.animationsEnabled !== undefined ? savedSettings.animationsEnabled : true
+  );
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
   const [tweetData, setTweetData] = useState<any>(null);
@@ -45,14 +48,26 @@ const Index = () => {
         imageData,
         imageWidth,
         imageHeight,
+        animationsEnabled,
       });
       setSvgContent(svg);
     }
-  }, [imageData, imageWidth, imageHeight, presetId, paletteId, titleBar, aspectRatio, currentPalette, currentPreset]);
+  }, [
+    imageData,
+    imageWidth,
+    imageHeight,
+    presetId,
+    paletteId,
+    titleBar,
+    aspectRatio,
+    animationsEnabled,
+    currentPalette,
+    currentPreset,
+  ]);
 
   useEffect(() => {
-    saveSettings({ presetId, paletteId, titleBar, aspectRatio });
-  }, [presetId, paletteId, titleBar, aspectRatio]);
+    saveSettings({ presetId, paletteId, titleBar, aspectRatio, animationsEnabled });
+  }, [presetId, paletteId, titleBar, aspectRatio, animationsEnabled]);
 
   // Preload background images for picture presets
   useEffect(() => {
@@ -281,8 +296,10 @@ const Index = () => {
                   <ControlPanel
                     titleBar={titleBar}
                     aspectRatio={aspectRatio}
+                    animationsEnabled={animationsEnabled}
                     onTitleBarChange={setTitleBar}
                     onAspectRatioChange={setAspectRatio}
+                    onAnimationsChange={setAnimationsEnabled}
                     supportsTitleBar={currentPreset.supportsTitle}
                   />
                 </section>

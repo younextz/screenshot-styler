@@ -57,6 +57,7 @@ export const presets: Preset[] = [
     label: 'Wave',
     kind: 'background',
     supportsTitle: false,
+    animation: { type: 'flow', speed: 'medium', enabled: true },
   },
   // Mesh Category (4 presets)
   {

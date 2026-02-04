@@ -1,5 +1,5 @@
 import { Palette } from './palettes';
-import { AnimationConfig, createAnimateElement, getAnimationDuration, prefersReducedMotion } from './animations';
+import { AnimationConfig, createAnimateElement, getAnimationDuration, prefersReducedMotion, createPulseOpacityAnimation, AnimationSpeed } from './animations';
 
 const BACKGROUND_IMAGE_URLS = {
   'bg-picture-dark': '/backgrounds/bg-dark-bubbles.png',
@@ -286,6 +286,21 @@ function createRadialFlowAnimation(
 }
 
 // ===========================================
+// ANIMATION UTILITIES
+// ===========================================
+
+/**
+ * Applies pulse animation to gradient stops
+ */
+function applyPulseAnimation(
+  animationsEnabled: boolean,
+  speed: AnimationSpeed = 'slow'
+): string {
+  if (!animationsEnabled) return '';
+  return createPulseOpacityAnimation(speed, 0.8);
+}
+
+// ===========================================
 // GRADIENT GENERATORS (6 presets)
 // ===========================================
 
@@ -428,7 +443,7 @@ function generateGradientMint(
   animation?: AnimationConfig
 ): string {
   const id = 'grad-mint';
-  // Green-teal light gradient
+  // Green-teal light gradient with flow animation
   const animationElements = animation ? createDiagonalFlowAnimation(animation) : '';
   return `
     <defs>
