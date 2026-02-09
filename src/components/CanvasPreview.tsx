@@ -18,7 +18,7 @@ export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
   return (
     <div
       className={cn(
-        'relative flex h-full min-h-0 flex-1 items-center justify-center overflow-hidden rounded-lg border border-border/50 bg-secondary/30',
+        'relative flex items-center justify-center overflow-hidden rounded-2xl bg-card p-4 sm:p-6',
         className,
       )}
     >

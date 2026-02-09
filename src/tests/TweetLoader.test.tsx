@@ -16,10 +16,10 @@ it('calls onTweetLoad with fetched data when the button is clicked', async () =>
 
     render(<TweetLoader onTweetLoad={onTweetLoad} />);
 
-    const input = screen.getByPlaceholderText('Enter Tweet URL');
+    const input = screen.getByPlaceholderText('https://x.com/...');
     fireEvent.change(input, { target: { value: 'https://twitter.com/user/status/123' } });
 
-    const button = screen.getByText('Fetch Tweet');
+    const button = screen.getByText('Fetch');
     fireEvent.click(button);
 
     await screen.findByText('Tweet loaded successfully');
@@ -48,10 +48,10 @@ it('throws an error when the tweet URL is invalid', async () => {
 
   render(<TweetLoader onTweetLoad={onTweetLoad} />);
 
-  const input = screen.getByPlaceholderText('Enter Tweet URL');
+  const input = screen.getByPlaceholderText('https://x.com/...');
   fireEvent.change(input, { target: { value: 'https://twitter.com/user/status/invalid' } });
 
-  const button = screen.getByText('Fetch Tweet');
+  const button = screen.getByText('Fetch');
   fireEvent.click(button);
 
   await screen.findByText('Failed to load tweet');
@@ -72,10 +72,10 @@ it('handles a missing author_url gracefully', async () => {
 
   render(<TweetLoader onTweetLoad={onTweetLoad} />);
 
-  const input = screen.getByPlaceholderText('Enter Tweet URL');
+  const input = screen.getByPlaceholderText('https://x.com/...');
   fireEvent.change(input, { target: { value: 'https://twitter.com/user/status/123' } });
 
-  const button = screen.getByText('Fetch Tweet');
+  const button = screen.getByText('Fetch');
   fireEvent.click(button);
 
   await screen.findByText('Tweet loaded successfully');

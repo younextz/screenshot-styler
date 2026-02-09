@@ -1,6 +1,6 @@
 import { Download, Copy, Loader2, FileDown, ImageDown } from 'lucide-react';
-import { Button } from './ui/button';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ExportButtonsProps {
   svgContent: string;
@@ -22,70 +22,46 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
     }
   };
 
+  const btnBase =
+    'btn-float inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-40';
+
   return (
-    <div className="flex items-center gap-2">
-      {/* Primary action - Copy to clipboard */}
-      <Button
+    <div className="flex flex-wrap gap-3">
+      <button
         onClick={() => handleExport('copy')}
         disabled={disabled || isExporting || !svgContent}
-        className="gap-1.5 px-4"
-        size="sm"
+        className={cn(btnBase, 'bg-primary text-primary-foreground')}
       >
-        {isExporting ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <Copy className="w-4 h-4" />
-        )}
-        Copy
-      </Button>
+        {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
+        Copy PNG
+      </button>
 
-      {/* Secondary actions - Downloads */}
-      <div className="flex items-center gap-1.5 pl-2 border-l border-border/50">
-        <Button
-          onClick={() => handleExport('download')}
-          disabled={disabled || isExporting || !svgContent}
-          variant="ghost"
-          className="gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-          size="sm"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <ImageDown className="w-4 h-4" />
-          )}
-          PNG
-        </Button>
+      <button
+        onClick={() => handleExport('download')}
+        disabled={disabled || isExporting || !svgContent}
+        className={cn(btnBase, 'bg-secondary text-secondary-foreground')}
+      >
+        {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageDown className="h-4 w-4" />}
+        PNG
+      </button>
 
-        <Button
-          onClick={() => handleExport('download4k')}
-          disabled={disabled || isExporting || !svgContent}
-          variant="ghost"
-          className="gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-          size="sm"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Download className="w-4 h-4" />
-          )}
-          4K
-        </Button>
+      <button
+        onClick={() => handleExport('download4k')}
+        disabled={disabled || isExporting || !svgContent}
+        className={cn(btnBase, 'bg-secondary text-secondary-foreground')}
+      >
+        {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+        4K
+      </button>
 
-        <Button
-          onClick={() => handleExport('downloadSvg')}
-          disabled={disabled || isExporting || !svgContent}
-          variant="ghost"
-          className="gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-          size="sm"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <FileDown className="w-4 h-4" />
-          )}
-          SVG
-        </Button>
-      </div>
+      <button
+        onClick={() => handleExport('downloadSvg')}
+        disabled={disabled || isExporting || !svgContent}
+        className={cn(btnBase, 'bg-secondary text-secondary-foreground')}
+      >
+        {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+        SVG
+      </button>
     </div>
   );
 }
