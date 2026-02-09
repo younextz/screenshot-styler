@@ -1,6 +1,5 @@
 import { Upload, Clipboard } from 'lucide-react';
 import { useRef, useEffect } from 'react';
-import { Button } from './ui/button';
 import { toast } from 'sonner';
 
 interface ImageLoaderProps {
@@ -12,7 +11,6 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle document-level paste events for Command+V
   useEffect(() => {
     const handleDocumentPaste = (e: ClipboardEvent) => {
       const items = e.clipboardData?.items;
@@ -93,42 +91,30 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
       const file = new File([blob], 'clipboard-image.png', { type: imageType });
       processFile(file);
     } catch (error) {
-      toast.error('Clipboard not available. Try Ctrl/⌘+V or use file picker.');
+      toast.error('Clipboard not available. Try Ctrl/Cmd+V or use file picker.');
       console.error('Clipboard error:', error);
     }
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          onClick={() => fileInputRef.current?.click()}
-          className="flex-1 h-16 border-dashed border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all"
-        >
-          <div className="flex items-center gap-3">
-            <Upload className="w-5 h-5 text-muted-foreground" />
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-sm font-medium">Upload</span>
-              <span className="text-[11px] text-muted-foreground">PNG, JPG · 10MB</span>
-            </div>
-          </div>
-        </Button>
+    <div className="grid grid-cols-2 gap-3">
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        className="btn-float tilt-hover flex flex-col items-center gap-2 rounded-2xl bg-primary px-4 py-6 text-primary-foreground"
+      >
+        <Upload className="h-6 w-6" />
+        <span className="text-sm font-semibold">Upload</span>
+        <span className="text-xs opacity-70">PNG or JPG</span>
+      </button>
 
-        <Button
-          variant="outline"
-          onClick={handlePasteFromClipboard}
-          className="flex-1 h-16 border-dashed border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all"
-        >
-          <div className="flex items-center gap-3">
-            <Clipboard className="w-5 h-5 text-muted-foreground" />
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-sm font-medium">Paste</span>
-              <span className="text-[11px] text-muted-foreground">⌘V / Ctrl+V</span>
-            </div>
-          </div>
-        </Button>
-      </div>
+      <button
+        onClick={handlePasteFromClipboard}
+        className="btn-float tilt-hover flex flex-col items-center gap-2 rounded-2xl bg-secondary px-4 py-6 text-secondary-foreground"
+      >
+        <Clipboard className="h-6 w-6" />
+        <span className="text-sm font-semibold">Paste</span>
+        <span className="text-xs opacity-70">Ctrl/Cmd+V</span>
+      </button>
 
       <input
         ref={fileInputRef}

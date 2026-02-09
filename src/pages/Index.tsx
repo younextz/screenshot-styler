@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { TweetLoader } from '@/components/TweetLoader';
-import { TweetCard } from '@/components/TweetCard';
 import { ImageLoader } from '@/components/ImageLoader';
 import { PresetPicker } from '@/components/PresetPicker';
 import { PalettePicker } from '@/components/PalettePicker';
@@ -12,7 +11,7 @@ import { palettes } from '@/lib/palettes';
 import { generateSVG, TitleBarType, AspectRatio, preloadBackgroundImages } from '@/lib/svgRenderer';
 import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
-import { AlertCircle, Upload } from 'lucide-react';
+import { Upload, Shield, Menu, X, Sparkles } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
@@ -31,6 +30,8 @@ const Index = () => {
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
   const [tweetData, setTweetData] = useState<any>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<'preview' | 'controls'>('preview');
 
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
@@ -71,8 +72,6 @@ const Index = () => {
     setImageData(dataUrl);
     setImageWidth(width);
     setImageHeight(height);
-    
-    // Set aspect ratio to 16:9 by default when loading the first image
     if (!hasLoadedFirstImage) {
       setAspectRatio('16:9');
       setHasLoadedFirstImage(true);
@@ -175,7 +174,6 @@ const Index = () => {
         } catch (clipboardError) {
           console.error('Clipboard error:', clipboardError);
           toast.error('Copy failed. Downloading instead...');
-          // Fallback to download
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -199,85 +197,178 @@ const Index = () => {
     }
   };
 
+  const navItems = [
+    { id: 'preview' as const, label: 'Preview' },
+    { id: 'controls' as const, label: 'Controls' },
+  ];
+
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
-      <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <span className="text-sm font-bold text-primary">SS</span>
-          </div>
-          <div>
-            <h1 className="text-base font-semibold text-foreground">Screenshot Styler</h1>
-            <p className="text-xs text-muted-foreground">Transform screenshots into polished frames</p>
-          </div>
+    <div className="flex h-screen flex-col bg-background font-body lg:overflow-hidden">
+      {/* ── Floating Island Header ───────────────────── */}
+      <header className="header-island flex items-center gap-3 sm:gap-5">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
+          <Sparkles className="h-4 w-4 text-primary-foreground" />
         </div>
-        <ThemeToggle />
+        <span className="hidden text-sm font-medium text-foreground sm:inline">
+          Screenshot Styler
+        </span>
+        <nav className="hidden items-center gap-1 md:flex">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveSection(item.id)}
+              className={cn(
+                'rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors',
+                activeSection === item.id
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+        <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            className="flex flex-col gap-1 p-2 md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5 text-foreground" />
+            ) : (
+              <Menu className="h-5 w-5 text-foreground" />
+            )}
+          </button>
+        </div>
       </header>
 
-      <main className="flex min-h-0 flex-1 overflow-hidden">
+      {/* ── Mobile dropdown menu ─────────────────────── */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-x-0 top-16 z-40 mx-4 animate-fade-up rounded-2xl bg-card p-4 md:hidden"
+          style={{ boxShadow: 'var(--shadow-lg)' }}
+        >
+          <nav className="flex flex-col gap-1">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveSection(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={cn(
+                  'rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors',
+                  activeSection === item.id
+                    ? 'bg-primary/15 text-primary'
+                    : 'text-muted-foreground hover:bg-secondary'
+                )}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
+
+      {/* ── Main Content ─────────────────────────────── */}
+      <main className="flex min-h-0 flex-1 flex-col pt-14 lg:flex-row">
+
+        {/* ── Preview Column ─────────────────────────── */}
         <section
           className={cn(
-            'relative flex min-w-0 flex-1 items-center p-4',
-            svgContent ? 'justify-center' : 'justify-center',
+            'min-h-0 flex-1 lg:flex lg:items-center lg:justify-center lg:p-4',
+            activeSection !== 'preview' && 'hidden md:flex'
           )}
         >
           {svgContent ? (
             <CanvasPreview
               svgContent={svgContent}
-              className="max-h-[calc(100vh-5rem)]"
+              className="h-full w-full"
             />
           ) : (
-            <div className="flex h-full max-h-[480px] w-full max-w-2xl flex-col items-center justify-center rounded-xl border border-border/40 bg-card/30 p-8 text-center shadow-[var(--shadow-sm)]">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
-                <Upload className="h-5 w-5 text-muted-foreground" />
+            <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-secondary">
+                <Upload className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h2 className="text-lg font-medium text-foreground">Drop a screenshot to begin</h2>
-              <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
-                Upload a PNG/JPG or paste from clipboard using the controls on the right.
+              <h2 className="font-heading text-xl font-bold sm:text-2xl">
+                Drop in a screenshot
+              </h2>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                Upload a PNG or JPG, paste from your clipboard, or use the controls to get started.
               </p>
             </div>
           )}
         </section>
 
-        <aside className="flex w-80 shrink-0 flex-col border-l border-border/50 bg-card/50">
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {/* Source Section */}
-            <section className="space-y-3">
-              <h2 className="text-xs font-medium text-muted-foreground">Source</h2>
+        {/* ── Controls Column ────────────────────────── */}
+        <aside
+          className={cn(
+            'w-full shrink-0 border-l border-border lg:w-[380px] lg:overflow-y-auto',
+            activeSection !== 'controls' && 'hidden md:block'
+          )}
+        >
+          <div className="space-y-0 p-5">
+            {/* Source section */}
+            <div className="space-y-4 pb-6">
+              <h2 className="section-heading">Source</h2>
+              <hr className="divider" />
               <ImageLoader onImageLoad={handleImageLoad} />
-              <div className="rounded-lg border border-border/40 bg-background/50 p-3">
-                <p className="mb-2 text-xs font-medium text-foreground">Fetch Tweet</p>
+
+              <div className="block-soft space-y-3">
+                <p className="text-sm font-medium text-foreground">Fetch Tweet</p>
+                <p className="text-xs text-muted-foreground">
+                  Paste a tweet URL to pull its text details.
+                </p>
                 <TweetLoader onTweetLoad={handleTweetLoad} />
               </div>
-            </section>
+            </div>
+
+            {/* Privacy note */}
+            <div className="block-soft flex items-start gap-3 text-sm text-muted-foreground">
+              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/20">
+                <Shield className="h-4 w-4 text-accent" />
+              </div>
+              <div>
+                <p className="font-medium text-accent">Privacy First</p>
+                <p className="mt-1 text-xs leading-relaxed">
+                  All processing happens locally. Images are never uploaded.
+                </p>
+              </div>
+            </div>
 
             {imageData && (
               <>
-                {/* Export Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Export</h2>
+                {/* Export */}
+                <div className="space-y-4 py-6">
+                  <h2 className="section-heading">Export</h2>
+                  <hr className="divider" />
                   <ExportButtons
                     svgContent={svgContent}
                     onExport={handleExport}
                     disabled={!svgContent}
                   />
-                </section>
+                </div>
 
-                {/* Style Preset Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Style Preset</h2>
+                {/* Style Preset */}
+                <div className="space-y-4 py-6">
+                  <h2 className="section-heading">Style Preset</h2>
+                  <hr className="divider" />
                   <PresetPicker selectedId={presetId} onChange={setPresetId} />
-                </section>
+                </div>
 
-                {/* Color Palette Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Color Palette</h2>
+                {/* Color Palette */}
+                <div className="space-y-4 py-6">
+                  <h2 className="section-heading">Color Palette</h2>
+                  <hr className="divider" />
                   <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-                </section>
+                </div>
 
-                {/* Options Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Options</h2>
+                {/* Options */}
+                <div className="space-y-4 py-6">
+                  <h2 className="section-heading">Options</h2>
+                  <hr className="divider" />
                   <ControlPanel
                     titleBar={titleBar}
                     aspectRatio={aspectRatio}
@@ -285,17 +376,9 @@ const Index = () => {
                     onAspectRatioChange={setAspectRatio}
                     supportsTitleBar={currentPreset.supportsTitle}
                   />
-                </section>
+                </div>
               </>
             )}
-          </div>
-
-          {/* Compact Footer with Privacy Note */}
-          <div className="shrink-0 border-t border-border/40 bg-background/30 px-4 py-2.5">
-            <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <AlertCircle className="h-3 w-3 shrink-0" />
-              <span>All processing is local. Images are never uploaded.</span>
-            </p>
           </div>
         </aside>
       </main>

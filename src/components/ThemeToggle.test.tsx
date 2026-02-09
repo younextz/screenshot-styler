@@ -14,8 +14,7 @@ describe('ThemeToggle', () => {
 
     render(<ThemeToggle />);
 
-    // Component now uses icon-only button with aria-label
-    const button = screen.getByRole('button', { name: 'Switch to dark theme' });
+    const button = screen.getByRole('button', { name: /switch to dark theme/i });
     expect(button).toBeInTheDocument();
 
     fireEvent.click(button);
@@ -28,8 +27,7 @@ describe('ThemeToggle', () => {
 
     render(<ThemeToggle />);
 
-    // Component now uses icon-only button with aria-label
-    const button = screen.getByRole('button', { name: 'Switch to light theme' });
+    const button = screen.getByRole('button', { name: /switch to light theme/i });
     expect(button).toBeInTheDocument();
 
     fireEvent.click(button);

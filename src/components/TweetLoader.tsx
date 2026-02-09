@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { Button } from './ui/button';
 import { Input } from './ui/input';
 
 interface TweetLoaderProps {
@@ -34,15 +33,14 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
       const links = doc.querySelectorAll('a');
       const timestamp = links.length > 0 ? links[links.length - 1]?.textContent || '' : '';
 
-
       const tweetData = {
         author: data.author_name,
         handle: data.author_url ? data.author_url.split('/').pop() : '',
         avatar: '/placeholder.svg',
         text,
         timestamp,
-        likes: 0, // oEmbed doesn't provide likes
-        retweets: 0, // oEmbed doesn't provide retweets
+        likes: 0,
+        retweets: 0,
       };
 
       onTweetLoad(tweetData);
@@ -54,26 +52,27 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
   };
 
   return (
-    <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">Tweet URL</p>
-      <div className="flex gap-3">
-        <Input
-          type="text"
-          placeholder="Enter Tweet URL"
-          value={tweetUrl}
-          onChange={(e) => setTweetUrl(e.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              handleFetchTweet();
-            }
-          }}
-          className="flex-1"
-        />
-        <Button type="button" onClick={handleFetchTweet}>
-          Fetch Tweet
-        </Button>
-      </div>
+    <div className="flex gap-2">
+      <Input
+        type="text"
+        placeholder="https://x.com/..."
+        value={tweetUrl}
+        onChange={(e) => setTweetUrl(e.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            handleFetchTweet();
+          }
+        }}
+        className="flex-1 rounded-xl"
+      />
+      <button
+        type="button"
+        onClick={handleFetchTweet}
+        className="btn-float rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground"
+      >
+        Fetch
+      </button>
     </div>
   );
 }
