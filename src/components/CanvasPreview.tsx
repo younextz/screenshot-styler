@@ -18,7 +18,7 @@ export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
   return (
     <div
       className={cn(
-        'relative flex items-center justify-center overflow-hidden rounded-2xl bg-card p-4 sm:p-6',
+        'relative flex items-center justify-center overflow-hidden',
         className,
       )}
     >
@@ -29,7 +29,7 @@ export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
       }} />
       <div
         ref={containerRef}
-        className="relative z-10 flex max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] items-center justify-center p-4 [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-lg"
+        className="relative z-10 flex max-h-full max-w-full items-center justify-center [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-lg"
       />
     </div>
   );

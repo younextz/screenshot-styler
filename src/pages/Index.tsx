@@ -203,20 +203,15 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background font-body">
+    <div className="flex h-screen flex-col bg-background font-body lg:overflow-hidden">
       {/* ── Floating Island Header ───────────────────── */}
       <header className="header-island flex items-center gap-3 sm:gap-5">
-        {/* Logo icon */}
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
           <Sparkles className="h-4 w-4 text-primary-foreground" />
         </div>
-
-        {/* App name in body text style */}
         <span className="hidden text-sm font-medium text-foreground sm:inline">
           Screenshot Styler
         </span>
-
-        {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex">
           {navItems.map((item) => (
             <button
@@ -233,11 +228,8 @@ const Index = () => {
             </button>
           ))}
         </nav>
-
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
-
-          {/* Mobile hamburger */}
           <button
             className="flex flex-col gap-1 p-2 md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -254,7 +246,8 @@ const Index = () => {
 
       {/* ── Mobile dropdown menu ─────────────────────── */}
       {mobileMenuOpen && (
-        <div className="fixed inset-x-0 top-16 z-40 mx-4 animate-fade-up rounded-2xl bg-card p-4 shadow-lg md:hidden"
+        <div
+          className="fixed inset-x-0 top-16 z-40 mx-4 animate-fade-up rounded-2xl bg-card p-4 md:hidden"
           style={{ boxShadow: 'var(--shadow-lg)' }}
         >
           <nav className="flex flex-col gap-1">
@@ -280,62 +273,45 @@ const Index = () => {
       )}
 
       {/* ── Main Content ─────────────────────────────── */}
-      <main className="mx-auto max-w-7xl px-4 pb-12 pt-20 sm:px-6 lg:px-8">
+      <main className="flex min-h-0 flex-1 flex-col pt-14 lg:flex-row">
 
-        {/* ── Hero Section ───────────────────────────── */}
-        {!imageData && (
-          <section className="mb-12 text-center">
-            <h1 className="font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-              Make your{' '}
-              <span className="hero-gradient-text">screenshots</span>
-              <br />
-              look amazing
-            </h1>
-            <p className="mx-auto mt-4 max-w-lg text-base text-muted-foreground sm:text-lg">
-              Drop in a screenshot, pick a style, and export a polished, sharable image.
-            </p>
-          </section>
-        )}
-
-        {/* ── Two-column layout (desktop) / tabbed (mobile) ── */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-
-          {/* ── Preview Column ───────────────────────── */}
-          <section
-            className={cn(
-              'order-1',
-              activeSection !== 'preview' && 'hidden md:block'
-            )}
-          >
-            {svgContent ? (
-              <CanvasPreview
-                svgContent={svgContent}
-                className="min-h-[300px] lg:min-h-[500px]"
-              />
-            ) : (
-              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl bg-card p-8 text-center sm:min-h-[400px] lg:min-h-[500px]">
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-secondary">
-                  <Upload className="h-6 w-6 text-muted-foreground" />
-                </div>
-                <h2 className="font-heading text-xl font-bold sm:text-2xl">
-                  Drop in a screenshot
-                </h2>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                  Upload a PNG or JPG, paste from your clipboard, or use the controls to get started.
-                </p>
+        {/* ── Preview Column ─────────────────────────── */}
+        <section
+          className={cn(
+            'min-h-0 flex-1 lg:flex lg:items-center lg:justify-center lg:p-4',
+            activeSection !== 'preview' && 'hidden md:flex'
+          )}
+        >
+          {svgContent ? (
+            <CanvasPreview
+              svgContent={svgContent}
+              className="h-full w-full"
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-secondary">
+                <Upload className="h-6 w-6 text-muted-foreground" />
               </div>
-            )}
-          </section>
+              <h2 className="font-heading text-xl font-bold sm:text-2xl">
+                Drop in a screenshot
+              </h2>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                Upload a PNG or JPG, paste from your clipboard, or use the controls to get started.
+              </p>
+            </div>
+          )}
+        </section>
 
-          {/* ── Controls Column ──────────────────────── */}
-          <aside
-            className={cn(
-              'order-2 space-y-0',
-              activeSection !== 'controls' && 'hidden md:block'
-            )}
-          >
+        {/* ── Controls Column ────────────────────────── */}
+        <aside
+          className={cn(
+            'w-full shrink-0 border-l border-border lg:w-[380px] lg:overflow-y-auto',
+            activeSection !== 'controls' && 'hidden md:block'
+          )}
+        >
+          <div className="space-y-0 p-5">
             {/* Source section */}
-            <div className="space-y-5 pb-8">
+            <div className="space-y-4 pb-6">
               <h2 className="section-heading">Source</h2>
               <hr className="divider" />
               <ImageLoader onImageLoad={handleImageLoad} />
@@ -356,8 +332,8 @@ const Index = () => {
               </div>
               <div>
                 <p className="font-medium text-accent">Privacy First</p>
-                <p className="mt-1 leading-relaxed">
-                  All processing happens in your browser. Images are never uploaded or stored.
+                <p className="mt-1 text-xs leading-relaxed">
+                  All processing happens locally. Images are never uploaded.
                 </p>
               </div>
             </div>
@@ -365,7 +341,7 @@ const Index = () => {
             {imageData && (
               <>
                 {/* Export */}
-                <div className="space-y-5 py-8">
+                <div className="space-y-4 py-6">
                   <h2 className="section-heading">Export</h2>
                   <hr className="divider" />
                   <ExportButtons
@@ -376,21 +352,21 @@ const Index = () => {
                 </div>
 
                 {/* Style Preset */}
-                <div className="space-y-5 py-8">
+                <div className="space-y-4 py-6">
                   <h2 className="section-heading">Style Preset</h2>
                   <hr className="divider" />
                   <PresetPicker selectedId={presetId} onChange={setPresetId} />
                 </div>
 
                 {/* Color Palette */}
-                <div className="space-y-5 py-8">
+                <div className="space-y-4 py-6">
                   <h2 className="section-heading">Color Palette</h2>
                   <hr className="divider" />
                   <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
                 </div>
 
                 {/* Options */}
-                <div className="space-y-5 py-8">
+                <div className="space-y-4 py-6">
                   <h2 className="section-heading">Options</h2>
                   <hr className="divider" />
                   <ControlPanel
@@ -403,14 +379,9 @@ const Index = () => {
                 </div>
               </>
             )}
-          </aside>
-        </div>
+          </div>
+        </aside>
       </main>
-
-      {/* ── Footer ───────────────────────────────────── */}
-      <footer className="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground">
-        <p>Screenshot Styler v1.0 — All processing is done locally in your browser.</p>
-      </footer>
     </div>
   );
 };
