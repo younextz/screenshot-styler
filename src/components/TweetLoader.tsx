@@ -3,26 +3,43 @@ import { toast } from 'sonner';
 
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import type { TweetData } from '@/types/tweet';
 
 interface TweetLoaderProps {
-  onTweetLoad: (tweetData: any) => void;
+  onTweetLoad: (tweetData: TweetData) => void;
 }
 
+const getHandleFromUrl = (authorUrl?: string): string => {
+  if (!authorUrl) return '';
+
+  try {
+    const url = new URL(authorUrl);
+    const parts = url.pathname.split('/').filter(Boolean);
+    return parts[parts.length - 1] ?? '';
+  } catch {
+    return authorUrl.split('/').filter(Boolean).pop() ?? '';
+  }
+};
+
 export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
-  const [tweetUrl, setTweetUrl] = useState('');
+  const [tweetUrl, setTweetUrl] = useState<string>('');
 
   const handleFetchTweet = async () => {
-    if (!tweetUrl) {
+    const trimmedUrl = tweetUrl.trim();
+    if (!trimmedUrl) {
       toast.error('Please enter a tweet URL');
       return;
     }
 
     try {
-      const response = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}`);
+      const normalizedUrl = trimmedUrl.replace('https://x.com/', 'https://twitter.com/');
+      const response = await fetch(
+        `https://publish.twitter.com/oembed?url=${encodeURIComponent(normalizedUrl)}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch tweet');
       }
-      const data = await response.json();
+      const data: { author_name?: string; author_url?: string; html?: string } = await response.json();
 
       if (!data.html) {
         throw new Error('Invalid tweet URL or oEmbed response');
@@ -34,10 +51,9 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
       const links = doc.querySelectorAll('a');
       const timestamp = links.length > 0 ? links[links.length - 1]?.textContent || '' : '';
 
-
-      const tweetData = {
-        author: data.author_name,
-        handle: data.author_url ? data.author_url.split('/').pop() : '',
+      const tweetData: TweetData = {
+        author: typeof data.author_name === 'string' ? data.author_name.trim() : '',
+        handle: getHandleFromUrl(data.author_url),
         avatar: '/placeholder.svg',
         text,
         timestamp,

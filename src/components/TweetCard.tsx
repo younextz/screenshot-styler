@@ -1,14 +1,7 @@
 import React from 'react';
+import type { TweetData } from '@/types/tweet';
 
-interface TweetCardProps {
-  author: string;
-  handle: string;
-  avatar: string;
-  text: string;
-  timestamp: string;
-  likes: number;
-  retweets: number;
-}
+type TweetCardProps = TweetData;
 
 export const TweetCard: React.FC<TweetCardProps> = ({
   author,

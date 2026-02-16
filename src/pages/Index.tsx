@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { TweetLoader } from '@/components/TweetLoader';
-import { TweetCard } from '@/components/TweetCard';
 import { ImageLoader } from '@/components/ImageLoader';
 import { PresetPicker } from '@/components/PresetPicker';
 import { PalettePicker } from '@/components/PalettePicker';
@@ -16,6 +15,8 @@ import { AlertCircle, Upload } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
+import { renderTweetToImage } from '@/utils/tweetRenderer';
+import type { TweetData } from '@/types/tweet';
 
 const Index = () => {
   const savedSettings = loadSettings();
@@ -33,8 +34,6 @@ const Index = () => {
   );
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
-  const [tweetData, setTweetData] = useState<any>(null);
-
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
 
@@ -94,8 +93,14 @@ const Index = () => {
     }
   };
 
-  const handleTweetLoad = (data: any) => {
-    setTweetData(data);
+  const handleTweetLoad = async (data: TweetData) => {
+    try {
+      const { dataUrl, width, height } = await renderTweetToImage(data);
+      handleImageLoad(dataUrl, width, height);
+    } catch (error) {
+      console.error('Tweet render error:', error);
+      toast.error('Failed to render tweet preview');
+    }
   };
 
   const getSvgSize = (svgString: string) => {
