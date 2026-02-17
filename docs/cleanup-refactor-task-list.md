@@ -1,0 +1,35 @@
+This list captures cleanup and refactor work discovered during the current repository audit.
+- [x] Fix ESLint errors so `npm run lint` passes.
+- [x] Fix TypeScript lint violations in tests (`any`, invalid mock typing, unnecessary escapes).
+- [x] Remove accidental artifact file `src/tests/TweetLoader.test.tsx.append`.
+- [x] Ensure `npm run test -- --run` is green in a writable environment.
+- [x] Add `typecheck` script (`tsc --noEmit`) and include it in the standard pre-merge checklist.
+- [x] Fix animation pipeline mismatch: wire `animationsEnabled` + preset-level animation config into `generateSVG` correctly.
+- [x] Validate that disabling animations actually removes animated SVG nodes for all animated presets.
+- [x] Add tests for animation-on/off behavior to prevent regressions.
+- [x] Remove split theme sources (`next-themes` vs custom `useTheme`).
+- [x] Standardize on a single theme provider/state flow for app UI and Sonner toasts.
+- [x] Update theme toggle and toast rendering tests to cover the unified flow.
+- [x] Break `src/lib/svgRenderer.ts` responsibilities into focused modules:
+  - [x] background asset loading/cache (`src/lib/svg/backgroundAssets.ts`)
+  - [x] frame generators (`src/lib/svg/frameGenerators.ts`)
+  - [x] preset style registry (`src/lib/svg/presetStyles.ts`)
+  - [x] preset-to-background renderer mapping (`BACKGROUND_RENDERER_REGISTRY`)
+- [x] Replace large `switch` logic with typed preset registry map.
+- [x] Deduplicate repeated shadow/radius config via shared preset metadata.
+- [x] Keep renderer public API stable while extracting internals.
+- [x] Remove unused Vite template leftovers (`src/App.css`).
+- [x] Re-evaluate `@tanstack/react-query` usage and remove it.
+- [x] Re-evaluate dual toast stacks and keep one (Sonner).
+- [x] Reconcile README preset/features list with actual implementation.
+- [x] Move repeated tweet embed HTML fixture into shared test data helpers.
+- [x] Replace brittle string-heavy test setup with typed fixtures and utility builders.
+- [x] Add coverage for image loading edge cases (clipboard denied, invalid mime type, oversized files).
+- [x] Add coverage for export fallbacks (clipboard write failure -> download fallback).
+- [x] Ensure segmented controls in `ControlPanel` expose keyboard interaction and selected-state semantics.
+- [x] Confirm accessible labels/titles for interactive icon/non-text controls.
+- [x] Improve responsive behavior for sidebar + preview at smaller widths.
+- [x] `npm run lint` passes
+- [x] `npm run typecheck` passes
+- [x] `TMPDIR=/tmp npm run test -- --run` passes
+- [x] `npm run build` passes

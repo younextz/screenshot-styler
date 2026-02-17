@@ -1,51 +1,22 @@
 import { Upload, Clipboard } from 'lucide-react';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Button } from './ui/button';
 import { toast } from 'sonner';
-
 interface ImageLoaderProps {
   onImageLoad: (dataUrl: string, width: number, height: number) => void;
 }
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-
 export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Handle document-level paste events for Command+V
-  useEffect(() => {
-    const handleDocumentPaste = (e: ClipboardEvent) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          const blob = items[i].getAsFile();
-          if (blob) {
-            processFile(blob);
-            e.preventDefault();
-          }
-        }
-      }
-    };
-
-    document.addEventListener('paste', handleDocumentPaste);
-    return () => {
-      document.removeEventListener('paste', handleDocumentPaste);
-    };
-  }, []);
-
-  const processFile = (file: File) => {
+  const processFile = useCallback((file: File) => {
     if (!file.type.match(/image\/(png|jpeg|jpg)/)) {
       toast.error('Please upload a PNG or JPG image');
       return;
     }
-
     if (file.size > MAX_FILE_SIZE) {
       toast.error('File size must be less than 10MB');
       return;
     }
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
@@ -62,33 +33,48 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
       toast.error('Failed to read file');
     };
     reader.readAsDataURL(file);
-  };
-
+  }, [onImageLoad]);
+  // Handle document-level paste events for Command+V
+  useEffect(() => {
+    const handleDocumentPaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) {
+            processFile(blob);
+            e.preventDefault();
+          }
+        }
+      }
+    };
+    document.addEventListener('paste', handleDocumentPaste);
+    return () => {
+      document.removeEventListener('paste', handleDocumentPaste);
+    };
+  }, [processFile]);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       processFile(file);
     }
   };
-
   const handlePasteFromClipboard = async () => {
     try {
       const clipboardItems = await navigator.clipboard.read();
       const imageItem = clipboardItems.find(item =>
         item.types.some(type => type.startsWith('image/'))
       );
-
       if (!imageItem) {
         toast.error('Clipboard is empty');
         return;
       }
-
       const imageType = imageItem.types.find(type => type.startsWith('image/'));
       if (!imageType) {
         toast.error('No image found in clipboard');
         return;
       }
-
       const blob = await imageItem.getType(imageType);
       const file = new File([blob], 'clipboard-image.png', { type: imageType });
       processFile(file);
@@ -97,7 +83,6 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
       console.error('Clipboard error:', error);
     }
   };
-
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
@@ -114,7 +99,6 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
             </div>
           </div>
         </Button>
-
         <Button
           variant="outline"
           onClick={handlePasteFromClipboard}
@@ -129,7 +113,6 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
           </div>
         </Button>
       </div>
-
       <input
         ref={fileInputRef}
         type="file"

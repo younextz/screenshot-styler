@@ -16,6 +16,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 import { renderTweetToImage } from '@/utils/tweetRenderer';
+import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
 import type { TweetData } from '@/types/tweet';
 
 const Index = () => {
@@ -39,6 +40,13 @@ const Index = () => {
 
   useEffect(() => {
     if (imageData && imageWidth && imageHeight) {
+      const animation = currentPreset.animation
+        ? {
+            ...currentPreset.animation,
+            enabled: currentPreset.animation.enabled && animationsEnabled,
+          }
+        : undefined;
+
       const svg = generateSVG({
         presetId,
         palette: currentPalette,
@@ -47,7 +55,7 @@ const Index = () => {
         imageData,
         imageWidth,
         imageHeight,
-        animationsEnabled,
+        animation,
       });
       setSvgContent(svg);
     }
@@ -166,51 +174,28 @@ const Index = () => {
 
   const downloadSvg = (svgString: string) => {
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `styled-screenshot-${Date.now()}.svg`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, `styled-screenshot-${Date.now()}.svg`);
   };
-
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
     if (!svgContent) return;
-
     try {
       if (type === 'downloadSvg') {
         downloadSvg(svgContent);
         toast.success('SVG downloaded!');
         return;
       }
-
       const blob = await svgToBlob(svgContent, type === 'download4k' ? 3840 : undefined);
-
+      const filename = `styled-screenshot-${Date.now()}.png`;
       if (type === 'copy') {
-        try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob })
-          ]);
+        const result = await copyOrDownloadBlob(blob, { filename });
+        if (result === 'copied') {
           toast.success('Copied to clipboard!');
-        } catch (clipboardError) {
-          console.error('Clipboard error:', clipboardError);
+        } else {
           toast.error('Copy failed. Downloading instead...');
-          // Fallback to download
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `styled-screenshot-${Date.now()}.png`;
-          a.click();
-          URL.revokeObjectURL(url);
           toast.success('Downloaded successfully!');
         }
       } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `styled-screenshot-${Date.now()}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
+        downloadBlob(blob, filename);
         toast.success(type === 'download4k' ? '4K PNG downloaded!' : 'PNG downloaded!');
       }
     } catch (error) {
@@ -218,7 +203,6 @@ const Index = () => {
       toast.error('Failed to export image');
     }
   };
-
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
@@ -234,10 +218,10 @@ const Index = () => {
         <ThemeToggle />
       </header>
 
-      <main className="flex min-h-0 flex-1 overflow-hidden">
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
         <section
           className={cn(
-            'relative flex min-w-0 flex-1 items-center p-4',
+            'relative flex min-h-[45vh] min-w-0 flex-1 items-center p-4 md:min-h-0',
             svgContent ? 'justify-center' : 'justify-center',
           )}
         >
@@ -259,7 +243,7 @@ const Index = () => {
           )}
         </section>
 
-        <aside className="flex w-80 shrink-0 flex-col border-l border-border/50 bg-card/50">
+        <aside className="flex w-full shrink-0 flex-col border-t border-border/50 bg-card/50 md:w-80 md:border-l md:border-t-0">
           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
             {/* Source Section */}
             <section className="space-y-3">

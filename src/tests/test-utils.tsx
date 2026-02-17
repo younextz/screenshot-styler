@@ -1,7 +1,7 @@
-import { render } from '@testing-library/react';
+import type { ReactElement, ReactNode } from 'react';
+import { render, type RenderOptions } from '@testing-library/react';
 import { Toaster as Sonner } from '@/components/ui/sonner';
-
-const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+const AllTheProviders = ({ children }: { children: ReactNode }) => {
   return (
     <>
       {children}
@@ -9,9 +9,9 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
     </>
   );
 };
-
-const customRender = (ui: React.ReactElement, options?: any) =>
-  render(ui, { wrapper: AllTheProviders, ...options });
-
+const customRender = (
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>,
+) => render(ui, { wrapper: AllTheProviders, ...options });
 export * from '@testing-library/react';
 export { customRender as render };

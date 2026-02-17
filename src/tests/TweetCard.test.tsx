@@ -1,6 +1,6 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TweetCard } from '../components/TweetCard';
-
 describe('TweetCard', () => {
   const tweetData = {
     author: 'John Doe',
@@ -11,10 +11,8 @@ describe('TweetCard', () => {
     likes: 123,
     retweets: 45,
   };
-
   it('renders the tweet data correctly', () => {
     render(<TweetCard {...tweetData} />);
-
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('@johndoe')).toBeInTheDocument();
     expect(screen.getByText('This is a mock tweet for demonstration purposes.')).toBeInTheDocument();
