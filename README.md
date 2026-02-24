@@ -61,4 +61,4 @@ TMPDIR=/tmp npm run test -- --run
 
 ## License
 
-MIT - see [LICENSE](./LICENSE).
+MIT - see [LICENSE](./LICENSE).,
