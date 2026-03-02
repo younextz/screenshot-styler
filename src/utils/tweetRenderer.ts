@@ -105,6 +105,55 @@ const getInitials = (author: string) => {
   return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
 };
 
+const loadImage = (src: string): Promise<HTMLImageElement | null> => (
+  new Promise((resolve) => {
+    if (!src.trim()) {
+      resolve(null);
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = src;
+  })
+);
+
+const drawAvatar = async (
+  ctx: CanvasRenderingContext2D,
+  tweet: TweetData,
+  avatarX: number,
+  avatarY: number,
+): Promise<void> => {
+  ctx.fillStyle = '#e2e8f0';
+  ctx.beginPath();
+  ctx.arc(avatarX + AVATAR_SIZE / 2, avatarY + AVATAR_SIZE / 2, AVATAR_SIZE / 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  const hasCustomAvatar = tweet.avatar.trim() !== '' && tweet.avatar !== '/placeholder.svg';
+  if (hasCustomAvatar) {
+    const avatarImage = await loadImage(tweet.avatar);
+    if (avatarImage) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avatarX + AVATAR_SIZE / 2, avatarY + AVATAR_SIZE / 2, AVATAR_SIZE / 2, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(avatarImage, avatarX, avatarY, AVATAR_SIZE, AVATAR_SIZE);
+      ctx.restore();
+      return;
+    }
+  }
+
+  const initials = getInitials(tweet.author);
+  if (initials) {
+    ctx.font = `600 16px ${FONT_STACK}`;
+    ctx.fillStyle = '#334155';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(initials, avatarX + AVATAR_SIZE / 2, avatarY + AVATAR_SIZE / 2);
+  }
+};
+
 export const renderTweetToImage = async (
   tweet: TweetData,
   options: TweetRenderOptions = {},
@@ -169,19 +218,7 @@ export const renderTweetToImage = async (
   const avatarX = PADDING;
   const avatarY = PADDING;
 
-  ctx.fillStyle = '#e2e8f0';
-  ctx.beginPath();
-  ctx.arc(avatarX + AVATAR_SIZE / 2, avatarY + AVATAR_SIZE / 2, AVATAR_SIZE / 2, 0, Math.PI * 2);
-  ctx.fill();
-
-  const initials = getInitials(tweet.author);
-  if (initials) {
-    ctx.font = `600 16px ${FONT_STACK}`;
-    ctx.fillStyle = '#334155';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(initials, avatarX + AVATAR_SIZE / 2, avatarY + AVATAR_SIZE / 2);
-  }
+  await drawAvatar(ctx, tweet, avatarX, avatarY);
 
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
