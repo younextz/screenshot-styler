@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import type { TweetData } from '@/types/tweet';
+import { resolveTweetAvatar } from '@/utils/tweetAvatar';
 
 interface TweetLoaderProps {
   onTweetLoad: (tweetData: TweetData) => void;
@@ -14,10 +15,15 @@ const getHandleFromUrl = (authorUrl?: string): string => {
 
   try {
     const url = new URL(authorUrl);
-    const parts = url.pathname.split('/').filter(Boolean);
-    return parts[parts.length - 1] ?? '';
+    const queryHandle = url.searchParams.get('screen_name');
+    if (queryHandle) {
+      return queryHandle.trim().replace(/^@+/, '');
+    }
+
+    const firstPathPart = url.pathname.split('/').filter(Boolean)[0];
+    return firstPathPart?.trim().replace(/^@+/, '') ?? '';
   } catch {
-    return authorUrl.split('/').filter(Boolean).pop() ?? '';
+    return authorUrl.split('/').filter(Boolean)[0]?.trim().replace(/^@+/, '') ?? '';
   }
 };
 
@@ -50,11 +56,13 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
       const text = doc.querySelector('p')?.textContent || '';
       const links = doc.querySelectorAll('a');
       const timestamp = links.length > 0 ? links[links.length - 1]?.textContent || '' : '';
+      const handle = getHandleFromUrl(data.author_url);
+      const avatar = await resolveTweetAvatar(handle);
 
       const tweetData: TweetData = {
         author: typeof data.author_name === 'string' ? data.author_name.trim() : '',
-        handle: getHandleFromUrl(data.author_url),
-        avatar: '/placeholder.svg',
+        handle,
+        avatar,
         text,
         timestamp,
         likes: 0, // oEmbed doesn't provide likes
