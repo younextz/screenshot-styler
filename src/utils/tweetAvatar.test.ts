@@ -2,12 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_TWEET_AVATAR, getTwitterAvatarUrl, resolveTweetAvatar } from './tweetAvatar';
 
-const TWITTER_PROFILE_LOOKUP_URL = 'https://cdn.syndication.twimg.com/widgets/followbutton/info.json?screen_names=';
-
-const makeJsonResponse = (payload: unknown, ok = true): Response => ({
-  ok,
-  json: () => Promise.resolve(payload),
-} as Response);
+const UNAVATAR_LOOKUP_URL = 'https://unavatar.io/x/';
 
 const makeBlobResponse = (blob: Blob, ok = true): Response => ({
   ok,
@@ -31,23 +26,14 @@ describe('tweetAvatar', () => {
     vi.restoreAllMocks();
   });
 
-  it('resolves a normalized high-resolution avatar URL', async () => {
-    const lowResolutionAvatar = 'http://pbs.twimg.com/profile_images/42/profile_normal.jpg';
-    global.fetch = vi.fn().mockResolvedValue(makeJsonResponse([
-      { profile_image_url_https: lowResolutionAvatar },
-    ]));
-
+  it('resolves a normalized avatar URL', async () => {
     const avatarUrl = await getTwitterAvatarUrl(' @steipete/ ');
 
-    expect(global.fetch).toHaveBeenCalledWith(`${TWITTER_PROFILE_LOOKUP_URL}steipete`);
-    expect(avatarUrl).toBe('https://pbs.twimg.com/profile_images/42/profile_400x400.jpg');
+    expect(avatarUrl).toBe(`${UNAVATAR_LOOKUP_URL}steipete`);
   });
 
-  it('returns null when lookup payload is malformed', async () => {
-    global.fetch = vi.fn().mockResolvedValue(makeJsonResponse({}));
-
-    const avatarUrl = await getTwitterAvatarUrl('steipete');
-
+  it('returns null when handle is missing', async () => {
+    const avatarUrl = await getTwitterAvatarUrl('  ');
     expect(avatarUrl).toBeNull();
   });
 
@@ -59,11 +45,7 @@ describe('tweetAvatar', () => {
   it('returns placeholder when avatar download fails', async () => {
     global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
       const url = getUrlFromRequest(input);
-      if (url.startsWith(TWITTER_PROFILE_LOOKUP_URL)) {
-        return Promise.resolve(makeJsonResponse([
-          { profile_image_url_https: 'https://pbs.twimg.com/profile_images/42/profile_normal.jpg' },
-        ]));
-      }
+      expect(url).toBe(`${UNAVATAR_LOOKUP_URL}steipete`);
 
       return Promise.resolve(makeBlobResponse(new Blob(['blocked'], { type: 'text/plain' })));
     });
@@ -74,14 +56,9 @@ describe('tweetAvatar', () => {
   });
 
   it('returns a data URL when avatar image is fetched successfully', async () => {
-    const expectedAvatarUrl = 'https://pbs.twimg.com/profile_images/42/profile_400x400.jpg';
+    const expectedAvatarUrl = `${UNAVATAR_LOOKUP_URL}steipete`;
     global.fetch = vi.fn().mockImplementation((input: RequestInfo | URL) => {
       const url = getUrlFromRequest(input);
-      if (url.startsWith(TWITTER_PROFILE_LOOKUP_URL)) {
-        return Promise.resolve(makeJsonResponse([
-          { profile_image_url_https: 'https://pbs.twimg.com/profile_images/42/profile_normal.jpg' },
-        ]));
-      }
 
       if (url === expectedAvatarUrl) {
         return Promise.resolve(makeBlobResponse(new Blob(['avatar'], { type: 'image/png' })));

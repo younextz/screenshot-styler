@@ -1,12 +1,7 @@
-const TWITTER_PROFILE_LOOKUP_URL = 'https://cdn.syndication.twimg.com/widgets/followbutton/info.json';
 export const DEFAULT_TWEET_AVATAR = '/placeholder.svg';
 
 const normalizeTwitterHandle = (handle: string): string => (
   handle.trim().replace(/^@+/, '').replace(/\/+$/, '')
-);
-
-const isRecord = (value: unknown): value is Record<string, unknown> => (
-  typeof value === 'object' && value !== null
 );
 
 const normalizeAvatarUrl = (avatarUrl: string): string | null => {
@@ -25,10 +20,6 @@ const normalizeAvatarUrl = (avatarUrl: string): string | null => {
     return null;
   }
 };
-
-const toHighResolutionAvatarUrl = (avatarUrl: string): string => (
-  avatarUrl.replace('_normal.', '_400x400.')
-);
 
 const blobToDataUrl = (blob: Blob): Promise<string> => (
   new Promise((resolve, reject) => {
@@ -52,34 +43,7 @@ export const getTwitterAvatarUrl = async (handle: string): Promise<string | null
     return null;
   }
 
-  try {
-    const lookupUrl = `${TWITTER_PROFILE_LOOKUP_URL}?screen_names=${encodeURIComponent(normalizedHandle)}`;
-    const response = await fetch(lookupUrl);
-    if (!response.ok) {
-      return null;
-    }
-
-    const payload: unknown = await response.json();
-    if (!Array.isArray(payload) || payload.length === 0 || !isRecord(payload[0])) {
-      return null;
-    }
-
-    const firstProfile = payload[0];
-    const avatarCandidate =
-      typeof firstProfile.profile_image_url_https === 'string'
-        ? firstProfile.profile_image_url_https
-        : typeof firstProfile.profile_image_url === 'string'
-          ? firstProfile.profile_image_url
-          : null;
-
-    if (!avatarCandidate) {
-      return null;
-    }
-
-    return normalizeAvatarUrl(toHighResolutionAvatarUrl(avatarCandidate));
-  } catch {
-    return null;
-  }
+  return normalizeAvatarUrl(`https://unavatar.io/x/${encodeURIComponent(normalizedHandle)}`);
 };
 
 const getAvatarDataUrl = async (avatarUrl: string): Promise<string | null> => {
