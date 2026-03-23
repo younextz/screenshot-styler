@@ -221,23 +221,24 @@ export const renderTweetToImage = async (
   await drawAvatar(ctx, tweet, avatarX, avatarY);
 
   ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
 
   const nameX = avatarX + AVATAR_SIZE + 14;
-  const nameY = avatarY + 2;
+  const avatarMidY = avatarY + AVATAR_SIZE / 2;
   const authorName = tweet.author || 'Unknown';
   ctx.font = titleFont;
   ctx.fillStyle = '#0f172a';
-  ctx.fillText(authorName, nameX, nameY);
+  ctx.textBaseline = 'middle';
+  ctx.fillText(authorName, nameX, avatarMidY);
 
   const nameWidth = ctx.measureText(authorName).width;
   const handle = tweet.handle ? `@${tweet.handle}` : '';
   if (handle) {
     ctx.font = metaFont;
     ctx.fillStyle = '#64748b';
-    ctx.fillText(handle, nameX + nameWidth + 8, nameY + 2);
+    ctx.fillText(handle, nameX + nameWidth + 8, avatarMidY);
   }
 
+  ctx.textBaseline = 'top';
   let currentY = avatarY + AVATAR_SIZE + HEADER_GAP;
   ctx.font = bodyFont;
   ctx.fillStyle = '#0f172a';
