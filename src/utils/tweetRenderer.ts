@@ -14,6 +14,8 @@ const FONT_STACK = '"Satoshi", "Space Grotesk", "IBM Plex Sans", "Segoe UI", san
 const DEFAULT_WIDTH = 720;
 const PADDING = 32;
 const AVATAR_SIZE = 44;
+const LOGO_SIZE = 20;
+const X_LOGO_PATH = 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z';
 const HEADER_GAP = 16;
 const BODY_FONT_SIZE = 20;
 const BODY_LINE_HEIGHT = 30;
@@ -98,6 +100,16 @@ const drawRoundedRect = (
   ctx.closePath();
 };
 
+const drawXLogo = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
+  const scale = size / 24;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill(new Path2D(X_LOGO_PATH));
+  ctx.restore();
+};
+
 const getInitials = (author: string) => {
   const parts = author.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return '';
@@ -165,6 +177,10 @@ export const renderTweetToImage = async (
   ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 1;
   ctx.stroke();
+
+  const logoX = width - PADDING - LOGO_SIZE;
+  const logoY = PADDING + (AVATAR_SIZE - LOGO_SIZE) / 2;
+  drawXLogo(ctx, logoX, logoY, LOGO_SIZE);
 
   const avatarX = PADDING;
   const avatarY = PADDING;
