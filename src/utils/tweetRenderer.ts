@@ -183,6 +183,19 @@ export const renderTweetToImage = async (
     ctx.fillText(initials, avatarX + AVATAR_SIZE / 2, avatarY + AVATAR_SIZE / 2);
   }
 
+  const logoSize = 20;
+  const logoX = width - PADDING - logoSize;
+  const logoY = PADDING + (AVATAR_SIZE - logoSize) / 2;
+  ctx.save();
+  ctx.translate(logoX, logoY);
+  ctx.scale(logoSize / 24, logoSize / 24);
+  ctx.fillStyle = '#0f172a';
+  const xLogoPath = new Path2D(
+    'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'
+  );
+  ctx.fill(xLogoPath);
+  ctx.restore();
+
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
 
