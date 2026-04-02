@@ -20,7 +20,7 @@ export const TweetCard: React.FC<TweetCardProps> = ({
         </svg>
       </div>
       <div className="flex items-center mb-4">
-        <img src={avatar} alt={`${author}'s avatar`} className="w-12 h-12 mr-4" />
+        <img src={avatar} alt={`${author}'s avatar`} className="w-16 h-12 rounded-full mr-4" />
         <div>
           <p className="font-bold text-gray-900 dark:text-white">{author}</p>
           <p className="text-gray-500 dark:text-gray-400">@{handle}</p>
