@@ -19,15 +19,17 @@ export function ImageLoader({ onImageLoad }: ImageLoaderProps) {
     }
     const reader = new FileReader();
     reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result !== 'string') return;
       const img = new Image();
       img.onload = () => {
-        onImageLoad(e.target?.result as string, img.width, img.height);
+        onImageLoad(result, img.width, img.height);
         toast.success('Image loaded successfully');
       };
       img.onerror = () => {
         toast.error('Failed to load image');
       };
-      img.src = e.target?.result as string;
+      img.src = result;
     };
     reader.onerror = () => {
       toast.error('Failed to read file');

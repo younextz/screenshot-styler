@@ -26,7 +26,7 @@ const Index = () => {
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
-  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-soft');
+  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-sunset');
   const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
   const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
@@ -115,8 +115,8 @@ const Index = () => {
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
     const svgElement = svgDoc.querySelector('svg');
-    const width = parseInt(svgElement?.getAttribute('width') || '800');
-    const height = parseInt(svgElement?.getAttribute('height') || '600');
+    const width = parseInt(svgElement?.getAttribute('width') || '800', 10);
+    const height = parseInt(svgElement?.getAttribute('height') || '600', 10);
     return { width, height };
   };
 

@@ -46,7 +46,7 @@ App runs at [http://localhost:5173](http://localhost:5173).
 
 ## Presets and Palettes
 
-- 25 presets across background, frame, and card categories.
+- 23 presets across background, frame, and card categories.
 - 20+ curated palettes for dark, light, vibrant, and minimal looks.
 
 ## Testing Notes

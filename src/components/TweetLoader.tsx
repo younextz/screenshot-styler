@@ -32,7 +32,7 @@ export function TweetLoader({ onTweetLoad }: TweetLoaderProps) {
     }
 
     try {
-      const normalizedUrl = trimmedUrl.replace('https://x.com/', 'https://twitter.com/');
+      const normalizedUrl = trimmedUrl.replace(/^(https?:\/\/)?(www\.)?x\.com\//, 'https://twitter.com/');
       const response = await fetch(
         `https://publish.twitter.com/oembed?url=${encodeURIComponent(normalizedUrl)}`
       );
