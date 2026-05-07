@@ -207,9 +207,14 @@ const Index = () => {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <span className="text-sm font-bold text-primary">SS</span>
-          </div>
+          <img
+            src="/app-logo.svg"
+            alt=""
+            width={32}
+            height={32}
+            className="h-8 w-8 shrink-0 rounded-lg"
+            aria-hidden
+          />
           <div>
             <h1 className="text-base font-semibold text-foreground">Screenshot Styler</h1>
             <p className="text-xs text-muted-foreground">Transform screenshots into polished frames</p>
