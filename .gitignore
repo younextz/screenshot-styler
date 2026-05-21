@@ -25,3 +25,10 @@ dist-ssr
 
 # Instructions file
 # agent_instructions.md
+
+# Test runner artifacts
+test-results/
+
+# Planning and task-tracking docs
+plan.md
+.zenflow/
