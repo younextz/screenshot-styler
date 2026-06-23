@@ -89,6 +89,13 @@ export default {
           "0%, 100%": { boxShadow: "0 0 20px hsl(189 100% 50% / 0.3)" },
           "50%": { boxShadow: "0 0 30px hsl(189 100% 50% / 0.5)" }
         },
+        "balloon-rise": {
+          "0%": { transform: "translateY(0) translateX(0) rotate(-3deg)", opacity: "0" },
+          "10%": { opacity: "1" },
+          "50%": { transform: "translateY(-60vh) translateX(var(--balloon-sway, 0px)) rotate(3deg)" },
+          "90%": { opacity: "1" },
+          "100%": { transform: "translateY(-125vh) translateX(0) rotate(-3deg)", opacity: "0" }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -97,6 +104,7 @@ export default {
         "fade-in-up": "fade-in-up 0.5s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
         "glow": "glow 2s ease-in-out infinite",
+        "balloon-rise": "balloon-rise 6s ease-in forwards",
       },
     },
   },

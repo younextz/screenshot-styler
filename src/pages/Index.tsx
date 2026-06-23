@@ -13,6 +13,7 @@ import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
 import { AlertCircle, Upload } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import Balloons from '@/components/Balloons';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 import { renderTweetToImage } from '@/utils/tweetRenderer';
@@ -35,6 +36,7 @@ const Index = () => {
   );
   const [svgContent, setSvgContent] = useState('');
   const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
+  const [showBalloons, setShowBalloons] = useState(true);
   const currentPreset = presets.find(p => p.id === presetId) || presets[0];
   const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
 
@@ -205,6 +207,7 @@ const Index = () => {
   };
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
+      {showBalloons && <Balloons onComplete={() => setShowBalloons(false)} />}
       <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
