@@ -2,103 +2,44 @@ import { useState, useEffect } from 'react';
 import { TweetLoader } from '@/components/TweetLoader';
 import { ImageLoader } from '@/components/ImageLoader';
 import { PresetPicker } from '@/components/PresetPicker';
-import { PalettePicker } from '@/components/PalettePicker';
-import { ControlPanel } from '@/components/ControlPanel';
 import { CanvasPreview } from '@/components/CanvasPreview';
 import { ExportButtons } from '@/components/ExportButtons';
-import { presets } from '@/lib/presets';
-import { palettes } from '@/lib/palettes';
-import { generateSVG, TitleBarType, AspectRatio, preloadBackgroundImages } from '@/lib/svgRenderer';
+import { generateSVG, preloadBackgroundImages } from '@/lib/svgRenderer';
 import { saveSettings, loadSettings } from '@/lib/storage';
 import { toast } from 'sonner';
 import { AlertCircle, Upload } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useTheme } from '@/hooks/useTheme';
-import { cn } from '@/lib/utils';
 import { renderTweetToImage } from '@/utils/tweetRenderer';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
 import type { TweetData } from '@/types/tweet';
 
 const Index = () => {
   const savedSettings = loadSettings();
-  const { theme } = useTheme();
 
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
-  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-soft');
-  const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
-  const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
-  const [animationsEnabled, setAnimationsEnabled] = useState<boolean>(
-    savedSettings.animationsEnabled !== undefined ? savedSettings.animationsEnabled : true
-  );
+  const [presetId, setPresetId] = useState(savedSettings.presetId || 'bg-picture-dark');
   const [svgContent, setSvgContent] = useState('');
-  const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
-  const currentPreset = presets.find(p => p.id === presetId) || presets[0];
-  const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
 
   useEffect(() => {
     if (imageData && imageWidth && imageHeight) {
-      const animation = currentPreset.animation
-        ? {
-            ...currentPreset.animation,
-            enabled: currentPreset.animation.enabled && animationsEnabled,
-          }
-        : undefined;
-
-      const svg = generateSVG({
-        presetId,
-        palette: currentPalette,
-        titleBar: currentPreset.supportsTitle ? titleBar : 'none',
-        aspectRatio,
-        imageData,
-        imageWidth,
-        imageHeight,
-        animation,
-      });
-      setSvgContent(svg);
+      setSvgContent(generateSVG({ presetId, imageData, imageWidth, imageHeight }));
     }
-  }, [
-    imageData,
-    imageWidth,
-    imageHeight,
-    presetId,
-    paletteId,
-    titleBar,
-    aspectRatio,
-    animationsEnabled,
-    currentPalette,
-    currentPreset,
-  ]);
+  }, [imageData, imageWidth, imageHeight, presetId]);
 
   useEffect(() => {
-    saveSettings({ presetId, paletteId, titleBar, aspectRatio, animationsEnabled });
-  }, [presetId, paletteId, titleBar, aspectRatio, animationsEnabled]);
+    saveSettings({ presetId });
+  }, [presetId]);
 
-  // Preload background images for picture presets
   useEffect(() => {
     preloadBackgroundImages().catch(console.error);
   }, []);
-
-  // Theme-aware default palette (applied only when there is no saved preference)
-  useEffect(() => {
-    if (!savedSettings.paletteId) {
-      setPaletteId(theme === 'light' ? 'soft-pastel' : 'jetbrains-dark');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme]);
 
   const handleImageLoad = (dataUrl: string, width: number, height: number) => {
     setImageData(dataUrl);
     setImageWidth(width);
     setImageHeight(height);
-    
-    // Set aspect ratio to 16:9 by default when loading the first image
-    if (!hasLoadedFirstImage) {
-      setAspectRatio('16:9');
-      setHasLoadedFirstImage(true);
-    }
   };
 
   const handleTweetLoad = async (data: TweetData) => {
@@ -155,11 +96,8 @@ const Index = () => {
         URL.revokeObjectURL(url);
 
         canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
+          if (blob) resolve(blob);
+          else reject(new Error('Failed to create blob'));
         }, 'image/png');
       };
 
@@ -172,15 +110,12 @@ const Index = () => {
     });
   };
 
-  const downloadSvg = (svgString: string) => {
-    const blob = new Blob([svgString], { type: 'image/svg+xml' });
-    downloadBlob(blob, `styled-screenshot-${Date.now()}.svg`);
-  };
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
     if (!svgContent) return;
     try {
       if (type === 'downloadSvg') {
-        downloadSvg(svgContent);
+        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+        downloadBlob(blob, `styled-screenshot-${Date.now()}.svg`);
         toast.success('SVG downloaded!');
         return;
       }
@@ -203,6 +138,7 @@ const Index = () => {
       toast.error('Failed to export image');
     }
   };
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
@@ -219,17 +155,9 @@ const Index = () => {
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <section
-          className={cn(
-            'relative flex min-h-[45vh] min-w-0 flex-1 items-center p-4 md:min-h-0',
-            svgContent ? 'justify-center' : 'justify-center',
-          )}
-        >
+        <section className="relative flex min-h-[45vh] min-w-0 flex-1 items-center justify-center p-4 md:min-h-0">
           {svgContent ? (
-            <CanvasPreview
-              svgContent={svgContent}
-              className="max-h-[calc(100vh-5rem)]"
-            />
+            <CanvasPreview svgContent={svgContent} className="max-h-[calc(100vh-5rem)]" />
           ) : (
             <div className="flex h-full max-h-[480px] w-full max-w-2xl flex-col items-center justify-center rounded-xl border border-border/40 bg-card/30 p-8 text-center shadow-[var(--shadow-sm)]">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
@@ -245,7 +173,6 @@ const Index = () => {
 
         <aside className="flex w-full shrink-0 flex-col border-t border-border/50 bg-card/50 md:w-80 md:border-l md:border-t-0">
           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {/* Source Section */}
             <section className="space-y-3">
               <h2 className="text-xs font-medium text-muted-foreground">Source</h2>
               <ImageLoader onImageLoad={handleImageLoad} />
@@ -257,46 +184,19 @@ const Index = () => {
 
             {imageData && (
               <>
-                {/* Export Section */}
                 <section className="space-y-2">
                   <h2 className="text-xs font-medium text-muted-foreground">Export</h2>
-                  <ExportButtons
-                    svgContent={svgContent}
-                    onExport={handleExport}
-                    disabled={!svgContent}
-                  />
+                  <ExportButtons svgContent={svgContent} onExport={handleExport} disabled={!svgContent} />
                 </section>
 
-                {/* Style Preset Section */}
                 <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Style Preset</h2>
+                  <h2 className="text-xs font-medium text-muted-foreground">Style</h2>
                   <PresetPicker selectedId={presetId} onChange={setPresetId} />
-                </section>
-
-                {/* Color Palette Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Color Palette</h2>
-                  <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-                </section>
-
-                {/* Options Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Options</h2>
-                  <ControlPanel
-                    titleBar={titleBar}
-                    aspectRatio={aspectRatio}
-                    animationsEnabled={animationsEnabled}
-                    onTitleBarChange={setTitleBar}
-                    onAspectRatioChange={setAspectRatio}
-                    onAnimationsChange={setAnimationsEnabled}
-                    supportsTitleBar={currentPreset.supportsTitle}
-                  />
                 </section>
               </>
             )}
           </div>
 
-          {/* Compact Footer with Privacy Note */}
           <div className="shrink-0 border-t border-border/40 bg-background/30 px-4 py-2.5">
             <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <AlertCircle className="h-3 w-3 shrink-0" />
