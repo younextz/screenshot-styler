@@ -1,16 +1,15 @@
 # Screenshot Styler
 
-Screenshot Styler is a browser-based tool for turning plain screenshots into polished visuals.
-Drop in an image (or fetch a tweet), apply a preset + palette, tweak framing controls, and export ready-to-share assets.
+Screenshot Styler is a browser-based tool that frames screenshots on the Air background.
+Drop in an image, pick the dark or light background, and export a ready-to-share asset.
 
 ## Highlights
 
 - Local-first processing: images stay in your browser.
-- Flexible input: upload PNG/JPG, paste from clipboard, or fetch tweet content via oEmbed.
-- Broad styling set: gradients, mesh, solids, patterns, picture backgrounds, browser/device frames, and card layouts.
-- Theme-aware UI: dark/light mode with persistent preference.
+- Flexible input: upload PNG/JPG or paste from clipboard (Ctrl/⌘+V).
+- Two Air backgrounds: dark and light; the default follows the UI theme until you pick one.
 - Export formats: copy PNG to clipboard, download PNG, download 4K PNG, or export SVG.
-- Persisted controls: preset, palette, title bar mode, aspect ratio, and animation toggle are saved locally.
+- Persisted choice: your background selection is saved locally.
 
 ## Quick Start
 
@@ -39,15 +38,12 @@ App runs at [http://localhost:5173](http://localhost:5173).
 
 ## How It Works
 
-1. Import an image (upload/paste) or fetch tweet content.
-2. Pick a style preset and color palette.
-3. Adjust title bar, aspect ratio, and animation options.
-4. Export PNG/SVG from the live SVG preview.
-
-## Presets and Palettes
-
-- 25 presets across background, frame, and card categories.
-- 20+ curated palettes for dark, light, vibrant, and minimal looks.
+1. Import a screenshot (upload or paste).
+2. It is composed onto the Air background: the screenshot spans 80% of the
+   output width with rounded corners and a soft shadow, padded evenly on all sides.
+3. Switch between the dark and light background variants.
+4. Export PNG/SVG from the live SVG preview. Backgrounds are embedded as data
+   URLs so exported files are self-contained.
 
 ## Testing Notes
 

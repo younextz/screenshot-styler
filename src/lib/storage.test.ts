@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { loadSettings, saveSettings } from './storage';
+import { loadBackgroundVariant, saveBackgroundVariant } from './storage';
 
 // The Node-provided global localStorage is non-functional in this test
 // environment, so install an in-memory implementation per test.
@@ -44,56 +44,32 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('saveSettings / loadSettings', () => {
-  it('round-trips all settings', () => {
-    saveSettings({
-      presetId: 'gradient-sunset',
-      paletteId: 'ocean-blue',
-      titleBar: 'macos',
-      aspectRatio: '16:9',
-      animationsEnabled: true,
-    });
-    expect(loadSettings()).toEqual({
-      presetId: 'gradient-sunset',
-      paletteId: 'ocean-blue',
-      titleBar: 'macos',
-      aspectRatio: '16:9',
-      animationsEnabled: true,
-    });
+describe('background variant storage', () => {
+  it('round-trips both variants', () => {
+    saveBackgroundVariant('dark');
+    expect(loadBackgroundVariant()).toBe('dark');
+    saveBackgroundVariant('light');
+    expect(loadBackgroundVariant()).toBe('light');
   });
 
-  it('keeps previously saved values on partial save', () => {
-    saveSettings({ presetId: 'gradient-sunset', paletteId: 'ocean-blue' });
-    saveSettings({ paletteId: 'soft-pastel' });
-    const settings = loadSettings();
-    expect(settings.presetId).toBe('gradient-sunset');
-    expect(settings.paletteId).toBe('soft-pastel');
+  it('returns null when nothing is saved', () => {
+    expect(loadBackgroundVariant()).toBeNull();
   });
 
-  it('preserves animationsEnabled=false through the string round-trip', () => {
-    saveSettings({ animationsEnabled: false });
-    expect(loadSettings().animationsEnabled).toBe(false);
+  it('returns null for unknown stored values', () => {
+    localStorage.setItem('screenshot-styler-background', 'neon');
+    expect(loadBackgroundVariant()).toBeNull();
   });
 
-  it('returns undefined fields when storage is empty', () => {
-    expect(loadSettings()).toEqual({
-      presetId: undefined,
-      paletteId: undefined,
-      titleBar: undefined,
-      aspectRatio: undefined,
-      animationsEnabled: undefined,
-    });
-  });
-
-  it('returns an empty object when localStorage reads throw', () => {
+  it('returns null when localStorage reads throw', () => {
     vi.stubGlobal('localStorage', createThrowingStorage());
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(loadSettings()).toEqual({});
+    expect(loadBackgroundVariant()).toBeNull();
   });
 
   it('does not throw when localStorage writes throw', () => {
     vi.stubGlobal('localStorage', createThrowingStorage());
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => saveSettings({ presetId: 'gradient-sunset' })).not.toThrow();
+    expect(() => saveBackgroundVariant('dark')).not.toThrow();
   });
 });

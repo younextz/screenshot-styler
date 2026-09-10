@@ -1,114 +1,52 @@
-import { useState, useEffect } from 'react';
-import { TweetLoader } from '@/components/TweetLoader';
-import { ImageLoader } from '@/components/ImageLoader';
-import { PresetPicker } from '@/components/PresetPicker';
-import { PalettePicker } from '@/components/PalettePicker';
-import { ControlPanel } from '@/components/ControlPanel';
-import { CanvasPreview } from '@/components/CanvasPreview';
-import { ExportButtons } from '@/components/ExportButtons';
-import { presets } from '@/lib/presets';
-import { palettes } from '@/lib/palettes';
-import { generateSVG, TitleBarType, AspectRatio, preloadBackgroundImages } from '@/lib/svgRenderer';
-import { saveSettings, loadSettings } from '@/lib/storage';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { AlertCircle, Upload } from 'lucide-react';
+
+import { BackgroundPicker } from '@/components/BackgroundPicker';
+import { CanvasPreview } from '@/components/CanvasPreview';
+import { ExportButtons } from '@/components/ExportButtons';
+import { ImageLoader } from '@/components/ImageLoader';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
-import { cn } from '@/lib/utils';
-import { renderTweetToImage } from '@/utils/tweetRenderer';
+import type { BackgroundVariant } from '@/lib/backgroundAssets';
+import { generateSVG, preloadBackgroundImages } from '@/lib/svgRenderer';
+import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
-import type { TweetData } from '@/types/tweet';
 
 const Index = () => {
-  const savedSettings = loadSettings();
   const { theme } = useTheme();
 
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
-  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-sunset');
-  const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
-  const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
-  const [animationsEnabled, setAnimationsEnabled] = useState<boolean>(
-    savedSettings.animationsEnabled !== undefined ? savedSettings.animationsEnabled : true
-  );
+  const [savedVariant, setSavedVariant] = useState<BackgroundVariant | null>(loadBackgroundVariant);
+  const [backgroundsReady, setBackgroundsReady] = useState(false);
   const [svgContent, setSvgContent] = useState('');
-  const [hasLoadedFirstImage, setHasLoadedFirstImage] = useState(false);
-  const currentPreset = presets.find(p => p.id === presetId) || presets[0];
-  const currentPalette = palettes.find(p => p.id === paletteId) || palettes[0];
+
+  // Follow the UI theme until the user picks a background explicitly.
+  const variant = savedVariant ?? theme;
 
   useEffect(() => {
-    if (imageData && imageWidth && imageHeight) {
-      const animation = currentPreset.animation
-        ? {
-            ...currentPreset.animation,
-            enabled: currentPreset.animation.enabled && animationsEnabled,
-          }
-        : undefined;
-
-      const svg = generateSVG({
-        presetId,
-        palette: currentPalette,
-        titleBar: currentPreset.supportsTitle ? titleBar : 'none',
-        aspectRatio,
-        imageData,
-        imageWidth,
-        imageHeight,
-        animation,
-      });
-      setSvgContent(svg);
-    }
-  }, [
-    imageData,
-    imageWidth,
-    imageHeight,
-    presetId,
-    paletteId,
-    titleBar,
-    aspectRatio,
-    animationsEnabled,
-    currentPalette,
-    currentPreset,
-  ]);
-
-  useEffect(() => {
-    saveSettings({ presetId, paletteId, titleBar, aspectRatio, animationsEnabled });
-  }, [presetId, paletteId, titleBar, aspectRatio, animationsEnabled]);
-
-  // Preload background images for picture presets
-  useEffect(() => {
-    preloadBackgroundImages().catch(console.error);
+    preloadBackgroundImages()
+      .then(() => setBackgroundsReady(true))
+      .catch(console.error);
   }, []);
 
-  // Theme-aware default palette (applied only when there is no saved preference)
   useEffect(() => {
-    if (!savedSettings.paletteId) {
-      setPaletteId(theme === 'light' ? 'soft-pastel' : 'jetbrains-dark');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme]);
+    if (!imageData || !imageWidth || !imageHeight) return;
+    setSvgContent(generateSVG({ variant, imageData, imageWidth, imageHeight }));
+    // backgroundsReady triggers a re-render once the backgrounds are embeddable data URLs
+  }, [imageData, imageWidth, imageHeight, variant, backgroundsReady]);
 
   const handleImageLoad = (dataUrl: string, width: number, height: number) => {
     setImageData(dataUrl);
     setImageWidth(width);
     setImageHeight(height);
-    
-    // Set aspect ratio to 16:9 by default when loading the first image
-    if (!hasLoadedFirstImage) {
-      setAspectRatio('16:9');
-      setHasLoadedFirstImage(true);
-    }
   };
 
-  const handleTweetLoad = async (data: TweetData) => {
-    try {
-      const { dataUrl, width, height } = await renderTweetToImage(data);
-      handleImageLoad(dataUrl, width, height);
-    } catch (error) {
-      console.error('Tweet render error:', error);
-      toast.error('Failed to render tweet preview');
-    }
+  const handleVariantChange = (next: BackgroundVariant) => {
+    setSavedVariant(next);
+    saveBackgroundVariant(next);
   };
 
   const getSvgSize = (svgString: string) => {
@@ -176,6 +114,7 @@ const Index = () => {
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     downloadBlob(blob, `styled-screenshot-${Date.now()}.svg`);
   };
+
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
     if (!svgContent) return;
     try {
@@ -203,6 +142,7 @@ const Index = () => {
       toast.error('Failed to export image');
     }
   };
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
@@ -212,19 +152,14 @@ const Index = () => {
           </div>
           <div>
             <h1 className="text-base font-semibold text-foreground">Screenshot Styler</h1>
-            <p className="text-xs text-muted-foreground">Transform screenshots into polished frames</p>
+            <p className="text-xs text-muted-foreground">Frame screenshots on the Air background</p>
           </div>
         </div>
         <ThemeToggle />
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <section
-          className={cn(
-            'relative flex min-h-[45vh] min-w-0 flex-1 items-center p-4 md:min-h-0',
-            svgContent ? 'justify-center' : 'justify-center',
-          )}
-        >
+        <section className="relative flex min-h-[45vh] min-w-0 flex-1 items-center justify-center p-4 md:min-h-0">
           {svgContent ? (
             <CanvasPreview
               svgContent={svgContent}
@@ -249,14 +184,16 @@ const Index = () => {
             <section className="space-y-3">
               <h2 className="text-xs font-medium text-muted-foreground">Source</h2>
               <ImageLoader onImageLoad={handleImageLoad} />
-              <div className="rounded-lg border border-border/40 bg-background/50 p-3">
-                <p className="mb-2 text-xs font-medium text-foreground">Fetch Tweet</p>
-                <TweetLoader onTweetLoad={handleTweetLoad} />
-              </div>
             </section>
 
             {imageData && (
               <>
+                {/* Background Section */}
+                <section className="space-y-2">
+                  <h2 className="text-xs font-medium text-muted-foreground">Background</h2>
+                  <BackgroundPicker selected={variant} onChange={handleVariantChange} />
+                </section>
+
                 {/* Export Section */}
                 <section className="space-y-2">
                   <h2 className="text-xs font-medium text-muted-foreground">Export</h2>
@@ -264,32 +201,6 @@ const Index = () => {
                     svgContent={svgContent}
                     onExport={handleExport}
                     disabled={!svgContent}
-                  />
-                </section>
-
-                {/* Style Preset Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Style Preset</h2>
-                  <PresetPicker selectedId={presetId} onChange={setPresetId} />
-                </section>
-
-                {/* Color Palette Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Color Palette</h2>
-                  <PalettePicker selectedId={paletteId} onChange={setPaletteId} />
-                </section>
-
-                {/* Options Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Options</h2>
-                  <ControlPanel
-                    titleBar={titleBar}
-                    aspectRatio={aspectRatio}
-                    animationsEnabled={animationsEnabled}
-                    onTitleBarChange={setTitleBar}
-                    onAspectRatioChange={setAspectRatio}
-                    onAnimationsChange={setAnimationsEnabled}
-                    supportsTitleBar={currentPreset.supportsTitle}
                   />
                 </section>
               </>
