@@ -25,3 +25,23 @@ dist-ssr
 
 # Instructions file
 # agent_instructions.md
+
+# Test runner artifacts
+test-results/
+
+# Planning and task-tracking docs
+plan.md
+.zenflow/
+docs/cleanup-refactor-task-list.md
+
+# IDE settings
+.air/
+
+# Backup files
+*.backup
+
+# Conflicting lock files (project uses npm)
+bun.lockb
+
+# Generated screenshot artifacts
+screenshots/*.png
