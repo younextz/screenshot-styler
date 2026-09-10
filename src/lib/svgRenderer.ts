@@ -273,7 +273,7 @@ function applyPulseAnimation(
 }
 
 // ===========================================
-// GRADIENT GENERATORS (6 presets)
+// GRADIENT GENERATORS (7 presets)
 // ===========================================
 
 function generateGradientSunset(

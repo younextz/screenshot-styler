@@ -9,7 +9,7 @@ export interface Preset {
 }
 
 export const presets: Preset[] = [
-  // Gradient Category (6 presets)
+  // Gradient Category (7 presets)
   {
     id: 'gradient-sunset',
     label: 'Sunset',
@@ -122,7 +122,7 @@ export const presets: Preset[] = [
     kind: 'background',
     supportsTitle: false,
   },
-  // Frame Presets (unchanged)
+  // Picture Backgrounds (2 presets)
   {
     id: 'bg-picture-dark',
     label: 'Picture - Dark',
@@ -135,6 +135,7 @@ export const presets: Preset[] = [
     kind: 'background',
     supportsTitle: false,
   },
+  // Frame Presets (4 presets)
   {
     id: 'browser-macos',
     label: 'Browser – macOS',

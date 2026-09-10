@@ -26,7 +26,7 @@ const Index = () => {
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
-  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-soft');
+  const [presetId, setPresetId] = useState(savedSettings.presetId || 'gradient-sunset');
   const [paletteId, setPaletteId] = useState(savedSettings.paletteId || 'jetbrains-dark');
   const [titleBar, setTitleBar] = useState<TitleBarType>(savedSettings.titleBar || 'none');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(savedSettings.aspectRatio || 'auto');
