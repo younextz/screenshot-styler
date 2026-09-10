@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+  <rect width="100" height="100" rx="22" fill="#040404"/>
+
+  <!-- Photo viewport -->
+  <rect x="31" y="31" width="38" height="38" rx="6" fill="#FFFFFF" stroke="#0a0a0a" stroke-width="3"/>
+
+  <!-- Sun (upper-right inside frame) -->
+  <circle cx="60" cy="45" r="7.8" fill="#FFD547" stroke="#0a0a0a" stroke-width="3"/>
+  <path d="M 53.5 44 A 8 8 0 0 1 60 51" fill="#E8A820" opacity="0.55"/>
+
+  <!-- Rolling hills (two overlapping mounds) -->
+  <path
+    d="M 33.5 72.5 C 40 63 50 63 58 68.5 C 62 71 66 69.5 72.5 73.5 V 69.5 H 33.5 Z"
+    fill="#5EBF62"
+    stroke="#0a0a0a"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M 33.5 73.5 C 44 64.5 56 68.5 67.5 72.5 C 69.5 73.2 71 72.5 72.5 74 V 69.5 H 33.5 Z"
+    fill="#7ED47E"
+    stroke="#0a0a0a"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <!-- Viewfinder brackets (light blue, on top of frame) -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top-left: inner corner at photo corner -->
+    <path d="M 12 31 L 31 31 M 31 12 L 31 31" stroke="#6EC0FF" stroke-width="6"/>
+    <path d="M 14 31 L 30 31 M 31 14 L 31 30" stroke="#A8DDFF" stroke-width="3.5"/>
+
+    <!-- Top-right -->
+    <path d="M 69 31 L 88 31 M 69 12 L 69 31" stroke="#6EC0FF" stroke-width="6"/>
+    <path d="M 70 31 L 86 31 M 69 14 L 69 30" stroke="#A8DDFF" stroke-width="3.5"/>
+
+    <!-- Bottom-left -->
+    <path d="M 12 69 L 31 69 M 31 88 L 31 69" stroke="#6EC0FF" stroke-width="6"/>
+    <path d="M 14 69 L 30 69 M 31 86 L 31 70" stroke="#A8DDFF" stroke-width="3.5"/>
+
+    <!-- Bottom-right -->
+    <path d="M 69 69 L 88 69 M 69 88 L 69 69" stroke="#6EC0FF" stroke-width="6"/>
+    <path d="M 70 69 L 86 69 M 69 86 L 69 70" stroke="#A8DDFF" stroke-width="3.5"/>
+  </g>
+</svg>
