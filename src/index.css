@@ -9,22 +9,14 @@
     color-scheme: light;
     --background: 210 14% 94%;
     --foreground: 0 0% 4%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
     --primary: 0 0% 4%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 12% 91%;
-    --secondary-foreground: 0 0% 15%;
     --muted: 210 12% 91%;
     --muted-foreground: 215 10% 33%;
     --accent: 211 93% 46%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 72% 45%;
-    --destructive-foreground: 0 0% 100%;
     --border: 210 10% 80%;
-    --input: 210 10% 80%;
     --ring: 211 93% 46%;
     --radius: 0.5rem;
   }

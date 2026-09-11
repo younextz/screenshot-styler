@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
-import { BackgroundPicker } from '@/components/BackgroundPicker';
-import { CanvasPreview } from '@/components/CanvasPreview';
-import { ExportButtons } from '@/components/ExportButtons';
-import { ImageLoader } from '@/components/ImageLoader';
+import AgentInstructions from '@/components/AgentInstructions';
+import BackgroundPicker from '@/components/BackgroundPicker';
+import CanvasPreview from '@/components/CanvasPreview';
+import ExportButtons from '@/components/ExportButtons';
+import ImageLoader from '@/components/ImageLoader';
 import { BACKGROUND_IMAGE_URLS, type BackgroundVariant } from '@/lib/backgroundAssets';
 import { generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
 import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
+import { svgToBlob } from '@/utils/browserRenderer';
 
 type BackgroundStatus = 'loading' | 'ready' | 'failed';
 interface BackgroundState {
@@ -70,67 +72,6 @@ const Index = () => {
     saveBackgroundVariant(next);
   };
 
-  const getSvgSize = (svgString: string) => {
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
-    const svgElement = svgDoc.querySelector('svg');
-    const width = parseInt(svgElement?.getAttribute('width') || '800');
-    const height = parseInt(svgElement?.getAttribute('height') || '600');
-    return { width, height };
-  };
-
-  const svgToBlob = async (svgString: string, targetLongSide?: number): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(svgBlob);
-
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const { width: svgW, height: svgH } = getSvgSize(svgString);
-
-        let outW = svgW;
-        let outH = svgH;
-        if (targetLongSide && Math.max(svgW, svgH) !== targetLongSide) {
-          if (svgW >= svgH) {
-            outW = targetLongSide;
-            outH = Math.round((targetLongSide / svgW) * svgH);
-          } else {
-            outH = targetLongSide;
-            outW = Math.round((targetLongSide / svgH) * svgW);
-          }
-        }
-
-        canvas.width = outW;
-        canvas.height = outH;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Could not get canvas context'));
-          return;
-        }
-
-        ctx.drawImage(img, 0, 0, outW, outH);
-        URL.revokeObjectURL(url);
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
-        }, 'image/png');
-      };
-
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Failed to load SVG'));
-      };
-
-      img.src = url;
-    });
-  };
-
   const downloadSvg = (svgString: string) => {
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     downloadBlob(blob, `styled-screenshot-${Date.now()}.svg`);
@@ -171,22 +112,25 @@ const Index = () => {
         backgroundImage: `linear-gradient(hsl(var(--background) / 0.65), hsl(var(--background) / 0.65)), url(${BACKGROUND_IMAGE_URLS.light})`,
       }}
     >
-      <header className="flex shrink-0 items-center justify-between gap-4 px-6 py-6 sm:px-10 sm:py-8">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-4 px-6 py-6 sm:px-10 sm:py-8">
         <a href={import.meta.env.BASE_URL} aria-label="Air Screenshot Studio home" className="flex items-center gap-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <img src={`${import.meta.env.BASE_URL}air-logo.svg`} alt="Air" className="h-7 w-auto" />
           <span className="h-5 w-px bg-foreground/20" aria-hidden="true" />
           <span className="text-sm font-medium tracking-tight"><span className="hidden sm:inline">Screenshot </span>Studio</span>
         </a>
-        <a
-          href="https://air.dev"
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-xs font-medium transition-colors hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <span className="hidden sm:inline">Discover Air</span>
-          <span className="sm:hidden">Air.dev</span>
-          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-        </a>
+        <div className="ml-auto flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+          <AgentInstructions />
+          <a
+            href="https://air.dev"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-xs font-medium transition-colors hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="hidden sm:inline">Discover Air</span>
+            <span className="sm:hidden">Air.dev</span>
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </a>
+        </div>
       </header>
 
       <main className="flex flex-1 flex-col items-center justify-center px-5 py-10 sm:px-10">
@@ -253,12 +197,14 @@ const Index = () => {
         </div>
       </main>
 
-      <footer className="flex flex-col items-center justify-between gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:flex-row sm:px-10">
-        <span>Made for your next “look at this.”</span>
-        <p className="flex items-center gap-1.5">
-          <LockKeyhole className="h-3 w-3" aria-hidden="true" />
-          Only in your browser. Always yours.
-        </p>
+      <footer className="flex flex-col gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:px-10">
+        <div className="space-y-1 text-center leading-relaxed">
+          <p>Community project. Not affiliated with the official Air product or JetBrains.</p>
+          <p className="flex items-center justify-center gap-1.5">
+            <LockKeyhole className="h-3 w-3 shrink-0" aria-hidden="true" />
+            <span>Screenshots are processed entirely in your browser and are never uploaded or stored on our servers.</span>
+          </p>
+        </div>
       </footer>
     </div>
   );

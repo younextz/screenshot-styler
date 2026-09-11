@@ -7,7 +7,7 @@ export interface ImageLoaderProps {
   onImageLoad: (dataUrl: string, width: number, height: number) => void;
 }
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-export function ImageLoader({ onImageLoad, compact = false }: ImageLoaderProps) {
+export default function ImageLoader({ onImageLoad, compact = false }: ImageLoaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const loadId = useRef(0);
@@ -175,5 +175,3 @@ export function ImageLoader({ onImageLoad, compact = false }: ImageLoaderProps) 
     </>
   );
 }
-
-export default ImageLoader;

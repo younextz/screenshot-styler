@@ -1,5 +1,5 @@
-export type ClipboardWriter = (items: unknown[]) => Promise<void>;
-export type ClipboardItemFactory = (blob: Blob) => unknown;
+type ClipboardWriter = (items: unknown[]) => Promise<void>;
+type ClipboardItemFactory = (blob: Blob) => unknown;
 interface CopyOrDownloadOptions {
   filename: string;
   writeClipboard?: ClipboardWriter;

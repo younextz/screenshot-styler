@@ -11,7 +11,7 @@ const OPTIONS: { id: BackgroundVariant; label: string }[] = [
   { id: 'dark', label: 'Dark' },
 ];
 
-export function BackgroundPicker({ selected, onChange }: BackgroundPickerProps) {
+export default function BackgroundPicker({ selected, onChange }: BackgroundPickerProps) {
   return (
     <div className="flex shrink-0 gap-1 rounded-lg bg-foreground/5 p-1" role="group" aria-label="Background">
       {OPTIONS.map((option) => (
@@ -34,5 +34,3 @@ export function BackgroundPicker({ selected, onChange }: BackgroundPickerProps) 
     </div>
   );
 }
-
-export default BackgroundPicker;
