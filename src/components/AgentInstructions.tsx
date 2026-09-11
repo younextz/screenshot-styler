@@ -25,7 +25,7 @@ export default function AgentInstructions() {
         type="button"
         aria-haspopup="dialog"
         onClick={() => { setCopyStatus(''); dialogRef.current?.showModal(); }}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors hover:bg-white/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-xs font-medium text-foreground transition-colors hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Bot className="h-4 w-4" aria-hidden="true" /> Use with an agent
       </button>

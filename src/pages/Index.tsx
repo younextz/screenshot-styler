@@ -195,16 +195,16 @@ const Index = () => {
       </main>
 
       <footer className="flex flex-col gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:px-10">
-        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+        <div className="flex justify-center sm:justify-start">
           <AgentInstructions />
-          <p className="flex items-center gap-1.5">
-            <LockKeyhole className="h-3 w-3" aria-hidden="true" />
-            Only in your browser. Always yours.
+        </div>
+        <div className="space-y-1 text-center leading-relaxed">
+          <p>Community project. Not affiliated with the official Air product or JetBrains.</p>
+          <p className="flex items-center justify-center gap-1.5">
+            <LockKeyhole className="h-3 w-3 shrink-0" aria-hidden="true" />
+            <span>Screenshots are processed entirely in your browser and are never uploaded or stored on our servers.</span>
           </p>
         </div>
-        <p className="text-center leading-relaxed">
-          Community project. Not affiliated with the official Air product or JetBrains.
-        </p>
       </footer>
     </div>
   );
