@@ -112,22 +112,25 @@ const Index = () => {
         backgroundImage: `linear-gradient(hsl(var(--background) / 0.65), hsl(var(--background) / 0.65)), url(${BACKGROUND_IMAGE_URLS.light})`,
       }}
     >
-      <header className="flex shrink-0 items-center justify-between gap-4 px-6 py-6 sm:px-10 sm:py-8">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-4 px-6 py-6 sm:px-10 sm:py-8">
         <a href={import.meta.env.BASE_URL} aria-label="Air Screenshot Studio home" className="flex items-center gap-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <img src={`${import.meta.env.BASE_URL}air-logo.svg`} alt="Air" className="h-7 w-auto" />
           <span className="h-5 w-px bg-foreground/20" aria-hidden="true" />
           <span className="text-sm font-medium tracking-tight"><span className="hidden sm:inline">Screenshot </span>Studio</span>
         </a>
-        <a
-          href="https://air.dev"
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-xs font-medium transition-colors hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <span className="hidden sm:inline">Discover Air</span>
-          <span className="sm:hidden">Air.dev</span>
-          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-        </a>
+        <div className="ml-auto flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+          <AgentInstructions />
+          <a
+            href="https://air.dev"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-xs font-medium transition-colors hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="hidden sm:inline">Discover Air</span>
+            <span className="sm:hidden">Air.dev</span>
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </a>
+        </div>
       </header>
 
       <main className="flex flex-1 flex-col items-center justify-center px-5 py-10 sm:px-10">
@@ -195,9 +198,6 @@ const Index = () => {
       </main>
 
       <footer className="flex flex-col gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:px-10">
-        <div className="flex justify-center sm:justify-start">
-          <AgentInstructions />
-        </div>
         <div className="space-y-1 text-center leading-relaxed">
           <p>Community project. Not affiliated with the official Air product or JetBrains.</p>
           <p className="flex items-center justify-center gap-1.5">
