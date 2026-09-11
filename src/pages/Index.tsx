@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { toast } from 'sonner';
 import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
@@ -137,7 +138,20 @@ const Index = () => {
         <div className={`w-full ${imageData ? 'max-w-5xl' : 'max-w-[680px]'}`}>
           <div className={`text-center ${imageData ? 'mb-6' : 'mb-9 sm:mb-11'}`}>
             <h1 className={`font-display font-[130] leading-[0.95] tracking-[-0.055em] ${imageData ? 'text-5xl sm:text-6xl' : 'text-[clamp(3rem,7vw,5.5rem)]'}`}>
-              {imageData ? 'Ready to share' : 'Add some Air'}
+              {imageData ? (
+                'Ready to share'
+              ) : (
+                <span className="inline-flex items-center gap-[0.18em]">
+                  <span>Add some</span>
+                  <DotLottieReact
+                    src={`${import.meta.env.BASE_URL}animation-air-logo.lottie`}
+                    autoplay
+                    loop
+                    aria-label="Air"
+                    className="h-[0.78em] w-[0.78em]"
+                  />
+                </span>
+              )}
             </h1>
           </div>
 
