@@ -35,6 +35,7 @@ App runs at [http://localhost:5173/ss/](http://localhost:5173/ss/).
 
 - `npm run dev` - start Vite dev server
 - `npm run build` - typecheck and package the production bundle beneath `/ss/`
+- `npm run build:preview` - build locally with the same root-to-`/ss/` redirect as Cloudflare feature-branch previews
 - `npm run preview` - preview the Workers build at [http://localhost:8787/ss/](http://localhost:8787/ss/)
 - `npm run lint` - run ESLint
 - `npm run typecheck` - check app and build configuration types, including unused locals and parameters
@@ -48,8 +49,8 @@ App runs at [http://localhost:5173/ss/](http://localhost:5173/ss/).
 ## Deploy to Cloudflare Workers
 
 The app deploys as static assets at `/ss/`, configured in `wrangler.jsonc`.
-No server-side entry point or runtime secrets are required. The domain root and
-unknown paths return 404; this single-screen app does not need an SPA fallback.
+No server-side entry point or runtime secrets are required. The production domain
+root and unknown paths return 404; this single-screen app does not need an SPA fallback.
 Vite generates URLs with the `/ss/` base, and the build packaging script places
 all app files in `dist/ss/`. Cloudflare's control files stay at the asset root.
 
@@ -104,6 +105,20 @@ including picture backgrounds, PNG/SVG exports, and clipboard copying.
 The studio's public address is [https://nitk.me/ss/](https://nitk.me/ss/).
 `public/_redirects` redirects `/ss` to `/ss/` while the request reaches this Worker.
 The standalone Workers and preview addresses also serve the app under `/ss/`.
+Cloudflare's PR comment links to the preview domain root. For non-`main` Workers
+Builds, packaging adds a static 302 redirect from `/` to `/ss/`, so both commit and
+branch preview links open the studio. It uses Cloudflare's injected `WORKERS_CI`
+and `WORKERS_CI_BRANCH` variables; production builds from `main` keep the root 404.
+If the production branch changes, update this condition in the packaging script.
+Local builds use production behavior unless built with `npm run build:preview`.
+For previews created before this redirect was added, append `/ss/` to their URL.
+
+To test the preview redirect locally, run `npm run build:preview`, then
+`npm run preview`, and open [http://localhost:8787/](http://localhost:8787/).
+No Worker runtime code or dashboard configuration changes are needed.
+
+See Cloudflare's [build variables](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/#environment-variables)
+and [static redirects](https://developers.cloudflare.com/workers/static-assets/redirects/).
 
 While the other app is not deployed, keep `nitk.me` as this Worker's Custom Domain.
 Cloudflare manages its DNS and HTTPS certificate. With this build, `/` returns 404,
