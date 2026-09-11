@@ -194,11 +194,16 @@ const Index = () => {
         </div>
       </main>
 
-      <footer className="flex flex-col items-center justify-between gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:flex-row sm:px-10">
-        <AgentInstructions />
-        <p className="flex items-center gap-1.5">
-          <LockKeyhole className="h-3 w-3" aria-hidden="true" />
-          Only in your browser. Always yours.
+      <footer className="flex flex-col gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:px-10">
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <AgentInstructions />
+          <p className="flex items-center gap-1.5">
+            <LockKeyhole className="h-3 w-3" aria-hidden="true" />
+            Only in your browser. Always yours.
+          </p>
+        </div>
+        <p className="text-center leading-relaxed">
+          Community project. Not affiliated with the official Air product or JetBrains.
         </p>
       </footer>
     </div>
