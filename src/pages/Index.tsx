@@ -172,8 +172,8 @@ const Index = () => {
       }}
     >
       <header className="flex shrink-0 items-center justify-between gap-4 px-6 py-6 sm:px-10 sm:py-8">
-        <a href="/" aria-label="Air Screenshot Studio home" className="flex items-center gap-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          <img src="/air-logo.svg" alt="Air" className="h-7 w-auto" />
+        <a href={import.meta.env.BASE_URL} aria-label="Air Screenshot Studio home" className="flex items-center gap-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <img src={`${import.meta.env.BASE_URL}air-logo.svg`} alt="Air" className="h-7 w-auto" />
           <span className="h-5 w-px bg-foreground/20" aria-hidden="true" />
           <span className="text-sm font-medium tracking-tight"><span className="hidden sm:inline">Screenshot </span>Studio</span>
         </a>

@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run typecheck && vite build",
-    "build:dev": "vite build --mode development",
+    "build": "npm run typecheck && vite build && node scripts/prepare-worker-assets.mjs",
+    "build:dev": "vite build --mode development && node scripts/prepare-worker-assets.mjs",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "wrangler dev --port 8787",
     "test": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test:run": "vitest run",

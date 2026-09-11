@@ -7,6 +7,7 @@ import { componentTagger } from 'lovable-tagger';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: '/ss/',
   server: {
     // Use default Vite debug port and IPv4-compatible host for debugger support
     host: true, // equivalent to 0.0.0.0

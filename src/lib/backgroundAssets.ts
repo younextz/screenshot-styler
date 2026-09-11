@@ -1,8 +1,8 @@
 export type BackgroundVariant = 'dark' | 'light';
 
 export const BACKGROUND_IMAGE_URLS: Record<BackgroundVariant, string> = {
-  dark: '/backgrounds/bg-dark-bubbles.png',
-  light: '/backgrounds/bg-light-bubbles.png',
+  dark: `${import.meta.env.BASE_URL}backgrounds/bg-dark-bubbles.png`,
+  light: `${import.meta.env.BASE_URL}backgrounds/bg-light-bubbles.png`,
 };
 
 const backgroundImageCache: Partial<Record<BackgroundVariant, string>> = {};

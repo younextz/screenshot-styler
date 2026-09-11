@@ -27,13 +27,13 @@ npm install
 npm run dev
 ```
 
-App runs at [http://localhost:5173](http://localhost:5173).
+App runs at [http://localhost:5173/ss/](http://localhost:5173/ss/).
 
 ## Scripts
 
 - `npm run dev` - start Vite dev server
-- `npm run build` - typecheck and build the production bundle
-- `npm run preview` - preview production build
+- `npm run build` - typecheck and package the production bundle beneath `/ss/`
+- `npm run preview` - preview the Workers build at [http://localhost:8787/ss/](http://localhost:8787/ss/)
 - `npm run lint` - run ESLint
 - `npm run typecheck` - run TypeScript checks
 - `npm run test -- --run` - run Vitest suite once
@@ -43,8 +43,11 @@ App runs at [http://localhost:5173](http://localhost:5173).
 
 ## Deploy to Cloudflare Workers
 
-The app deploys as static assets with SPA fallback configured in `wrangler.jsonc`.
-No server-side entry point or runtime secrets are required.
+The app deploys as static assets at `/ss/`, configured in `wrangler.jsonc`.
+No server-side entry point or runtime secrets are required. The domain root and
+unknown paths return 404; this single-screen app does not need an SPA fallback.
+Vite generates URLs with the `/ss/` base, and the build packaging script places
+all app files in `dist/ss/`. Cloudflare's control files stay at the asset root.
 
 Push the configuration to GitHub before deploying. In Cloudflare Workers & Pages,
 import the repository and use these settings:
@@ -87,11 +90,32 @@ open **Workers & Pages > screenshot-styler > Deployments** in Cloudflare. A fail
 build leaves the previous deployment live. To check the trigger settings, use
 **Settings > Build > Branch control** and keep `main` as the production branch.
 
-After deployment, test the provided Workers URL using `test.png`, including picture
-backgrounds, PNG/SVG exports, and clipboard copying. To attach an unused subdomain,
-open the Worker's **Settings > Domains & Routes > Add > Custom Domain**. Cloudflare
-creates its DNS record and HTTPS certificate. This configuration serves the app at
-the root of that hostname; hosting below a path requires additional configuration.
+After deployment, open `/ss/` on the provided Workers URL and test with `test.png`,
+including picture backgrounds, PNG/SVG exports, and clipboard copying.
+
+### Domain and path routing
+
+The studio's public address is [https://nitk.me/ss/](https://nitk.me/ss/).
+`public/_redirects` redirects `/ss` to `/ss/` while the request reaches this Worker.
+The standalone Workers and preview addresses also serve the app under `/ss/`.
+
+While the other app is not deployed, keep `nitk.me` as this Worker's Custom Domain.
+Cloudflare manages its DNS and HTTPS certificate. With this build, `/` returns 404,
+and `/ss/` serves the studio. Keep the existing `nitk.me/ss/*` route as well.
+
+When the other app is ready:
+
+1. Transfer the `nitk.me` Custom Domain to the other app (or configure its hosting
+   provider's DNS destination with Cloudflare proxying enabled).
+2. Keep the route `nitk.me/ss/*` assigned to `screenshot-styler`.
+3. Add a domain Redirect Rule matching hostname `nitk.me` and URI path exactly `/ss`,
+   redirecting to `https://nitk.me/ss/` with status 301 and query preservation enabled.
+   The `/ss/*` route does not match `/ss` itself, so that redirect must happen before
+   requests reach the other app.
+
+Domain assignments and routes are managed in the Cloudflare dashboard, not by this
+repository. Do not remove the current root domain assignment before a replacement
+DNS/hosting destination is ready.
 
 See Cloudflare's [Workers Builds documentation](https://developers.cloudflare.com/workers/ci-cd/builds/)
 and [Custom Domains documentation](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
