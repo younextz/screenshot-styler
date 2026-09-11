@@ -7,40 +7,49 @@ import { CanvasPreview } from '@/components/CanvasPreview';
 import { ExportButtons } from '@/components/ExportButtons';
 import { ImageLoader } from '@/components/ImageLoader';
 import { BACKGROUND_IMAGE_URLS, type BackgroundVariant } from '@/lib/backgroundAssets';
-import { generateSVG, preloadBackgroundImages } from '@/lib/svgRenderer';
+import { generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
 import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
 
 type BackgroundStatus = 'loading' | 'ready' | 'failed';
+interface BackgroundState {
+  variant: BackgroundVariant;
+  status: BackgroundStatus;
+}
 
 const Index = () => {
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
   const [savedVariant, setSavedVariant] = useState<BackgroundVariant | null>(loadBackgroundVariant);
-  const [backgroundStatus, setBackgroundStatus] = useState<BackgroundStatus>('loading');
+  const [backgroundState, setBackgroundState] = useState<BackgroundState>({
+    variant: savedVariant ?? 'light',
+    status: 'loading',
+  });
   const [backgroundAttempt, setBackgroundAttempt] = useState(0);
   const [svgContent, setSvgContent] = useState('');
 
   const variant = savedVariant ?? 'light';
+  const backgroundStatus = backgroundState.variant === variant ? backgroundState.status : 'loading';
   const backgroundsReady = backgroundStatus === 'ready';
 
   useEffect(() => {
     let active = true;
-    preloadBackgroundImages()
+    setBackgroundState({ variant, status: 'loading' });
+    preloadBackgroundImage(variant)
       .then(() => {
-        if (active) setBackgroundStatus('ready');
+        if (active) setBackgroundState({ variant, status: 'ready' });
       })
       .catch((error: unknown) => {
         if (!active) return;
         console.error(error);
-        setBackgroundStatus('failed');
+        setBackgroundState({ variant, status: 'failed' });
       });
     return () => { active = false; };
-  }, [backgroundAttempt]);
+  }, [variant, backgroundAttempt]);
 
   const retryBackgrounds = () => {
-    setBackgroundStatus('loading');
+    setBackgroundState({ variant, status: 'loading' });
     setBackgroundAttempt((attempt) => attempt + 1);
   };
 

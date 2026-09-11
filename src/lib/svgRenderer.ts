@@ -1,11 +1,11 @@
 import {
   BACKGROUND_IMAGE_URLS,
   getBackgroundImageDataUrl,
-  preloadBackgroundImages,
+  preloadBackgroundImage,
 } from './backgroundAssets';
 import type { BackgroundVariant } from './backgroundAssets';
 
-export { preloadBackgroundImages };
+export { preloadBackgroundImage };
 export type { BackgroundVariant };
 
 export interface RenderOptions {

@@ -17,7 +17,7 @@ Drop in an image, pick the dark or light background, and export a ready-to-share
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22.12+ (Node.js 24 recommended for Cloudflare builds)
 - npm
 
 ### Run locally
@@ -32,11 +32,14 @@ App runs at [http://localhost:5173](http://localhost:5173).
 ## Scripts
 
 - `npm run dev` - start Vite dev server
-- `npm run build` - build production bundle
+- `npm run build` - typecheck and build the production bundle
 - `npm run preview` - preview production build
 - `npm run lint` - run ESLint
 - `npm run typecheck` - run TypeScript checks
 - `npm run test -- --run` - run Vitest suite once
+- `npm run test:run` - run Vitest suite once (also excludes local agent worktrees)
+- `npm run deploy` - deploy an already-built bundle with the pinned Wrangler version
+- `npm run deploy:preview` - upload an already-built preview version
 
 ## Deploy to Cloudflare Workers
 
@@ -60,6 +63,16 @@ The explicit npm install uses `package-lock.json`. Disable automatic dependency
 installation so Cloudflare does not select Bun from the legacy `bun.lockb` file.
 Leave Cloudflare Access protection off for a public app. Builds for non-production
 branches are optional; leave them enabled if you want preview deployments.
+
+The existing Cloudflare commands can stay unchanged: `npx wrangler` resolves the
+exact Wrangler version installed by `npm ci`. `workers_dev` and `preview_urls`
+are explicitly enabled. The `allowScripts` entries approve only the reviewed,
+pinned SWC, esbuild, and workerd binary-installation scripts. When updating these
+dependencies, review their install scripts again and refresh the approvals with
+an npm version supporting `npm install-scripts`.
+
+To run lint and tests before every Cloudflare deployment as well as typechecking,
+use `npm ci && npm run lint && npm run test:run && npm run build` as the build command.
 
 ### Deploy on PR merge
 
@@ -96,6 +109,17 @@ and [Custom Domains documentation](https://developers.cloudflare.com/workers/con
 
 If background loading fails, select **Retry backgrounds** in the studio. Your
 screenshot stays in place; exports become available once loading succeeds.
+
+Only the selected export background is loaded and converted to an embedded PNG;
+switching variants loads the other one on demand. The studio's decorative light
+background remains visible in either mode. Shared in-flight requests avoid duplicate
+conversion work, and exporting waits for the selected background to finish loading.
+
+The 3840×2160 background PNGs are compressed losslessly with OxiPNG, preserving
+their pixels and color metadata. `public/.assetsignore` excludes backup files
+from Workers deployments. Exports embed PNG data for standalone SVG compatibility.
+To optimize a replacement background, use `oxipng -o 4 input.png` and verify its
+decoded pixels against the original before publishing.
 
 ## Testing Notes
 
