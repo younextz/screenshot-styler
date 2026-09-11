@@ -36,6 +36,37 @@ App runs at [http://localhost:5173](http://localhost:5173).
 - `npm run typecheck` - run TypeScript checks
 - `npm run test -- --run` - run Vitest suite once
 
+## Deploy to Cloudflare Workers
+
+The app deploys as static assets with SPA fallback configured in `wrangler.jsonc`.
+No server-side entry point or runtime secrets are required.
+
+Push the configuration to GitHub before deploying. In Cloudflare Workers & Pages,
+import the repository and use these settings:
+
+| Setting | Value |
+| --- | --- |
+| Project name | `screenshot-styler` |
+| Build command | `npm ci && npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | Repository root |
+| Build variable `SKIP_DEPENDENCY_INSTALL` | `true` |
+| Build variable `NODE_VERSION` | `24` |
+
+The explicit npm install uses `package-lock.json`. Disable automatic dependency
+installation so Cloudflare does not select Bun from the legacy `bun.lockb` file.
+Leave Cloudflare Access protection off for a public app. Builds for non-production
+branches are optional; leave them enabled if you want preview deployments.
+
+After deployment, test the provided Workers URL using `test.png`, including picture
+backgrounds, PNG/SVG exports, and clipboard copying. To attach an unused subdomain,
+open the Worker's **Settings > Domains & Routes > Add > Custom Domain**. Cloudflare
+creates its DNS record and HTTPS certificate. This configuration serves the app at
+the root of that hostname; hosting below a path requires additional configuration.
+
+See Cloudflare's [Workers Builds documentation](https://developers.cloudflare.com/workers/ci-cd/builds/)
+and [Custom Domains documentation](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
+
 ## How It Works
 
 1. Import a screenshot (upload or paste).
@@ -58,3 +89,4 @@ TMPDIR=/tmp npm run test -- --run
 ## License
 
 MIT - see [LICENSE](./LICENSE).
+.
