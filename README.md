@@ -269,4 +269,4 @@ The composer follows the supplied Air UI kit. The Air logo and locally hosted Mo
 
 ## License
 
-MIT - see [LICENSE](./LICENSE).
+MIT - see [LICENSE](./LICENSE).,
