@@ -35,7 +35,7 @@ App runs at [http://localhost:5173/ss/](http://localhost:5173/ss/).
 - `npm run build` - typecheck and package the production bundle beneath `/ss/`
 - `npm run preview` - preview the Workers build at [http://localhost:8787/ss/](http://localhost:8787/ss/)
 - `npm run lint` - run ESLint
-- `npm run typecheck` - run TypeScript checks
+- `npm run typecheck` - check app and build configuration types, including unused locals and parameters
 - `npm run test -- --run` - run Vitest suite once
 - `npm run test:run` - run Vitest suite once (also excludes local agent worktrees)
 - `npm run deploy` - deploy an already-built bundle with the pinned Wrangler version
@@ -62,8 +62,8 @@ import the repository and use these settings:
 | Build variable `SKIP_DEPENDENCY_INSTALL` | `true` |
 | Build variable `NODE_VERSION` | `24` |
 
-The explicit npm install uses `package-lock.json`. Disable automatic dependency
-installation so Cloudflare does not select Bun from the legacy `bun.lockb` file.
+The explicit npm install uses `package-lock.json`, the project's only lockfile.
+Disable automatic dependency installation to avoid installing twice.
 Leave Cloudflare Access protection off for a public app. Builds for non-production
 branches are optional; leave them enabled if you want preview deployments.
 
@@ -158,6 +158,9 @@ npm run typecheck
 TMPDIR=/tmp npm run test -- --run
 ```
 
+The [dead-code audit](docs/dead-code-audit.md) records cleanup decisions and
+configuration candidates that need workflow context.
+
 ## Design reference
 
 The composer follows the supplied Air UI kit. The Air logo and locally hosted Modul Air display font come from [air.dev](https://air.dev).
@@ -165,4 +168,3 @@ The composer follows the supplied Air UI kit. The Air logo and locally hosted Mo
 ## License
 
 MIT - see [LICENSE](./LICENSE).
-.

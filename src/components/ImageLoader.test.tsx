@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { ImageLoader } from './ImageLoader';
+import ImageLoader from './ImageLoader';
 import { toast } from 'sonner';
 vi.mock('sonner', () => ({
   toast: {

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
-import { BackgroundPicker } from '@/components/BackgroundPicker';
-import { CanvasPreview } from '@/components/CanvasPreview';
-import { ExportButtons } from '@/components/ExportButtons';
-import { ImageLoader } from '@/components/ImageLoader';
+import BackgroundPicker from '@/components/BackgroundPicker';
+import CanvasPreview from '@/components/CanvasPreview';
+import ExportButtons from '@/components/ExportButtons';
+import ImageLoader from '@/components/ImageLoader';
 import { BACKGROUND_IMAGE_URLS, type BackgroundVariant } from '@/lib/backgroundAssets';
 import { generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
 import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';

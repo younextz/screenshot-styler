@@ -8,7 +8,7 @@ interface CanvasPreviewProps {
   canExpand?: boolean;
 }
 
-export function CanvasPreview({ svgContent, className, canExpand = false }: CanvasPreviewProps) {
+export default function CanvasPreview({ svgContent, className, canExpand = false }: CanvasPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

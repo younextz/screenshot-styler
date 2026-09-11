@@ -11,7 +11,7 @@ vi.mock('@/lib/svgRenderer', async (importOriginal) => ({
 }));
 
 vi.mock('@/components/ImageLoader', () => ({
-  ImageLoader: ({ onImageLoad }: ImageLoaderProps) => (
+  default: ({ onImageLoad }: ImageLoaderProps) => (
     <button onClick={() => onImageLoad('data:image/png;base64,c291cmNl', 80, 60)}>
       Load screenshot
     </button>

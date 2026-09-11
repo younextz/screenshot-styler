@@ -8,7 +8,7 @@ interface ExportButtonsProps {
   disabled?: boolean;
 }
 
-export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsProps) {
+export default function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsProps) {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
@@ -29,7 +29,6 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
         onClick={() => handleExport('copy')}
         disabled={disabled || isExporting || !svgContent}
         className="gap-1.5 px-4"
-        size="sm"
       >
         {isExporting ? (
           <Loader2 className="w-4 h-4 animate-spin" />
@@ -46,7 +45,6 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
           disabled={disabled || isExporting || !svgContent}
           variant="ghost"
           className="gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-          size="sm"
         >
           {isExporting ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -61,7 +59,6 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
           disabled={disabled || isExporting || !svgContent}
           variant="ghost"
           className="gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-          size="sm"
         >
           {isExporting ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -76,7 +73,6 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
           disabled={disabled || isExporting || !svgContent}
           variant="ghost"
           className="gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
-          size="sm"
         >
           {isExporting ? (
             <Loader2 className="w-4 h-4 animate-spin" />

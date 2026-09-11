@@ -10,13 +10,12 @@
     "lint": "eslint .",
     "preview": "wrangler dev --port 8787",
     "test": "vitest",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "test:run": "vitest run",
     "deploy": "wrangler deploy",
     "deploy:preview": "wrangler versions upload"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.462.0",

@@ -24,5 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Instructions file
-# agent_instructions.md
+# Generated browser test output
+test-results/
+playwright-report/

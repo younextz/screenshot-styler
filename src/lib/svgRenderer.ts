@@ -6,7 +6,6 @@ import {
 import type { BackgroundVariant } from './backgroundAssets';
 
 export { preloadBackgroundImage };
-export type { BackgroundVariant };
 
 export interface RenderOptions {
   variant: BackgroundVariant;
