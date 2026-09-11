@@ -5,15 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run typecheck && vite build && node scripts/prepare-worker-assets.mjs",
-    "build:dev": "vite build --mode development && node scripts/prepare-worker-assets.mjs",
+    "build": "npm run typecheck && vite build && node scripts/build-agent-release.mjs && node scripts/prepare-worker-assets.mjs",
+    "build:dev": "vite build --mode development && node scripts/build-agent-release.mjs && node scripts/prepare-worker-assets.mjs",
     "lint": "eslint .",
     "preview": "wrangler dev --port 8787",
     "test": "vitest",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.agent.json",
     "test:run": "vitest run",
     "deploy": "wrangler deploy",
-    "deploy:preview": "wrangler versions upload"
+    "deploy:preview": "wrangler versions upload",
+    "validate:agent": "node scripts/validate-agent-release.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -37,9 +38,12 @@
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "fflate": "0.8.3",
     "globals": "^15.15.0",
+    "ipaddr.js": "2.5.0",
     "jsdom": "^27.0.1",
     "lovable-tagger": "^1.1.10",
+    "playwright": "1.63.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",

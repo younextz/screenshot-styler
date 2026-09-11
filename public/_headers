@@ -1,0 +1,28 @@
+/ss/
+  Link: </ss/agents/guide.md>; rel="alternate"; type="text/markdown"
+  Cache-Control: no-cache
+
+/ss/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: no-cache
+
+/ss/agents/guide.md
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff
+
+/ss/agents/manifest.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: no-cache
+
+/ss/agents/screenshot-styler/SKILL.md
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: no-cache
+  Content-Disposition: attachment; filename="SKILL.md"
+
+/ss/agents/releases/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+/ss/agents/assets/*
+  Cache-Control: public, max-age=31536000, immutable

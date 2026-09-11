@@ -1,0 +1,12 @@
+# Screenshot Studio
+
+Style existing PNG/JPEG screenshots with the light or dark Air background.
+Return native PNG, 4K PNG, or self-contained SVG using the local helper.
+No hosted rendering API, webpage capture, or screenshot uploads to the studio.
+
+- [Agent guide](https://nitk.me/ss/agents/guide.md): setup, command contract, limits, and errors.
+- [Release manifest](https://nitk.me/ss/agents/manifest.json): versioned helper archive and SHA-256 checksums.
+- [Optional skill](https://nitk.me/ss/agents/screenshot-styler/SKILL.md): reusable agent instructions.
+
+Requires Node.js 22.12+ with local Chromium, or browser tools supporting file uploads and downloads.
+An HTTP-only agent can read these instructions but cannot render images.

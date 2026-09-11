@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
+import AgentInstructions from '@/components/AgentInstructions';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import CanvasPreview from '@/components/CanvasPreview';
 import ExportButtons from '@/components/ExportButtons';
@@ -10,6 +11,7 @@ import { BACKGROUND_IMAGE_URLS, type BackgroundVariant } from '@/lib/backgroundA
 import { generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
 import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
+import { svgToBlob } from '@/utils/browserRenderer';
 
 type BackgroundStatus = 'loading' | 'ready' | 'failed';
 interface BackgroundState {
@@ -68,67 +70,6 @@ const Index = () => {
   const handleVariantChange = (next: BackgroundVariant) => {
     setSavedVariant(next);
     saveBackgroundVariant(next);
-  };
-
-  const getSvgSize = (svgString: string) => {
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
-    const svgElement = svgDoc.querySelector('svg');
-    const width = parseInt(svgElement?.getAttribute('width') || '800');
-    const height = parseInt(svgElement?.getAttribute('height') || '600');
-    return { width, height };
-  };
-
-  const svgToBlob = async (svgString: string, targetLongSide?: number): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(svgBlob);
-
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const { width: svgW, height: svgH } = getSvgSize(svgString);
-
-        let outW = svgW;
-        let outH = svgH;
-        if (targetLongSide && Math.max(svgW, svgH) !== targetLongSide) {
-          if (svgW >= svgH) {
-            outW = targetLongSide;
-            outH = Math.round((targetLongSide / svgW) * svgH);
-          } else {
-            outH = targetLongSide;
-            outW = Math.round((targetLongSide / svgH) * svgW);
-          }
-        }
-
-        canvas.width = outW;
-        canvas.height = outH;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Could not get canvas context'));
-          return;
-        }
-
-        ctx.drawImage(img, 0, 0, outW, outH);
-        URL.revokeObjectURL(url);
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
-        }, 'image/png');
-      };
-
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Failed to load SVG'));
-      };
-
-      img.src = url;
-    });
   };
 
   const downloadSvg = (svgString: string) => {
@@ -254,7 +195,7 @@ const Index = () => {
       </main>
 
       <footer className="flex flex-col items-center justify-between gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:flex-row sm:px-10">
-        <span>Made for your next “look at this.”</span>
+        <AgentInstructions />
         <p className="flex items-center gap-1.5">
           <LockKeyhole className="h-3 w-3" aria-hidden="true" />
           Only in your browser. Always yours.

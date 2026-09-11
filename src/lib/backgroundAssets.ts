@@ -1,9 +1,6 @@
 export type BackgroundVariant = 'dark' | 'light';
 
-export const BACKGROUND_IMAGE_URLS: Record<BackgroundVariant, string> = {
-  dark: `${import.meta.env.BASE_URL}backgrounds/bg-dark-bubbles.png`,
-  light: `${import.meta.env.BASE_URL}backgrounds/bg-light-bubbles.png`,
-};
+export const BACKGROUND_IMAGE_URLS: Record<BackgroundVariant, string> = __STUDIO_BACKGROUND_URLS__;
 
 const backgroundImageCache: Partial<Record<BackgroundVariant, string>> = {};
 const pendingBackgrounds: Partial<Record<BackgroundVariant, Promise<string>>> = {};

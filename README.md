@@ -12,6 +12,8 @@ Drop in an image, pick the dark or light background, and export a ready-to-share
 - Export formats: copy PNG to clipboard, download PNG, download 4K PNG, or export SVG.
 - Full-size preview: expand the styled picture with a smooth transition, fitted to your viewport without cropping. Close with Escape, the close button, or the backdrop; reduced-motion preferences are respected.
 - Persisted choice: your background selection is saved locally.
+- Agent support: discoverable Markdown instructions, a downloadable local renderer,
+  and an optional skill. Select **Use with an agent** for a copyable prompt.
 
 ## Quick Start
 
@@ -38,6 +40,8 @@ App runs at [http://localhost:5173/ss/](http://localhost:5173/ss/).
 - `npm run typecheck` - check app and build configuration types, including unused locals and parameters
 - `npm run test -- --run` - run Vitest suite once
 - `npm run test:run` - run Vitest suite once (also excludes local agent worktrees)
+- `npm run validate:agent -- http://localhost:8787` - validate a built helper archive
+  against a running local Workers preview, including pixel comparisons with the editor
 - `npm run deploy` - deploy an already-built bundle with the pinned Wrangler version
 - `npm run deploy:preview` - upload an already-built preview version
 
@@ -62,7 +66,9 @@ import the repository and use these settings:
 | Build variable `SKIP_DEPENDENCY_INSTALL` | `true` |
 | Build variable `NODE_VERSION` | `24` |
 
-The explicit npm install uses `package-lock.json`, the project's only lockfile.
+The explicit npm install uses the root `package-lock.json`. The separate
+`agent/package-lock.json` pins dependencies for the downloadable helper and is copied
+into its archive; the Cloudflare build does not install that second package.
 Disable automatic dependency installation to avoid installing twice.
 Leave Cloudflare Access protection off for a public app. Builds for non-production
 branches are optional; leave them enabled if you want preview deployments.
@@ -119,6 +125,87 @@ DNS/hosting destination is ready.
 
 See Cloudflare's [Workers Builds documentation](https://developers.cloudflare.com/workers/ci-cd/builds/)
 and [Custom Domains documentation](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
+
+## Use with agents
+
+Give your agent the studio URL and a PNG/JPEG screenshot. The editor's **Use with an
+agent** panel provides a prompt, the [agent guide](public/agents/guide.md), and an
+[optional skill](public/agents/screenshot-styler/SKILL.md). The initial HTML and HTTP
+Link header point to the guide without displaying its instructions in the composer.
+These are discovery hints: not every bot follows metadata, so the guide also has an
+ordinary link inside the panel. No bot detection or JavaScript execution is needed
+to read the published Markdown guide.
+
+The helper requires Node.js 22.12+ and its pinned Playwright Chromium installation.
+Download and verify the archive advertised by `/ss/agents/manifest.json`, extract it,
+then run the guide's `npm ci` and Chromium setup commands in the helper directory.
+Example after setup:
+
+```sh
+node render.mjs --input /absolute/path/screenshot.png --background light --output /absolute/path/styled.png
+node render.mjs --url https://example.com/screenshot.jpg --background dark --output /absolute/path/styled.svg
+```
+
+Results are local files with a single JSON status on stdout. Native PNG, 4K PNG, and
+self-contained SVG use the same renderer as the editor. Input limits are 10 MiB,
+8192 px per side, and 16 million pixels; output is bounded to 24 million pixels and
+32 MiB. Remote inputs are public HTTPS images only, with connection-pinned address
+checks, bounded downloads, and redirect/deadline limits. See the guide for errors.
+
+The helper downloads only its selected background and verifies its content hash.
+Subsequent local-file renders work without network access; `--offline` also enforces
+that the input is local and the background is cached. Only public backgrounds are
+cached, under `~/.cache/screenshot-styler` by default. Screenshots and generated files
+never pass through Cloudflare. This is a local renderer, not a hosted HTTP image API
+or webpage screenshot service. Browser-only agents can use the editor's upload and
+download controls; HTTP-only agents cannot render.
+
+### Build and validate agent releases
+
+`npm run build` compiles the shared browser renderer and Node helper, creates a
+content-addressed ZIP with its own package lock, and emits the manifest and hashed
+backgrounds. The production editor uses those same background URLs. Documentation
+revalidates; immutable release and background URLs can be cached for a year. All of
+these are Workers Static Assets: no Worker entry point, hosted browser, or API quota
+is introduced. Cache reuse reduces transferred bytes rather than imposing a global
+bandwidth cap.
+
+New development dependencies are Playwright (local rendering and browser validation),
+ipaddr.js (IPv4/IPv6 address classification), and fflate (portable ZIP packaging).
+Only Playwright and ipaddr.js are runtime dependencies of the downloadable helper.
+None are included in the editor's JavaScript bundle. PNG/JPEG header inspection is
+bounded and followed by Chromium decoding; other image types are rejected.
+
+To reproduce full local validation:
+
+```sh
+npm run lint
+npm run test:run
+npm run build
+npx --no-install playwright install chromium
+npm run preview
+# In a second terminal:
+npm run validate:agent -- http://localhost:8787
+```
+
+If 8787 is already occupied, use `npx --no-install wrangler dev --port 8788
+--inspector-port 9230` and pass `http://localhost:8788` to validation. The validation
+script downloads the local archive, installs it in a fresh temporary directory,
+seeds its cache from verified local preview assets, and disables Node DNS/HTTP for
+warmed helper runs. It compares editor/helper pixels using the root `test.png`,
+checks desktop/mobile keyboard interaction, and writes screenshots and a report to
+`test-results/agent-validation/`. The temporary installation is removed afterward.
+Remote URL policy and transport limits have separate mocked network tests.
+
+The generated release identity changes whenever bundled code, package lock, guide,
+skill, or background content changes. It is never overwritten under an existing
+immutable URL. This first release does not provide an archive-retention service;
+before replacing a published release, retain its generated release directory and
+referenced hashed backgrounds in the next deployment if continued online access is
+required. Installed helpers with cached backgrounds continue to work offline.
+
+The [implementation proposal](docs/agent-friendly-implementation.md) also records the
+optional hosted API design. That API remains outside this implementation.
 
 ## How It Works
 
