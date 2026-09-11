@@ -1,0 +1,93 @@
+{
+  "errors": [],
+  "geometry": [
+    {
+      "state": "empty",
+      "width": 320,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "empty",
+      "width": 390,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "empty",
+      "width": 850,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "empty",
+      "width": 1440,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "result",
+      "width": 320,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "result",
+      "width": 390,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "result",
+      "width": 850,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    },
+    {
+      "state": "result",
+      "width": 1440,
+      "overflow": false,
+      "background": "linear-gradient(rgba(238, 240, 242, 0.65), rgba(238, 240, 242, 0.65)), url(\"http://localhost:5174/backgrounds/bg-light-bubbles.png\")"
+    }
+  ],
+  "exports": [
+    {
+      "variant": "Air Light",
+      "format": "PNG",
+      "bytes": 3631458
+    },
+    {
+      "variant": "Air Light",
+      "format": "4K",
+      "bytes": 5309941
+    },
+    {
+      "variant": "Air Light",
+      "format": "SVG",
+      "bytes": 9856335
+    },
+    {
+      "variant": "Air Dark",
+      "format": "PNG",
+      "bytes": 3506065
+    },
+    {
+      "variant": "Air Dark",
+      "format": "4K",
+      "bytes": 5136765
+    },
+    {
+      "variant": "Air Dark",
+      "format": "SVG",
+      "bytes": 9535215
+    }
+  ],
+  "inputs": [
+    "file chooser",
+    "same-file replacement",
+    "drag and drop",
+    "clipboard button",
+    "keyboard paste"
+  ],
+  "fixture": "test.png"
+}

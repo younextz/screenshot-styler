@@ -1,36 +1,48 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { AlertCircle, Upload } from 'lucide-react';
+import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
 import { BackgroundPicker } from '@/components/BackgroundPicker';
 import { CanvasPreview } from '@/components/CanvasPreview';
 import { ExportButtons } from '@/components/ExportButtons';
 import { ImageLoader } from '@/components/ImageLoader';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { useTheme } from '@/hooks/useTheme';
-import type { BackgroundVariant } from '@/lib/backgroundAssets';
+import { BACKGROUND_IMAGE_URLS, type BackgroundVariant } from '@/lib/backgroundAssets';
 import { generateSVG, preloadBackgroundImages } from '@/lib/svgRenderer';
 import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
 
-const Index = () => {
-  const { theme } = useTheme();
+type BackgroundStatus = 'loading' | 'ready' | 'failed';
 
+const Index = () => {
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
   const [savedVariant, setSavedVariant] = useState<BackgroundVariant | null>(loadBackgroundVariant);
-  const [backgroundsReady, setBackgroundsReady] = useState(false);
+  const [backgroundStatus, setBackgroundStatus] = useState<BackgroundStatus>('loading');
+  const [backgroundAttempt, setBackgroundAttempt] = useState(0);
   const [svgContent, setSvgContent] = useState('');
 
-  // Follow the UI theme until the user picks a background explicitly.
-  const variant = savedVariant ?? theme;
+  const variant = savedVariant ?? 'light';
+  const backgroundsReady = backgroundStatus === 'ready';
 
   useEffect(() => {
+    let active = true;
     preloadBackgroundImages()
-      .then(() => setBackgroundsReady(true))
-      .catch(console.error);
-  }, []);
+      .then(() => {
+        if (active) setBackgroundStatus('ready');
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error(error);
+        setBackgroundStatus('failed');
+      });
+    return () => { active = false; };
+  }, [backgroundAttempt]);
+
+  const retryBackgrounds = () => {
+    setBackgroundStatus('loading');
+    setBackgroundAttempt((attempt) => attempt + 1);
+  };
 
   useEffect(() => {
     if (!imageData || !imageWidth || !imageHeight) return;
@@ -116,7 +128,7 @@ const Index = () => {
   };
 
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
-    if (!svgContent) return;
+    if (!svgContent || !backgroundsReady) return;
     try {
       if (type === 'downloadSvg') {
         downloadSvg(svgContent);
@@ -144,78 +156,101 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
-      <header className="flex shrink-0 items-center justify-between border-b border-border/50 px-6 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <span className="text-sm font-bold text-primary">SS</span>
-          </div>
-          <div>
-            <h1 className="text-base font-semibold text-foreground">Screenshot Styler</h1>
-            <p className="text-xs text-muted-foreground">Frame screenshots on the Air background</p>
-          </div>
-        </div>
-        <ThemeToggle />
+    <div
+      className="relative isolate flex min-h-svh flex-col bg-cover bg-center bg-no-repeat text-foreground"
+      style={{
+        backgroundImage: `linear-gradient(hsl(var(--background) / 0.65), hsl(var(--background) / 0.65)), url(${BACKGROUND_IMAGE_URLS.light})`,
+      }}
+    >
+      <header className="flex shrink-0 items-center justify-between gap-4 px-6 py-6 sm:px-10 sm:py-8">
+        <a href="/" aria-label="Air Screenshot Studio home" className="flex items-center gap-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <img src="/air-logo.svg" alt="Air" className="h-7 w-auto" />
+          <span className="h-5 w-px bg-foreground/20" aria-hidden="true" />
+          <span className="text-sm font-medium tracking-tight"><span className="hidden sm:inline">Screenshot </span>Studio</span>
+        </a>
+        <a
+          href="https://air.dev"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-xs font-medium transition-colors hover:bg-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <span className="hidden sm:inline">Discover Air</span>
+          <span className="sm:hidden">Air.dev</span>
+          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </a>
       </header>
 
-      <main className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <section className="relative flex min-h-[45vh] min-w-0 flex-1 items-center justify-center p-4 md:min-h-0">
-          {svgContent ? (
-            <CanvasPreview
-              svgContent={svgContent}
-              className="max-h-[calc(100vh-5rem)]"
-            />
-          ) : (
-            <div className="flex h-full max-h-[480px] w-full max-w-2xl flex-col items-center justify-center rounded-xl border border-border/40 bg-card/30 p-8 text-center shadow-[var(--shadow-sm)]">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
-                <Upload className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <h2 className="text-lg font-medium text-foreground">Drop a screenshot to begin</h2>
-              <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
-                Upload a PNG/JPG or paste from clipboard using the controls on the right.
+      <main className="flex flex-1 flex-col items-center justify-center px-5 py-10 sm:px-10">
+        <div className={`w-full ${imageData ? 'max-w-5xl' : 'max-w-[680px]'}`}>
+          <div className={`text-center ${imageData ? 'mb-6' : 'mb-9 sm:mb-11'}`}>
+            <h1 className={`font-display font-[130] leading-[0.95] tracking-[-0.055em] ${imageData ? 'text-5xl sm:text-6xl' : 'text-[clamp(3rem,7vw,5.5rem)]'}`}>
+              {imageData ? 'Ready to share' : 'Add some Air'}
+            </h1>
+          </div>
+
+          {backgroundStatus !== 'ready' && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/60 bg-white/65 px-4 py-3 text-sm">
+              <p role="status" aria-live="polite">
+                {backgroundStatus === 'failed'
+                  ? 'Air backgrounds couldn’t load. Retry to enable exports. Your screenshot is safe.'
+                  : 'Loading Air backgrounds for export…'}
               </p>
+              <button
+                type="button"
+                onClick={retryBackgrounds}
+                disabled={backgroundStatus === 'loading'}
+                className="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-50"
+              >
+                Retry backgrounds
+              </button>
             </div>
           )}
-        </section>
 
-        <aside className="flex w-full shrink-0 flex-col border-t border-border/50 bg-card/50 md:w-80 md:border-l md:border-t-0">
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {/* Source Section */}
-            <section className="space-y-3">
-              <h2 className="text-xs font-medium text-muted-foreground">Source</h2>
-              <ImageLoader onImageLoad={handleImageLoad} />
+          {imageData && (
+            <section aria-label="Styled screenshot" className="mb-4 overflow-hidden rounded-2xl border border-white/60 bg-white/40 p-2 shadow-lg backdrop-blur-xl sm:p-3">
+              <div className="h-[clamp(220px,40vh,480px)]">
+                <CanvasPreview svgContent={svgContent} canExpand={backgroundsReady} className="rounded-xl border-0 bg-transparent" />
+              </div>
+              <div className="flex flex-col items-center justify-between gap-4 px-2 pb-2 pt-4 sm:flex-row sm:px-3">
+                <BackgroundPicker selected={variant} onChange={handleVariantChange} />
+                <ExportButtons svgContent={svgContent} onExport={handleExport} disabled={!svgContent || !backgroundsReady} />
+              </div>
             </section>
+          )}
 
-            {imageData && (
-              <>
-                {/* Background Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Background</h2>
-                  <BackgroundPicker selected={variant} onChange={handleVariantChange} />
-                </section>
+          <ImageLoader onImageLoad={handleImageLoad} compact={Boolean(imageData)} />
 
-                {/* Export Section */}
-                <section className="space-y-2">
-                  <h2 className="text-xs font-medium text-muted-foreground">Export</h2>
-                  <ExportButtons
-                    svgContent={svgContent}
-                    onExport={handleExport}
-                    disabled={!svgContent}
-                  />
-                </section>
-              </>
-            )}
-          </div>
-
-          {/* Compact Footer with Privacy Note */}
-          <div className="shrink-0 border-t border-border/40 bg-background/30 px-4 py-2.5">
-            <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <AlertCircle className="h-3 w-3 shrink-0" />
-              <span>All processing is local. Images are never uploaded.</span>
-            </p>
-          </div>
-        </aside>
+          {imageData ? (
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 px-1 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5" aria-hidden="true" /> {imageWidth} × {imageHeight} source · Original quality</span>
+              <button
+                type="button"
+                onClick={() => { setImageData(''); setSvgContent(''); }}
+                className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-white/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Start fresh
+              </button>
+            </div>
+          ) : (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground sm:gap-x-8">
+              {['Drop it in', 'Give it some Air', 'Share it anywhere'].map((step, index) => (
+                <span key={step} className="flex items-center gap-2">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full border border-foreground/20 text-[9px]">{index + 1}</span>
+                  {step}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </main>
+
+      <footer className="flex flex-col items-center justify-between gap-3 px-6 py-6 text-[11px] text-muted-foreground sm:flex-row sm:px-10">
+        <span>Made for your next “look at this.”</span>
+        <p className="flex items-center gap-1.5">
+          <LockKeyhole className="h-3 w-3" aria-hidden="true" />
+          Only in your browser. Always yours.
+        </p>
+      </footer>
     </div>
   );
 };

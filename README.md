@@ -6,9 +6,11 @@ Drop in an image, pick the dark or light background, and export a ready-to-share
 ## Highlights
 
 - Local-first processing: images stay in your browser.
-- Flexible input: upload PNG/JPG or paste from clipboard (Ctrl/⌘+V).
-- Two Air backgrounds: dark and light; the default follows the UI theme until you pick one.
+- Centered “Add some Air” composer: drag and drop, upload PNG/JPG, or paste from clipboard (Ctrl/⌘+V). Files can be up to 10 MB.
+- Full-page Air Light artwork with a subtle tint, a responsive layout, and Air display typography.
+- Two export backgrounds: dark and light; defaults to Air Light. The website always stays light.
 - Export formats: copy PNG to clipboard, download PNG, download 4K PNG, or export SVG.
+- Full-size preview: expand the styled picture with a smooth transition, fitted to your viewport without cropping. Close with Escape, the close button, or the backdrop; reduced-motion preferences are respected.
 - Persisted choice: your background selection is saved locally.
 
 ## Quick Start
@@ -47,6 +49,7 @@ import the repository and use these settings:
 | Setting | Value |
 | --- | --- |
 | Project name | `screenshot-styler` |
+| Production branch | `main` (automatic builds enabled) |
 | Build command | `npm ci && npm run build` |
 | Deploy command | `npx wrangler deploy` |
 | Root directory | Repository root |
@@ -57,6 +60,19 @@ The explicit npm install uses `package-lock.json`. Disable automatic dependency
 installation so Cloudflare does not select Bun from the legacy `bun.lockb` file.
 Leave Cloudflare Access protection off for a public app. Builds for non-production
 branches are optional; leave them enabled if you want preview deployments.
+
+### Deploy on PR merge
+
+Cloudflare Workers Builds is connected to this GitHub repository. Merge release
+PRs into `main`: the resulting push triggers the production build and then
+`npx wrangler deploy`, which publishes the built app. Direct pushes to `main`
+also trigger this pipeline. No additional GitHub deployment workflow or repository
+API token is needed for the connected Cloudflare integration.
+
+Monitor **Workers Builds: screenshot-styler** on the merged commit in GitHub, or
+open **Workers & Pages > screenshot-styler > Deployments** in Cloudflare. A failed
+build leaves the previous deployment live. To check the trigger settings, use
+**Settings > Build > Branch control** and keep `main` as the production branch.
 
 After deployment, test the provided Workers URL using `test.png`, including picture
 backgrounds, PNG/SVG exports, and clipboard copying. To attach an unused subdomain,
@@ -69,15 +85,23 @@ and [Custom Domains documentation](https://developers.cloudflare.com/workers/con
 
 ## How It Works
 
-1. Import a screenshot (upload or paste).
+1. Add a screenshot using the central composer (drop, upload, or paste).
 2. It is composed onto the Air background: the screenshot spans 80% of the
    output width with rounded corners and a soft shadow, padded evenly on all sides.
 3. Switch between the dark and light background variants.
-4. Export PNG/SVG from the live SVG preview. Backgrounds are embedded as data
+   Select **Full-size view** in the preview to inspect the picture before exporting.
+4. Replace the image or select **Start fresh** to begin again.
+5. Export PNG/SVG from the live SVG preview. Backgrounds are embedded as data
    URLs so exported files are self-contained.
+
+If background loading fails, select **Retry backgrounds** in the studio. Your
+screenshot stays in place; exports become available once loading succeeds.
 
 ## Testing Notes
 
+- For manual image checks, upload `test.png` and test both **Dark** and **Light** on desktop and mobile. Resize the window and confirm the full image stays visible.
+- **Copy** and **PNG** preserve native screenshot resolution. Air backgrounds use integer padding and sRGB shadow filtering to keep text sharp and source colors intact. **4K** resizes the result; it does not add detail to the original screenshot.
+- WebP inputs can be converted to PNG without resizing before upload (on macOS: `sips -s format png input.webp --out input.png`).
 - Run lint + typecheck + tests before committing:
 
 ```bash
@@ -85,6 +109,10 @@ npm run lint
 npm run typecheck
 TMPDIR=/tmp npm run test -- --run
 ```
+
+## Design reference
+
+The composer follows the supplied Air UI kit. The Air logo and locally hosted Modul Air display font come from [air.dev](https://air.dev).
 
 ## License
 

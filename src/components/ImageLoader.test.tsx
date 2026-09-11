@@ -16,6 +16,21 @@ describe('ImageLoader', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+  it.each([false, true])('announces dragging and decoding with compact=%s', (compact) => {
+    const { container } = render(<ImageLoader onImageLoad={vi.fn()} compact={compact} />);
+    const status = screen.getByRole('status');
+    const dropZone = container.querySelector('[aria-busy]') as HTMLDivElement;
+    expect(status).toHaveAttribute('aria-live', 'polite');
+    expect(status.closest('[aria-busy]')).toBeNull();
+
+    fireEvent.dragOver(dropZone, { dataTransfer: { types: ['Files'] } });
+    expect(status).toHaveTextContent('Let go. Let it shine.');
+    fireEvent.drop(dropZone, {
+      dataTransfer: { files: [new File(['image'], 'image.png', { type: 'image/png' })] },
+    });
+    expect(status).toHaveTextContent('Adding a little atmosphere…');
+    expect(dropZone).toHaveAttribute('aria-busy', 'true');
+  });
   it('shows an error for unsupported file types', () => {
     const onImageLoad = vi.fn();
     const { container } = render(<ImageLoader onImageLoad={onImageLoad} />);
