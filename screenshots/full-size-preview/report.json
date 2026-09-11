@@ -1,0 +1,203 @@
+{
+  "fixture": "test.png",
+  "geometry": [
+    {
+      "label": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "image": {
+        "x": 249.109375,
+        "y": 96,
+        "width": 941.78125,
+        "height": 771.984375
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "320x568",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "image": {
+        "x": 16,
+        "y": 197.953125,
+        "width": 288,
+        "height": 236.078125
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "390x844",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "image": {
+        "x": 16,
+        "y": 307.265625,
+        "width": 358,
+        "height": 293.453125
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "844x390",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "image": {
+        "x": 262.1875,
+        "y": 96,
+        "width": 319.609375,
+        "height": 261.984375
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "2560x1440",
+      "viewport": {
+        "width": 2560,
+        "height": 1440
+      },
+      "image": {
+        "x": 479.71875,
+        "y": 96,
+        "width": 1600.546875,
+        "height": 1311.984375
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "resized while open",
+      "viewport": {
+        "width": 390,
+        "height": 600
+      },
+      "image": {
+        "x": 16,
+        "y": 185.265625,
+        "width": 358,
+        "height": 293.453125
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "source 300x2400",
+      "viewport": {
+        "width": 390,
+        "height": 600
+      },
+      "image": {
+        "x": 156.734375,
+        "y": 80.015625,
+        "width": 76.53125,
+        "height": 503.953125
+      },
+      "natural": {
+        "width": 376,
+        "height": 2476
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "source 2400x300",
+      "viewport": {
+        "width": 390,
+        "height": 600
+      },
+      "image": {
+        "x": 16,
+        "y": 278.296875,
+        "width": 358,
+        "height": 107.390625
+      },
+      "natural": {
+        "width": 3000,
+        "height": 900
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "source 80x60",
+      "viewport": {
+        "width": 390,
+        "height": 600
+      },
+      "image": {
+        "x": 145,
+        "y": 292,
+        "width": 100,
+        "height": 80
+      },
+      "natural": {
+        "width": 100,
+        "height": 80
+      },
+      "closeInBounds": true,
+      "overflow": false
+    },
+    {
+      "label": "dark background",
+      "viewport": {
+        "width": 390,
+        "height": 600
+      },
+      "image": {
+        "x": 16,
+        "y": 185.265625,
+        "width": 358,
+        "height": 293.453125
+      },
+      "natural": {
+        "width": 2840,
+        "height": 2328
+      },
+      "closeInBounds": true,
+      "overflow": false
+    }
+  ],
+  "checks": [
+    "Keyboard focus stays in the modal; clicking the image keeps it open",
+    "Escape closes and restores trigger focus and page scroll",
+    "Close button and backdrop restore focus; open preview responds to resizing",
+    "Reduced motion disables picture animation",
+    "Portrait, panorama, small images, dark background, and Start fresh"
+  ],
+  "errors": []
+}

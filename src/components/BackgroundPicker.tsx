@@ -7,13 +7,13 @@ export interface BackgroundPickerProps {
 }
 
 const OPTIONS: { id: BackgroundVariant; label: string }[] = [
-  { id: 'dark', label: 'Air Dark' },
-  { id: 'light', label: 'Air Light' },
+  { id: 'light', label: 'Light' },
+  { id: 'dark', label: 'Dark' },
 ];
 
 export function BackgroundPicker({ selected, onChange }: BackgroundPickerProps) {
   return (
-    <div className="flex gap-1.5" role="group" aria-label="Background">
+    <div className="flex shrink-0 gap-1 rounded-lg bg-foreground/5 p-1" role="group" aria-label="Background">
       {OPTIONS.map((option) => (
         <button
           key={option.id}
@@ -21,12 +21,13 @@ export function BackgroundPicker({ selected, onChange }: BackgroundPickerProps) 
           onClick={() => onChange(option.id)}
           aria-pressed={selected === option.id}
           className={cn(
-            'flex-1 rounded-md border border-transparent px-2.5 py-1.5 text-xs transition-colors',
+            'flex items-center gap-2 rounded-md border border-transparent px-3 py-2 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
             selected === option.id
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground',
+              ? 'border-foreground/5 bg-white text-foreground shadow-sm'
+              : 'text-muted-foreground hover:bg-white/40 hover:text-foreground',
           )}
         >
+          <span aria-hidden="true" className={cn('h-3 w-3 rounded-full border border-foreground/15', option.id === 'light' ? 'bg-white' : 'bg-foreground')} />
           {option.label}
         </button>
       ))}

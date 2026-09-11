@@ -23,7 +23,7 @@ export function ExportButtons({ svgContent, onExport, disabled }: ExportButtonsP
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center justify-center gap-2">
       {/* Primary action - Copy to clipboard */}
       <Button
         onClick={() => handleExport('copy')}

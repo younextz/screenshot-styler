@@ -1,0 +1,257 @@
+{
+  "errors": [],
+  "results": [
+    {
+      "fixture": "test.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 850,
+        "height": 610
+      },
+      "width": 2840,
+      "height": 2328,
+      "bytes": 3506065,
+      "x": 284,
+      "y": 284,
+      "sourceWidth": 2272,
+      "sourceHeight": 1760,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 464,
+      "previewHeight": 479,
+      "uniformScale": true
+    },
+    {
+      "fixture": "test.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "width": 2840,
+      "height": 2328,
+      "bytes": 3506065,
+      "x": 284,
+      "y": 284,
+      "sourceWidth": 2272,
+      "sourceHeight": 1760,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 1054,
+      "previewHeight": 869,
+      "uniformScale": true
+    },
+    {
+      "fixture": "test.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "width": 2840,
+      "height": 2328,
+      "bytes": 3506065,
+      "x": 284,
+      "y": 284,
+      "sourceWidth": 2272,
+      "sourceHeight": 1760,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 324,
+      "previewHeight": 406,
+      "uniformScale": true
+    },
+    {
+      "fixture": "test.png",
+      "theme": "light",
+      "viewport": {
+        "width": 850,
+        "height": 610
+      },
+      "width": 2840,
+      "height": 2328,
+      "bytes": 3631458,
+      "x": 284,
+      "y": 284,
+      "sourceWidth": 2272,
+      "sourceHeight": 1760,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 464,
+      "previewHeight": 479,
+      "uniformScale": true
+    },
+    {
+      "fixture": "test.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "width": 2840,
+      "height": 2328,
+      "bytes": 3631458,
+      "x": 284,
+      "y": 284,
+      "sourceWidth": 2272,
+      "sourceHeight": 1760,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 1054,
+      "previewHeight": 869,
+      "uniformScale": true
+    },
+    {
+      "fixture": "test.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "width": 2840,
+      "height": 2328,
+      "bytes": 3631458,
+      "x": 284,
+      "y": 284,
+      "sourceWidth": 2272,
+      "sourceHeight": 1760,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 324,
+      "previewHeight": 406,
+      "uniformScale": true
+    },
+    {
+      "fixture": "screenshots/image-qa/source.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 850,
+        "height": 610
+      },
+      "width": 1575,
+      "height": 1084,
+      "bytes": 959329,
+      "x": 158,
+      "y": 158,
+      "sourceWidth": 1259,
+      "sourceHeight": 768,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 464,
+      "previewHeight": 479,
+      "uniformScale": true
+    },
+    {
+      "fixture": "screenshots/image-qa/source.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "width": 1575,
+      "height": 1084,
+      "bytes": 959329,
+      "x": 158,
+      "y": 158,
+      "sourceWidth": 1259,
+      "sourceHeight": 768,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 1054,
+      "previewHeight": 869,
+      "uniformScale": true
+    },
+    {
+      "fixture": "screenshots/image-qa/source.png",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "width": 1575,
+      "height": 1084,
+      "bytes": 959329,
+      "x": 158,
+      "y": 158,
+      "sourceWidth": 1259,
+      "sourceHeight": 768,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 324,
+      "previewHeight": 406,
+      "uniformScale": true
+    },
+    {
+      "fixture": "screenshots/image-qa/source.png",
+      "theme": "light",
+      "viewport": {
+        "width": 850,
+        "height": 610
+      },
+      "width": 1575,
+      "height": 1084,
+      "bytes": 973785,
+      "x": 158,
+      "y": 158,
+      "sourceWidth": 1259,
+      "sourceHeight": 768,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 464,
+      "previewHeight": 479,
+      "uniformScale": true
+    },
+    {
+      "fixture": "screenshots/image-qa/source.png",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "width": 1575,
+      "height": 1084,
+      "bytes": 973785,
+      "x": 158,
+      "y": 158,
+      "sourceWidth": 1259,
+      "sourceHeight": 768,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 1054,
+      "previewHeight": 869,
+      "uniformScale": true
+    },
+    {
+      "fixture": "screenshots/image-qa/source.png",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "width": 1575,
+      "height": 1084,
+      "bytes": 973785,
+      "x": 158,
+      "y": 158,
+      "sourceWidth": 1259,
+      "sourceHeight": 768,
+      "differences": 0,
+      "maxDelta": 0,
+      "contained": true,
+      "previewWidth": 324,
+      "previewHeight": 406,
+      "uniformScale": true
+    }
+  ]
+}

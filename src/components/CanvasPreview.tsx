@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import FullSizePreview from './FullSizePreview';
 
 interface CanvasPreviewProps {
   svgContent: string;
   className?: string;
+  canExpand?: boolean;
 }
 
-export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
+export function CanvasPreview({ svgContent, className, canExpand = false }: CanvasPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,8 +31,9 @@ export function CanvasPreview({ svgContent, className }: CanvasPreviewProps) {
       }} />
       <div
         ref={containerRef}
-        className="relative z-10 flex max-h-[calc(100%-2rem)] max-w-[calc(100%-2rem)] items-center justify-center p-4 [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:drop-shadow-lg"
+        className="absolute inset-4 z-10 flex items-center justify-center [&>svg]:h-full [&>svg]:w-full [&>svg]:drop-shadow-lg"
       />
+      <FullSizePreview svgContent={svgContent} sourceRef={containerRef} disabled={!canExpand} />
     </div>
   );
 }
