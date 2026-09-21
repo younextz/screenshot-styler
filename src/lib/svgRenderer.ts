@@ -9,6 +9,7 @@ export interface RenderOptions {
   imageData: string;
   imageWidth: number;
   imageHeight: number;
+  screenshotScale?: number;
 }
 
 export function generateSVG(options: RenderOptions): string {

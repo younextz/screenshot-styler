@@ -1,14 +1,23 @@
 import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import FullSizePreview from './FullSizePreview';
+import ScreenshotResizeHandles from './ScreenshotResizeHandles';
+
+export interface ScreenshotResizeConfig {
+  imageWidth: number;
+  imageHeight: number;
+  scale: number;
+  onScaleChange: (scale: number) => void;
+}
 
 interface CanvasPreviewProps {
   svgContent: string;
   className?: string;
   canExpand?: boolean;
+  resize?: ScreenshotResizeConfig;
 }
 
-export default function CanvasPreview({ svgContent, className, canExpand = false }: CanvasPreviewProps) {
+export default function CanvasPreview({ svgContent, className, canExpand = false, resize }: CanvasPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,6 +42,7 @@ export default function CanvasPreview({ svgContent, className, canExpand = false
         ref={containerRef}
         className="absolute inset-4 z-10 flex items-center justify-center [&>svg]:h-full [&>svg]:w-full [&>svg]:drop-shadow-lg"
       />
+      {resize && svgContent && <ScreenshotResizeHandles {...resize} sourceRef={containerRef} />}
       <FullSizePreview svgContent={svgContent} sourceRef={containerRef} disabled={!canExpand} />
     </div>
   );

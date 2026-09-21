@@ -40,6 +40,27 @@ describe('generateSVG', () => {
     );
   });
 
+  it('resizes the screenshot inside an unchanged canvas when screenshotScale is set', () => {
+    const svg = generateSVG({ ...BASE_OPTIONS, screenshotScale: 0.5 });
+    expect(svg).toContain('width="1000" height="600"');
+    const document = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    const image = document.querySelector('g image')!;
+    expect(image.getAttribute('width')).toBe('400');
+    expect(image.getAttribute('height')).toBe('200');
+    expect(image.getAttribute('x')).toBe('300');
+    expect(image.getAttribute('y')).toBe('200');
+  });
+
+  it('clamps screenshotScale so the screenshot stays inside the canvas', () => {
+    const oversized = generateSVG({ ...BASE_OPTIONS, screenshotScale: 5 });
+    const undersized = generateSVG({ ...BASE_OPTIONS, screenshotScale: 0.01 });
+    const parse = (svg: string) =>
+      new DOMParser().parseFromString(svg, 'image/svg+xml').querySelector('g image')!;
+    // Max scale is 1.2 for a landscape source; min is 0.25.
+    expect(parse(oversized).getAttribute('width')).toBe('960');
+    expect(parse(undersized).getAttribute('width')).toBe('200');
+  });
+
   it('embeds the screenshot with rounded clipping and a drop shadow', () => {
     const svg = generateSVG(BASE_OPTIONS);
     expect(svg).toContain(BASE_OPTIONS.imageData);

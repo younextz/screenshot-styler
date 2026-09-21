@@ -9,6 +9,7 @@ Drop in an image, pick the dark or light background, and export a ready-to-share
 - Centered “Add some Air” composer: drag and drop, upload PNG/JPG, or paste from clipboard (Ctrl/⌘+V). Files can be up to 10 MB.
 - Full-page Air Light artwork with a subtle tint, a responsive layout, and Air display typography.
 - Two export backgrounds: dark and light; defaults to Air Light. The website always stays light.
+- Resizable screenshot: drag a corner handle on the preview to scale the screenshot within the background (like resizing an app window), use arrow keys on a focused handle for fine steps, or double-click a handle to reset to 100%.
 - Export formats: copy PNG to clipboard, download PNG, download 4K PNG, or export SVG.
 - Full-size preview: expand the styled picture with a smooth transition, fitted to your viewport without cropping. Close with Escape, the close button, or the backdrop; reduced-motion preferences are respected.
 - Persisted choice: your background selection is saved locally.

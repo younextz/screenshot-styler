@@ -23,6 +23,7 @@ const Index = () => {
   const [imageData, setImageData] = useState<string>('');
   const [imageWidth, setImageWidth] = useState(0);
   const [imageHeight, setImageHeight] = useState(0);
+  const [screenshotScale, setScreenshotScale] = useState(1);
   const [savedVariant, setSavedVariant] = useState<BackgroundVariant | null>(loadBackgroundVariant);
   const [backgroundState, setBackgroundState] = useState<BackgroundState>({
     variant: savedVariant ?? 'light',
@@ -57,14 +58,15 @@ const Index = () => {
 
   useEffect(() => {
     if (!imageData || !imageWidth || !imageHeight) return;
-    setSvgContent(generateSVG({ variant, imageData, imageWidth, imageHeight }));
+    setSvgContent(generateSVG({ variant, imageData, imageWidth, imageHeight, screenshotScale }));
     // backgroundsReady triggers a re-render once the backgrounds are embeddable data URLs
-  }, [imageData, imageWidth, imageHeight, variant, backgroundsReady]);
+  }, [imageData, imageWidth, imageHeight, variant, backgroundsReady, screenshotScale]);
 
   const handleImageLoad = (dataUrl: string, width: number, height: number) => {
     setImageData(dataUrl);
     setImageWidth(width);
     setImageHeight(height);
+    setScreenshotScale(1);
   };
 
   const handleVariantChange = (next: BackgroundVariant) => {
@@ -162,7 +164,12 @@ const Index = () => {
           {imageData && (
             <section aria-label="Styled screenshot" className="mb-4 overflow-hidden rounded-2xl border border-white/60 bg-white/40 p-2 shadow-lg backdrop-blur-xl sm:p-3">
               <div className="h-[clamp(220px,40vh,480px)]">
-                <CanvasPreview svgContent={svgContent} canExpand={backgroundsReady} className="rounded-xl border-0 bg-transparent" />
+                <CanvasPreview
+                  svgContent={svgContent}
+                  canExpand={backgroundsReady}
+                  className="rounded-xl border-0 bg-transparent"
+                  resize={{ imageWidth, imageHeight, scale: screenshotScale, onScaleChange: setScreenshotScale }}
+                />
               </div>
               <div className="flex flex-col items-center justify-between gap-4 px-2 pb-2 pt-4 sm:flex-row sm:px-3">
                 <BackgroundPicker selected={variant} onChange={handleVariantChange} />
@@ -175,10 +182,13 @@ const Index = () => {
 
           {imageData ? (
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3 px-1 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5" aria-hidden="true" /> {imageWidth} × {imageHeight} source · Original quality</span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5" aria-hidden="true" /> {imageWidth} × {imageHeight} source · Original quality
+                {Math.round(screenshotScale * 100) !== 100 && ` · Resized to ${Math.round(screenshotScale * 100)}%`}
+              </span>
               <button
                 type="button"
-                onClick={() => { setImageData(''); setSvgContent(''); }}
+                onClick={() => { setImageData(''); setSvgContent(''); setScreenshotScale(1); }}
                 className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-white/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Start fresh
