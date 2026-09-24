@@ -5,6 +5,12 @@ import { preloadBackgroundImage } from '@/lib/svgRenderer';
 import { downloadBlob } from '@/utils/exportUtils';
 import Index from './Index';
 
+// Exercise page behavior without loading the canvas/WASM player in jsdom.
+vi.mock('@lottiefiles/dotlottie-react', () => ({
+  DotLottieReact: () => <span aria-label="Air" />,
+  setWasmUrl: vi.fn(),
+}));
+
 vi.mock('@/lib/svgRenderer', async (importOriginal) => ({
   ...await importOriginal<typeof import('@/lib/svgRenderer')>(),
   preloadBackgroundImage: vi.fn(),

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { DotLottieReact, setWasmUrl } from '@lottiefiles/dotlottie-react';
+import dotLottieWasmUrl from '@lottiefiles/dotlottie-web/dotlottie-player.wasm?url';
 import { toast } from 'sonner';
 import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
@@ -13,6 +14,8 @@ import { generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
 import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
 import { svgToBlob } from '@/utils/browserRenderer';
+
+setWasmUrl(dotLottieWasmUrl);
 
 type BackgroundStatus = 'loading' | 'ready' | 'failed';
 interface BackgroundState {
@@ -141,14 +144,14 @@ const Index = () => {
               {imageData ? (
                 'Ready to share'
               ) : (
-                <span className="inline-flex items-center gap-[0.18em]">
+                <span className="whitespace-nowrap">
                   <span>Add some</span>
                   <DotLottieReact
                     src={`${import.meta.env.BASE_URL}animation-air-logo.lottie`}
                     autoplay
                     loop
                     aria-label="Air"
-                    className="h-[0.78em] w-[0.78em]"
+                    className="ml-[0.18em] inline-block h-[0.78em] w-[0.78em] align-[-0.025em] brightness-0"
                   />
                 </span>
               )}
