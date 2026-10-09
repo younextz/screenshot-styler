@@ -1,7 +1,8 @@
-import { ArrowUpRight, Clipboard, ImagePlus, Loader2, Plus } from 'lucide-react';
+import { ArrowUpRight, Clipboard, ImagePlus, Loader2, Monitor, Plus } from 'lucide-react';
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import cursorIdeSample from '../../test.png';
 export interface ImageLoaderProps {
   compact?: boolean;
   onImageLoad: (dataUrl: string, width: number, height: number) => void;
@@ -97,6 +98,23 @@ export default function ImageLoader({ onImageLoad, compact = false }: ImageLoade
       console.error('Clipboard error:', error);
     }
   };
+
+  const handleLoadCursorIdeSample = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(cursorIdeSample);
+      if (!response.ok) throw new Error(`Sample image request failed with ${response.status}`);
+      const blob = await response.blob();
+      const file = new File([blob], 'cursor-ide-sample.png', {
+        type: blob.type || 'image/png',
+      });
+      processFile(file);
+    } catch (error) {
+      setIsLoading(false);
+      toast.error('Failed to load Cursor IDE sample image');
+      console.error('Sample image error:', error);
+    }
+  };
   const statusMessage = isLoading ? 'Adding a little atmosphere…' : isDragging ? 'Let go. Let it shine.' : '';
 
   return (
@@ -140,16 +158,27 @@ export default function ImageLoader({ onImageLoad, compact = false }: ImageLoade
           </button>
         )}
         <div className={cn('flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5', !compact && 'border-t border-foreground/[0.07]')}>
-          <button
-            type="button"
-            onClick={handlePasteFromClipboard}
-            disabled={isLoading}
-            className="flex items-center gap-2 rounded-lg px-2 py-2 text-xs text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-          >
-            <Clipboard className="h-3.5 w-3.5" aria-hidden="true" />
-            Paste image
-            <kbd className="ml-1 hidden rounded border border-foreground/10 px-1.5 py-0.5 font-sans text-[10px] sm:inline">⌘ / Ctrl V</kbd>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handlePasteFromClipboard}
+              disabled={isLoading}
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-xs text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+            >
+              <Clipboard className="h-3.5 w-3.5" aria-hidden="true" />
+              Paste image
+              <kbd className="ml-1 hidden rounded border border-foreground/10 px-1.5 py-0.5 font-sans text-[10px] sm:inline">⌘ / Ctrl V</kbd>
+            </button>
+            <button
+              type="button"
+              onClick={handleLoadCursorIdeSample}
+              disabled={isLoading}
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-xs text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+            >
+              <Monitor className="h-3.5 w-3.5" aria-hidden="true" />
+              Cursor IDE sample
+            </button>
+          </div>
           <div className="flex items-center gap-4">
             <span className="hidden text-[10px] text-muted-foreground sm:inline">PNG, JPG · up to 10 MB</span>
             <button
