@@ -6,7 +6,7 @@ Drop in an image, pick the dark or light background, and export a ready-to-share
 ## Highlights
 
 - Local-first processing: images stay in your browser.
-- Centered “Add some Air” composer: drag and drop, upload PNG/JPG, or paste from clipboard (Ctrl/⌘+V). Files can be up to 10 MB.
+- Centered “Add some Air” composer: drag and drop, upload PNG/JPG, paste from clipboard (Ctrl/⌘+V), or load the built-in Cursor IDE sample image. Files can be up to 10 MB.
 - Full-page Air Light artwork with a subtle tint, a responsive layout, and Air display typography.
 - Two export backgrounds: dark and light; defaults to Air Light. The website always stays light.
 - Export formats: copy PNG to clipboard, download PNG, download 4K PNG, or export SVG.
