@@ -19,3 +19,25 @@ export function loadBackgroundVariant(): BackgroundVariant | null {
     return null;
   }
 }
+
+export type StudioLayout = 'screenshot' | 'iphone';
+
+const LAYOUT_KEY = 'screenshot-styler-layout';
+
+export function saveLayout(layout: StudioLayout): void {
+  try {
+    localStorage.setItem(LAYOUT_KEY, layout);
+  } catch (error) {
+    console.error('Failed to save layout:', error);
+  }
+}
+
+export function loadLayout(): StudioLayout | null {
+  try {
+    const value = localStorage.getItem(LAYOUT_KEY);
+    return value === 'screenshot' || value === 'iphone' ? value : null;
+  } catch (error) {
+    console.error('Failed to load layout:', error);
+    return null;
+  }
+}
