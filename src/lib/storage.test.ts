@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { loadBackgroundVariant, saveBackgroundVariant } from './storage';
+import { loadBackgroundVariant, loadLayout, saveBackgroundVariant, saveLayout } from './storage';
 
 // The Node-provided global localStorage is non-functional in this test
 // environment, so install an in-memory implementation per test.
@@ -71,5 +71,24 @@ describe('background variant storage', () => {
     vi.stubGlobal('localStorage', createThrowingStorage());
     vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => saveBackgroundVariant('dark')).not.toThrow();
+  });
+});
+
+describe('layout storage', () => {
+  it('round-trips both layouts and ignores unknown values', () => {
+    expect(loadLayout()).toBeNull();
+    saveLayout('iphone');
+    expect(loadLayout()).toBe('iphone');
+    saveLayout('screenshot');
+    expect(loadLayout()).toBe('screenshot');
+    localStorage.setItem('screenshot-styler-layout', 'tablet');
+    expect(loadLayout()).toBeNull();
+  });
+
+  it('survives unavailable localStorage', () => {
+    vi.stubGlobal('localStorage', createThrowingStorage());
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(loadLayout()).toBeNull();
+    expect(() => saveLayout('iphone')).not.toThrow();
   });
 });

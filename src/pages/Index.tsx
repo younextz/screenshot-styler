@@ -1,15 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { ArrowUpRight, Check, LockKeyhole, RotateCcw } from 'lucide-react';
 
 import AgentInstructions from '@/components/AgentInstructions';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import CanvasPreview from '@/components/CanvasPreview';
+import CropControls from '@/components/CropControls';
+import CropSurface from '@/components/CropSurface';
+import DeviceFramePreview from '@/components/DeviceFramePreview';
 import ExportButtons from '@/components/ExportButtons';
 import ImageLoader from '@/components/ImageLoader';
+import LayoutPicker from '@/components/LayoutPicker';
 import { BACKGROUND_IMAGE_URLS, type BackgroundVariant } from '@/lib/backgroundAssets';
-import { generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
-import { loadBackgroundVariant, saveBackgroundVariant } from '@/lib/storage';
+import { DEVICE_FRAME, loadDeviceFrame } from '@/lib/deviceFrame';
+import { backgroundHref, generateDeviceSVG, generateSVG, preloadBackgroundImage } from '@/lib/svgRenderer';
+import { loadBackgroundVariant, loadLayout, saveBackgroundVariant, saveLayout, type StudioLayout } from '@/lib/storage';
+import {
+  CENTERED_CROP,
+  deviceLayout,
+  panCrop,
+  zoomCrop,
+  type CropState,
+  type DeviceFrameAsset,
+} from '@/utils/composeDeviceFrame';
 import { copyOrDownloadBlob, downloadBlob } from '@/utils/exportUtils';
 import { svgToBlob } from '@/utils/browserRenderer';
 
@@ -18,6 +31,9 @@ interface BackgroundState {
   variant: BackgroundVariant;
   status: BackgroundStatus;
 }
+type FrameState =
+  | { status: 'idle' | 'loading' | 'failed' }
+  | { status: 'ready'; frame: DeviceFrameAsset };
 
 const Index = () => {
   const [imageData, setImageData] = useState<string>('');
@@ -30,10 +46,21 @@ const Index = () => {
   });
   const [backgroundAttempt, setBackgroundAttempt] = useState(0);
   const [svgContent, setSvgContent] = useState('');
+  const [savedLayout, setSavedLayout] = useState<StudioLayout | null>(loadLayout);
+  const [frameState, setFrameState] = useState<FrameState>({ status: 'idle' });
+  const [frameAttempt, setFrameAttempt] = useState(0);
+  // Pan and zoom belong to the current image and are not saved.
+  const [crop, setCrop] = useState<CropState>(CENTERED_CROP);
+  const [adjusting, setAdjusting] = useState(false);
 
   const variant = savedVariant ?? 'light';
   const backgroundStatus = backgroundState.variant === variant ? backgroundState.status : 'loading';
   const backgroundsReady = backgroundStatus === 'ready';
+  // Without the bundled bezel the iPhone layout does not exist and a saved choice is ignored.
+  const layout: StudioLayout = DEVICE_FRAME ? savedLayout ?? 'screenshot' : 'screenshot';
+  const usesDevice = layout === 'iphone';
+  const frame = usesDevice && frameState.status === 'ready' ? frameState.frame : null;
+  const frameStatus = usesDevice ? frameState.status : 'idle';
 
   useEffect(() => {
     let active = true;
@@ -56,15 +83,69 @@ const Index = () => {
   };
 
   useEffect(() => {
+    if (!usesDevice || !DEVICE_FRAME) return;
+    let active = true;
+    setFrameState((state) => (state.status === 'ready' ? state : { status: 'loading' }));
+    loadDeviceFrame(DEVICE_FRAME)
+      .then((loaded) => {
+        if (active) setFrameState({ status: 'ready', frame: loaded });
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error(error);
+        setFrameState({ status: 'failed' });
+      });
+    return () => { active = false; };
+  }, [usesDevice, frameAttempt]);
+
+  useEffect(() => {
     if (!imageData || !imageWidth || !imageHeight) return;
-    setSvgContent(generateSVG({ variant, imageData, imageWidth, imageHeight }));
+    if (!usesDevice) {
+      setSvgContent(generateSVG({ variant, imageData, imageWidth, imageHeight }));
+      return;
+    }
+    setSvgContent(frame ? generateDeviceSVG({ variant, imageData, imageWidth, imageHeight, frame, crop }) : '');
     // backgroundsReady triggers a re-render once the backgrounds are embeddable data URLs
-  }, [imageData, imageWidth, imageHeight, variant, backgroundsReady]);
+  }, [imageData, imageWidth, imageHeight, variant, backgroundsReady, usesDevice, frame, crop]);
+
+  const deviceView = useMemo(
+    () => (frame && imageData && imageWidth && imageHeight
+      ? deviceLayout({ width: imageWidth, height: imageHeight }, frame, crop)
+      : null),
+    [frame, imageData, imageWidth, imageHeight, crop],
+  );
+  const imageSize = useMemo(() => ({ width: imageWidth, height: imageHeight }), [imageWidth, imageHeight]);
+  const screenSize = frame?.screen;
+
+  const handlePan = useCallback((dx: number, dy: number) => {
+    if (!screenSize) return;
+    setCrop((current) => panCrop(imageSize, screenSize, current, dx, dy));
+  }, [imageSize, screenSize]);
+
+  const handleZoom = useCallback((zoom: number) => {
+    if (!screenSize) return;
+    setCrop((current) => zoomCrop(imageSize, screenSize, current, zoom));
+  }, [imageSize, screenSize]);
+
+  const handleZoomBy = useCallback((factor: number) => {
+    if (!screenSize) return;
+    setCrop((current) => zoomCrop(imageSize, screenSize, current, current.zoom * factor));
+  }, [imageSize, screenSize]);
+
+  const handleCenter = useCallback(() => {
+    setCrop((current) => ({ ...current, centerX: 0.5, centerY: 0.5 }));
+  }, []);
 
   const handleImageLoad = (dataUrl: string, width: number, height: number) => {
     setImageData(dataUrl);
     setImageWidth(width);
     setImageHeight(height);
+    setCrop(CENTERED_CROP);
+  };
+
+  const handleLayoutChange = (next: StudioLayout) => {
+    setSavedLayout(next);
+    saveLayout(next);
   };
 
   const handleVariantChange = (next: BackgroundVariant) => {
@@ -72,13 +153,15 @@ const Index = () => {
     saveBackgroundVariant(next);
   };
 
+  const exportsReady = backgroundsReady && (!usesDevice || frame !== null);
+
   const downloadSvg = (svgString: string) => {
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     downloadBlob(blob, `styled-screenshot-${Date.now()}.svg`);
   };
 
   const handleExport = async (type: 'copy' | 'download' | 'download4k' | 'downloadSvg') => {
-    if (!svgContent || !backgroundsReady) return;
+    if (!svgContent || !exportsReady) return;
     try {
       if (type === 'downloadSvg') {
         downloadSvg(svgContent);
@@ -159,14 +242,64 @@ const Index = () => {
             </div>
           )}
 
+          {imageData && usesDevice && frameStatus !== 'ready' && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/60 bg-white/65 px-4 py-3 text-sm">
+              <p role="status" aria-live="polite">
+                {frameStatus === 'failed'
+                  ? 'The iPhone frame couldn’t load. Retry, or switch to the Screenshot layout.'
+                  : 'Loading the iPhone frame…'}
+              </p>
+              <button
+                type="button"
+                onClick={() => setFrameAttempt((attempt) => attempt + 1)}
+                disabled={frameStatus !== 'failed'}
+                className="shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-50"
+              >
+                Retry frame
+              </button>
+            </div>
+          )}
+
           {imageData && (
             <section aria-label="Styled screenshot" className="mb-4 overflow-hidden rounded-2xl border border-white/60 bg-white/40 p-2 shadow-lg backdrop-blur-xl sm:p-3">
-              <div className="h-[clamp(220px,40vh,480px)]">
-                <CanvasPreview svgContent={svgContent} canExpand={backgroundsReady} className="rounded-xl border-0 bg-transparent" />
+              <div className={usesDevice ? 'h-[clamp(320px,60vh,640px)]' : 'h-[clamp(220px,40vh,480px)]'}>
+                <CanvasPreview
+                  svgContent={svgContent}
+                  canExpand={exportsReady}
+                  className="rounded-xl border-0 bg-transparent"
+                  overlay={deviceView && frame && (
+                    <CropSurface
+                      composition={deviceView}
+                      screen={frame.screen}
+                      onPan={handlePan}
+                      onZoom={handleZoomBy}
+                      onCenter={handleCenter}
+                      onAdjustingChange={setAdjusting}
+                    />
+                  )}
+                >
+                  {deviceView && frame && (
+                    <DeviceFramePreview
+                      layout={deviceView}
+                      backgroundHref={backgroundHref(variant)}
+                      imageHref={imageData}
+                      frameHref={frame.data}
+                      showOverflow={adjusting}
+                    />
+                  )}
+                </CanvasPreview>
               </div>
+              {deviceView && (
+                <div className="px-2 pt-3 sm:px-3">
+                  <CropControls zoom={crop.zoom} onZoomChange={handleZoom} onCenter={handleCenter} onAdjustingChange={setAdjusting} />
+                </div>
+              )}
               <div className="flex flex-col items-center justify-between gap-4 px-2 pb-2 pt-4 sm:flex-row sm:px-3">
-                <BackgroundPicker selected={variant} onChange={handleVariantChange} />
-                <ExportButtons svgContent={svgContent} onExport={handleExport} disabled={!svgContent || !backgroundsReady} />
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {DEVICE_FRAME && <LayoutPicker selected={layout} onChange={handleLayoutChange} deviceModel={DEVICE_FRAME.model} />}
+                  <BackgroundPicker selected={variant} onChange={handleVariantChange} />
+                </div>
+                <ExportButtons svgContent={svgContent} onExport={handleExport} disabled={!svgContent || !exportsReady} />
               </div>
             </section>
           )}
@@ -204,6 +337,7 @@ const Index = () => {
             <LockKeyhole className="h-3 w-3 shrink-0" aria-hidden="true" />
             <span>Screenshots are processed entirely in your browser and are never uploaded or stored on our servers.</span>
           </p>
+          {DEVICE_FRAME && <p>iPhone is a trademark of Apple Inc., registered in the U.S. and other countries and regions.</p>}
         </div>
       </footer>
     </div>

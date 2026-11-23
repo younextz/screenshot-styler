@@ -11,7 +11,10 @@ Drop in an image, pick the dark or light background, and export a ready-to-share
 - Two export backgrounds: dark and light; defaults to Air Light. The website always stays light.
 - Export formats: copy PNG to clipboard, download PNG, download 4K PNG, or export SVG.
 - Full-size preview: expand the styled picture with a smooth transition, fitted to your viewport without cropping. Close with Escape, the close button, or the backdrop; reduced-motion preferences are respected.
-- Persisted choice: your background selection is saved locally.
+- iPhone layout (when the bezel asset is installed, see [iPhone frame](#iphone-frame)):
+  places the screenshot inside an iPhone bezel, cropped to the bezel's screen ratio.
+  Drag, scroll, pinch, or use the keyboard to choose which part fills the screen.
+- Persisted choice: your background and layout selections are saved locally.
 - Agent support: discoverable Markdown instructions, a downloadable local renderer,
   and an optional skill. Select **Use with an agent** for a copyable prompt.
 
@@ -229,8 +232,9 @@ optional hosted API design. That API remains outside this implementation.
    output width with rounded corners and a soft shadow, padded evenly on all sides.
 3. Switch between the dark and light background variants.
    Select **Full-size view** in the preview to inspect the picture before exporting.
-4. Replace the image or select **Start fresh** to begin again.
-5. Export PNG/SVG from the live SVG preview. Backgrounds are embedded as data
+4. Optionally select **iPhone** to frame the screenshot in an iPhone bezel (see below).
+5. Replace the image or select **Start fresh** to begin again.
+6. Export PNG/SVG from the live SVG preview. Backgrounds are embedded as data
    URLs so exported files are self-contained.
 
 If background loading fails, select **Retry backgrounds** in the studio. Your
@@ -247,10 +251,46 @@ from Workers deployments. Exports embed PNG data for standalone SVG compatibilit
 To optimize a replacement background, use `oxipng -o 4 input.png` and verify its
 decoded pixels against the original before publishing.
 
+## iPhone frame
+
+The **iPhone** layout composes the screenshot inside an Apple iPhone bezel on the
+Air background. It only exists when the repository contains the bezel, which the
+owner adds after Apple grants permission to use it. Builds and agents never
+download Apple artwork. To enable the layout, add both files:
+
+- `public/devices/iphone-portrait.png`: the unmodified portrait bezel PNG, with a
+  transparent screen opening.
+- `public/devices/iphone-portrait.json`: `{"model": "iPhone 17 Pro"}` (the device
+  name, up to 60 characters).
+
+Without the PNG, the layout picker, the iPhone controls, and the trademark notice
+are hidden, and the editor's output is unchanged. A PNG without valid JSON fails
+the build with an explanatory error. The image URL carries a content hash so a
+replacement bezel is not served from stale caches.
+
+How the layout works:
+
+- The crop ratio comes from the bezel: the studio finds the transparent region
+  enclosed by the bezel around its centre and uses its bounding box as the screen.
+  No ratio is hard-coded, so a different model only needs a different PNG.
+- The bezel is drawn unchanged on top, without shadow, tilt, or other effects, and
+  spans 80% of the picture height with even padding. The screenshot underneath is
+  clipped to the screen opening and always covers it, so the screen is never blank.
+- Choose the visible part by dragging, scrolling (Shift for sideways), or using the
+  arrow keys (Shift for bigger steps). Zoom from 1× to 4× with the slider, a pinch,
+  Ctrl/⌘ + scroll, or `+`/`-`. **Center** (or `0`) re-centres the crop.
+  While you adjust, the cut-off parts of the screenshot appear tinted around the
+  phone; exports never include them.
+- Pan and zoom reset for each new image; the layout choice is saved.
+- The agent helper keeps rendering the Screenshot layout only, and the bezel is not
+  included in its archive.
+
 ## Testing Notes
 
 - For manual image checks, upload `test.png` and test both **Dark** and **Light** on desktop and mobile. Resize the window and confirm the full image stays visible.
 - **Copy** and **PNG** preserve native screenshot resolution. Air backgrounds use integer padding and sRGB shadow filtering to keep text sharp and source colors intact. **4K** resizes the result; it does not add detail to the original screenshot.
+- For the iPhone layout, test `test.png` with a bezel installed locally: drag, scroll, pinch, keyboard, zoom, **Center**, and exports.
+- On Node.js 25+, whose built-in `localStorage` hides jsdom's, run tests with `NODE_OPTIONS=--no-webstorage`.
 - WebP inputs can be converted to PNG without resizing before upload (on macOS: `sips -s format png input.webp --out input.png`).
 - Run lint + typecheck + tests before committing:
 

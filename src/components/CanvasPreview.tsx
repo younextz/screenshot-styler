@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import FullSizePreview from './FullSizePreview';
 
@@ -6,16 +6,23 @@ interface CanvasPreviewProps {
   svgContent: string;
   className?: string;
   canExpand?: boolean;
+  /** A React-rendered SVG to show instead of the `svgContent` markup. */
+  children?: ReactNode;
+  /** Interactive layer placed over the picture. */
+  overlay?: ReactNode;
 }
 
-export default function CanvasPreview({ svgContent, className, canExpand = false }: CanvasPreviewProps) {
+export default function CanvasPreview({ svgContent, className, canExpand = false, children, overlay }: CanvasPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const usesMarkup = !children;
 
   useEffect(() => {
-    if (containerRef.current) {
+    if (usesMarkup && containerRef.current) {
       containerRef.current.innerHTML = svgContent || '';
     }
-  }, [svgContent]);
+  }, [svgContent, usesMarkup]);
+
+  const containerClassName = 'absolute inset-4 z-10 flex items-center justify-center [&>svg]:h-full [&>svg]:w-full [&>svg]:drop-shadow-lg';
 
   return (
     <div
@@ -29,10 +36,11 @@ export default function CanvasPreview({ svgContent, className, canExpand = false
         backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
         backgroundSize: '24px 24px'
       }} />
-      <div
-        ref={containerRef}
-        className="absolute inset-4 z-10 flex items-center justify-center [&>svg]:h-full [&>svg]:w-full [&>svg]:drop-shadow-lg"
-      />
+      {/* Keys remount the container so React children and injected markup never mix. */}
+      {usesMarkup
+        ? <div key="markup" ref={containerRef} className={containerClassName} />
+        : <div key="element" ref={containerRef} className={containerClassName}>{children}</div>}
+      {overlay && <div className="absolute inset-4 z-10">{overlay}</div>}
       <FullSizePreview svgContent={svgContent} sourceRef={containerRef} disabled={!canExpand} />
     </div>
   );
